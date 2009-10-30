@@ -3,6 +3,8 @@
 #include "MainViewer.h"
 #include "MainViewer.moc"
 
+#include "Rendering/ContoursRenderer.h"
+
 #include <NQVTK/Interactors/ArcballCameraInteractor.h>
 
 #include <NQVTK/Rendering/ArcballCamera.h>
@@ -12,14 +14,14 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MainViewer::MainViewer(QWidget *parent) : NQVTKWidget(parent)
 	{
-		// TODO: initialize main viewer
-		// renderer = new ...;
+		// Initialize main viewer
+		ContoursRenderer *renderer = new ContoursRenderer();
 
-		//NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
-		//renderer->SetCamera(camera);
+		NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
+		renderer->SetCamera(camera);
 
-		//SetRenderer(renderer);
-		//SetInteractor(new NQVTK::ArcballCameraInteractor(camera));
+		SetRenderer(renderer);
+		SetInteractor(new NQVTK::ArcballCameraInteractor(camera));
 	}
 
 	// ------------------------------------------------------------------------
