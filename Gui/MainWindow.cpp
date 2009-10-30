@@ -26,15 +26,31 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_actionLoad_triggered()
+	void MainWindow::on_actionLoadMesh_triggered()
 	{
 		// Show open dialog
 		QString filename = QFileDialog::getOpenFileName(
-			this, "Load shape model", QString(), 
+			this, "Load shape model mesh", QString(), 
 			"VTK XML PolyData (*.vtp)");
 		// This returns a null string when cancelled
 		if (!filename.isNull())
 		{
+			// TODO: load
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionLoadPopulation_triggered()
+	{
+		// Show open dialog
+		QString filename = QFileDialog::getOpenFileName(
+			this, "Load population vectors", QString(), 
+			"CSV files (*.csv)");
+		// This returns a null string when cancelled
+		if (!filename.isNull())
+		{
+			// TODO: figure out file format to use for populations
+			// a simple text file with node positions should be fine
 			// TODO: load
 		}
 	}
