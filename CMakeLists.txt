@@ -20,6 +20,10 @@ INCLUDE( ${NQVTK_USE_FILE} )
 FIND_PACKAGE( NQVTKGui REQUIRED )
 INCLUDE( ${NQVTKGui_USE_FILE} )
 
+# We're using GLEW, which is provided by NQVTK. However, we still need 
+# to set this as we're using some GLEW functions directly.
+ADD_DEFINITIONS( -DGLEW_STATIC )
+
 # We need VTK for its readers
 FIND_PACKAGE( VTK REQUIRED )
 INCLUDE( ${VTK_USE_FILE} )
@@ -78,6 +82,7 @@ SET( ${ProjectName}_Data_Classes
 )
 
 SET( ${ProjectName}_Rendering_Classes
+	ContoursRenderer
 )
 
 # --------------------------------------------------
