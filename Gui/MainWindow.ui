@@ -36,7 +36,8 @@
     <property name="title">
      <string>&amp;Shape</string>
     </property>
-    <addaction name="actionLoad"/>
+    <addaction name="actionLoadMesh"/>
+    <addaction name="actionLoadPopulation"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -52,12 +53,12 @@
    <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad">
+  <action name="actionLoadMesh">
    <property name="text">
-    <string>&amp;Load shape space...</string>
+    <string>&amp;Load mesh...</string>
    </property>
    <property name="toolTip">
-    <string>Load shape space</string>
+    <string>Load shape model mean mesh</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -96,6 +97,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionLoadPopulation">
+   <property name="text">
+    <string>Load &amp;population</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>

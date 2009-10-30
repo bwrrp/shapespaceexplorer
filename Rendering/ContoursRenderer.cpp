@@ -57,37 +57,6 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ContoursRenderer::SetViewport(int x, int y, int w, int h)
-	{
-		Superclass::SetViewport(x, y, w, h);
-
-		// Resize or create mesh rendering FBO
-		if (!meshBuffer)
-		{
-			meshBuffer = GLFramebuffer::New(w, h);
-			meshBuffer->CreateDepthBuffer();
-			meshBuffer->CreateColorTexture();
-			GLenum bufs[] = {GL_COLOR_ATTACHMENT0};
-			glDrawBuffers(1, bufs);
-			if (!meshBuffer->IsOk())
-			{
-				std::cerr << "Error creating buffer for mesh rendering" << 
-					std::endl;
-			}
-			meshBuffer->Unbind();
-		}
-		else
-		{
-			if (!meshBuffer->Resize(w, h))
-			{
-				std::cerr << 
-					"WARNING! Could not resize buffer for mesh rendering!" << 
-					std::endl;
-			}
-		}
-	}
-
-	// ------------------------------------------------------------------------
 	void ContoursRenderer::Draw()
 	{
 		// TODO: determine how many contours to draw
@@ -97,6 +66,16 @@ namespace Diverse
 		// TODO:     render object to a g-buffer
 		// TODO:     setup camera for final (composite space) rendering
 		// TODO:     detect contours and composite into final scene
+
+		// An extra helper class to hold the entire population could be nice...
+
+		// Testing... just render 50 slices with the same object
+		int numSlices = 50;
+		for (int i = 0; i < numSlices; ++i)
+		{
+			// TODO: render mesh to the meshBuffer
+			// We could use a separate renderer for this...
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -135,10 +114,29 @@ namespace Diverse
 			compositeShader = 0;
 		}
 
-		// Framebuffer for mesh rendering is created on resize
-		delete meshBuffer;
-		meshBuffer = 0;
+		// Create framebuffer for mesh rendering
+		// TODO: make this size adaptive to viewport and projection?
+		meshBuffer = GLFramebuffer::New(1024, 1024);
+		ok = meshBuffer != 0;
+		if (ok)
+		{
+			meshBuffer->CreateDepthBuffer();
+			meshBuffer->CreateColorTexture();
+			GLenum bufs[] = {GL_COLOR_ATTACHMENT0};
+			glDrawBuffers(1, bufs);
+			ok = meshBuffer->IsOk();
+			meshBuffer->Unbind();
+		}
+		if (!ok)
+		{
+			std::cerr << "Error creating buffer for mesh rendering" << 
+				std::endl;
+			delete meshBuffer;
+			meshBuffer = 0;
+		}
 
-		return meshShader != 0 && compositeShader != 0;
+		return meshShader != 0 && 
+			compositeShader != 0 &&
+			meshBuffer != 0;
 	}
 }

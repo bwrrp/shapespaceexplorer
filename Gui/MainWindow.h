@@ -21,7 +21,8 @@ namespace Diverse
 		Ui::MainWindow ui;
 
 	private slots:
-		void on_actionLoad_triggered();
+		void on_actionLoadMesh_triggered();
+		void on_actionLoadPopulation_triggered();
 		void on_actionQuit_triggered();
 		void on_actionReloadShaders_triggered();
 		void on_actionStartBenchmark_triggered();

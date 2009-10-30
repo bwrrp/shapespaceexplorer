@@ -79,6 +79,7 @@ SET( ${ProjectName}_Gui_Classes
 )
 
 SET( ${ProjectName}_Data_Classes
+	ShapeModel
 )
 
 SET( ${ProjectName}_Rendering_Classes

@@ -15,8 +15,6 @@ namespace Diverse
 		ContoursRenderer();
 		~ContoursRenderer();
 
-		virtual void SetViewport(int x, int y, int w, int h);
-
 		virtual void Draw();
 
 	protected:
