@@ -6,6 +6,8 @@
 
 namespace Diverse
 {
+	class Population;
+
 	class MainWindow : public QMainWindow
 	{
 		Q_OBJECT;
@@ -19,6 +21,8 @@ namespace Diverse
 
 	protected:
 		Ui::MainWindow ui;
+
+		Population *population;
 
 	private slots:
 		void on_actionLoadMesh_triggered();
