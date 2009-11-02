@@ -42,12 +42,43 @@ SET( QT_lib
 	${QT_QTMAIN_LIBRARIES}
 )
 
+# We need IT++
+FIND_PATH( ITpp_PATH
+	NAMES itpp-config.in
+	DOC "Directory containing IT++"
+)
+INCLUDE_DIRECTORIES( ${ITpp_PATH} )
+FIND_LIBRARY( ITpp_release
+	NAMES itpp
+	PATHS ${ITpp_PATH} ${ITpp_PATH}/lib ${ITpp_PATH}/win32/lib
+)
+FIND_LIBRARY( ITpp_debug
+	NAMES itpp_debug
+	PATHS ${ITpp_PATH} ${ITpp_PATH}/lib ${ITpp_PATH}/win32/lib
+)
+SET( ITpp_lib
+	debug ${ITpp_debug}
+	optimized ${ITpp_release}
+)
+IF( WIN32 )
+	FIND_LIBRARY( ACML_lib
+		NAMES libacml_dll.lib
+		DOC "Path to libacml_dll.lib for PGI-compiled ACML"
+	)
+	SET( ITpp_lib ${ITpp_lib} ${ACML_lib} )
+	ADD_DEFINITIONS( 
+		-D_CRT_SECURE_NO_DEPRECATE 
+		-D_CRT_NONSTDC_NO_DEPRECATE
+	)
+ENDIF( WIN32 )
+
 # The complete set of libraries required by the project
 SET( ${ProjectName}_Libraries
 	${NQVTK_LIBRARIES}
 	${NQVTKGui_LIBRARIES}
 	${VTK_lib}
 	${QT_lib}
+	${ITpp_lib}
 )
 
 # --------------------------------------------------
@@ -80,6 +111,7 @@ SET( ${ProjectName}_Gui_Classes
 
 SET( ${ProjectName}_Data_Classes
 	ShapeModel
+	Population
 )
 
 SET( ${ProjectName}_Rendering_Classes

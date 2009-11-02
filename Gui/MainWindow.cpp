@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include "MainWindow.moc"
 
+#include "Data/Population.h"
+
 #include <QApplication>
 #include <QDateTime>
 #include <QFileDialog>
@@ -9,7 +11,8 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+	MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
+		population(0)
 	{
 		ui.setupUi(this);
 	}
@@ -17,6 +20,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MainWindow::~MainWindow()
 	{
+		delete population;
 	}
 
 	// ------------------------------------------------------------------------
@@ -45,13 +49,16 @@ namespace Diverse
 		// Show open dialog
 		QString filename = QFileDialog::getOpenFileName(
 			this, "Load population vectors", QString(), 
-			"CSV files (*.csv)");
+			"Tab-separated text files (*.txt)");
 		// This returns a null string when cancelled
 		if (!filename.isNull())
 		{
-			// TODO: figure out file format to use for populations
-			// a simple text file with node positions should be fine
-			// TODO: load
+			Population *newPop = Population::Load(filename);
+			if (newPop)
+			{
+				delete population;
+				population = newPop;
+			}
 		}
 	}
 
