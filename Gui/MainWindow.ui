@@ -39,6 +39,8 @@
     <addaction name="actionLoadMesh"/>
     <addaction name="actionLoadPopulation"/>
     <addaction name="separator"/>
+    <addaction name="actionPCA"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -105,6 +107,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPCA">
+   <property name="text">
+    <string>&amp;Compute PCA</string>
    </property>
   </action>
  </widget>

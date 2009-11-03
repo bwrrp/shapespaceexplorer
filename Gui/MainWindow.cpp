@@ -63,6 +63,14 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MainWindow::on_actionPCA_triggered()
+	{
+		// TODO: this should be computed automatically on load
+		// TODO: do PCA in a background thread
+		if (population) population->DoPCA();
+	}
+
+	// ------------------------------------------------------------------------
 	void MainWindow::on_actionQuit_triggered()
 	{
 		qApp->quit();

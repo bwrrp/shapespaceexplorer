@@ -1,12 +1,13 @@
 #include "Population.h"
 
-#include "ShapeModel.h"
+#include <itpp/itsignal.h>
 
 #include <QFile>
 #include <QStringList>
 #include <QTextStream>
 
 #include <cassert>
+#include <cmath>
 
 namespace Diverse
 {
@@ -99,5 +100,72 @@ namespace Diverse
 	itpp::vec Population::GetIndividual(int i)
 	{
 		return population.get_row(i);
+	}
+
+	// ------------------------------------------------------------------------
+	void Population::DoPCA()
+	{
+		qDebug("Computing covariance...");
+
+		itpp::mat covariance = itpp::cov(population);
+
+		qDebug("Computing eigenvectors...");
+
+		itpp::vec eigVals;
+		itpp::mat eigVecs;
+
+		itpp::eig_sym(covariance, eigVals, eigVecs);
+
+		qDebug("Computing components...");
+
+		assert(eigVals.size() == eigVecs.cols());
+
+		// Sort by the eigVals in decreasing order
+		itpp::ivec index = itpp::reverse(itpp::sort_index(eigVals));
+
+		eigComps.set_size(eigVecs.rows(), eigVecs.cols());
+
+		// Multiply the eigVecs by sqrt(eigVals) and remove insignificant ones
+		int compcol = 0;
+		for (int col = 0; col < eigVecs.cols(); ++col)
+		{
+			itpp::vec evec = eigVecs.get_col(index(col));
+			double eval = eigVals(index(col));
+			const double epsilon = 0.000001;
+			if (eval > epsilon)
+			{
+				evec *= sqrt(eval);
+				eigComps.set_col(compcol, evec);
+				++compcol;
+			}
+			else
+			{
+				if (eval < -epsilon)
+				{
+					qDebug(QString("Warning! Negative eigenvalue: %1")
+						.arg(eval).toAscii());
+				}
+				// Treat this eigenvalue as if it's 0 and discard the result
+			}
+		}
+		// Discard zero-valued components
+		eigComps.set_size(eigVecs.rows(), compcol, true);
+
+		assert(eigComps.rows() == GetShapeSpaceDimension());
+
+		qDebug(QString("PCA complete! Found %1 significant components")
+			.arg(compcol).toAscii());
+	}
+
+	// ------------------------------------------------------------------------
+	int Population::GetNumberOfPrincipalComponents()
+	{
+		return eigComps.cols();
+	}
+
+	// ------------------------------------------------------------------------
+	itpp::vec Population::GetPrincipalComponent(int i)
+	{
+		return eigComps.get_col(i);
 	}
 }
