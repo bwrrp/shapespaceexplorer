@@ -4,6 +4,8 @@
 
 #include <itpp/itbase.h>
 
+#include <QString>
+
 class vtkPolyData;
 
 namespace Diverse
@@ -13,9 +15,12 @@ namespace Diverse
 	public:
 		typedef NQVTK::PolyData Superclass;
 
-		ShapeMesh(vtkPolyData *meanMesh);
+		static ShapeMesh *Load(const QString &filename);
 		virtual ~ShapeMesh();
 
 		void SetShape(const itpp::vec &shape);
+
+	protected:
+		ShapeMesh(vtkPolyData *meanMesh);
 	};
 }
