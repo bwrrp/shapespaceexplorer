@@ -110,7 +110,7 @@ SET( ${ProjectName}_Gui_Classes
 )
 
 SET( ${ProjectName}_Data_Classes
-	ShapeModel
+	ShapeMesh
 	Population
 )
 

@@ -17,13 +17,18 @@ namespace Diverse
 		int GetNumberOfIndividuals();
 		itpp::vec GetIndividual(int i);
 
-		// unsigned int GetNumberOfComponents(double threshold);
-		// vec GetPrincipalComponent(unsigned int i);
+		void DoPCA();
+
+		int GetNumberOfPrincipalComponents();
+		itpp::vec GetPrincipalComponent(int i);
 
 	protected:
 		Population(const itpp::mat &population);
 
 		// Population matrix
 		itpp::mat population;
+
+		// Principal components, stored as eigvec * sqrt(eigval)
+		itpp::mat eigComps;
 	};
 }
