@@ -2,10 +2,16 @@
 
 #include "ContoursRenderer.h"
 
+#include "Data/ShapeMesh.h"
+#include "Data/Population.h"
+
+#include <NQVTK/Rendering/View.h>
+
 #include <GLBlaat/GLFramebuffer.h>
 #include <GLBlaat/GLProgram.h>
 
 #include <QApplication>
+#include <QTime>
 
 #include <fstream>
 #include <iostream>
@@ -44,16 +50,42 @@ namespace Diverse
 
 	// ------------------------------------------------------------------------
 	ContoursRenderer::ContoursRenderer() 
-		: meshShader(0), compositeShader(0), meshBuffer(0)
+		: meshShader(0), compositeShader(0), meshBuffer(0), pop(0)
 	{
 	}
 
 	// ------------------------------------------------------------------------
 	ContoursRenderer::~ContoursRenderer()
 	{
+		SetShader(0);
 		delete meshShader;
 		delete compositeShader;
 		delete meshBuffer;
+	}
+
+	// ------------------------------------------------------------------------
+	void ContoursRenderer::Clear()
+	{
+		Superclass::Clear();
+		// TODO: we should integrate this with the NQVTK SimpleRenderer
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		// Blend in the background last
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_LIGHTING);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		glBegin(GL_QUADS);
+		glColor4d(0.2, 0.2, 0.25, 0.0);
+		glVertex3d(-1.0, -1.0, 0.0);
+		glVertex3d(1.0, -1.0, 0.0);
+		glColor4d(0.6, 0.6, 0.65, 0.0);
+		glVertex3d(1.0, 1.0, 0.0);
+		glVertex3d(-1.0, 1.0, 0.0);
+		glEnd();
+		glPopAttrib();
 	}
 
 	// ------------------------------------------------------------------------
@@ -67,21 +99,43 @@ namespace Diverse
 		// TODO:     setup camera for final (composite space) rendering
 		// TODO:     detect contours and composite into final scene
 
-		// An extra helper class to hold the entire population could be nice...
+		// An extra helper class to hold the entire model could be nice...
 
-		// Testing... just render 50 slices with the same object
-		int numSlices = 50;
-		for (int i = 0; i < numSlices; ++i)
+		// For now, some testing
+		if (view)
 		{
-			// TODO: render mesh to the meshBuffer
-			// We could use a separate renderer for this...
+			ShapeMesh *mesh = dynamic_cast<ShapeMesh*>(view->GetRenderable(0));
+			static int irk = 0;
+			if (mesh != 0 && pop != 0)
+			{
+				//mesh->SetShape(pop->GetIndividual(irk));
+				//irk = (irk + 1) % pop->GetNumberOfIndividuals();
+				if (pop->GetNumberOfPrincipalComponents() > 0)
+				{
+					// Animate through the principal components
+					QTime now = QTime::currentTime();
+					int time = now.msec() + now.second() * 1000 + 
+						now.minute() * 60000 + now.hour() * 3600000;
+					irk = (time / 5000) % 
+						pop->GetNumberOfPrincipalComponents();
+					double delta = static_cast<double>(time % 5000) / 
+						5000.0 * 6.0 - 3.0;
+					mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
+				}
+			}
 		}
+		SetShader(meshShader);
+
+		// Draw!
+		Superclass::Draw();
 	}
 
 	// ------------------------------------------------------------------------
 	bool ContoursRenderer::Initialize()
 	{
-		bool ok;
+		bool ok = Superclass::Initialize();
+		if (!ok) return false;
+
 		// Set up shader for g-buffer creation
 		delete meshShader;
 		meshShader = GLProgram::New();

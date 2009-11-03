@@ -1,21 +1,28 @@
 #pragma once
 
-#include <NQVTK/Rendering/Renderer.h>
+#include <NQVTK/Rendering/SimpleRenderer.h>
 
 class GLProgram;
 class GLFramebuffer;
 
 namespace Diverse
 {
-	class ContoursRenderer : public NQVTK::Renderer
+	class Population;
+
+	class ContoursRenderer : public NQVTK::SimpleRenderer
 	{
 	public:
-		typedef NQVTK::Renderer Superclass;
+		typedef NQVTK::SimpleRenderer Superclass;
 
 		ContoursRenderer();
 		~ContoursRenderer();
 
+		virtual void Clear();
+
 		virtual void Draw();
+
+		// TODO: testing only!
+		Population *pop;
 
 	protected:
 		virtual bool Initialize();

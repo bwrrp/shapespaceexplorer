@@ -4,6 +4,8 @@
 
 #include "ui_MainWindow.h"
 
+namespace NQVTK { class Scene; }
+
 namespace Diverse
 {
 	class Population;
@@ -23,6 +25,8 @@ namespace Diverse
 		Ui::MainWindow ui;
 
 		Population *population;
+
+		NQVTK::Scene *scene;
 
 	private slots:
 		void on_actionLoadMesh_triggered();

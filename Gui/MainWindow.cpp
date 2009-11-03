@@ -1,7 +1,15 @@
+#include <GLBlaat/GL.h>
+
 #include "MainWindow.h"
 #include "MainWindow.moc"
 
 #include "Data/Population.h"
+#include "Data/ShapeMesh.h"
+
+#include "Rendering/ContoursRenderer.h"
+
+#include <NQVTK/Rendering/Renderer.h>
+#include <NQVTK/Rendering/Scene.h>
 
 #include <QApplication>
 #include <QDateTime>
@@ -15,12 +23,16 @@ namespace Diverse
 		population(0)
 	{
 		ui.setupUi(this);
+
+		scene = new NQVTK::Scene();
+		ui.mainViewer->GetRenderer()->SetScene(scene);
 	}
 
 	// ------------------------------------------------------------------------
 	MainWindow::~MainWindow()
 	{
 		delete population;
+		delete scene;
 	}
 
 	// ------------------------------------------------------------------------
@@ -39,7 +51,13 @@ namespace Diverse
 		// This returns a null string when cancelled
 		if (!filename.isNull())
 		{
-			// TODO: load
+			ShapeMesh *mesh = ShapeMesh::Load(filename);
+			if (mesh)
+			{
+				scene->DeleteAllRenderables();
+				scene->AddRenderable(mesh);
+				ui.mainViewer->GetRenderer()->SceneChanged();
+			}
 		}
 	}
 
@@ -58,6 +76,11 @@ namespace Diverse
 			{
 				delete population;
 				population = newPop;
+
+				// TODO: remove after testing
+				ContoursRenderer *ren = dynamic_cast<ContoursRenderer*>(
+					ui.mainViewer->GetRenderer());
+				if (ren) ren->pop = newPop;
 			}
 		}
 	}
