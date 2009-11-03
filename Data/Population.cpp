@@ -81,6 +81,8 @@ namespace Diverse
 			}
 		}
 
+		// TODO: center population on its mean
+
 		return new Population(population);
 	}
 
