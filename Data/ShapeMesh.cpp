@@ -11,15 +11,18 @@
 #include <vtkTriangleFilter.h>
 #include <vtkXMLPolyDataReader.h>
 
+#include <cassert>
+
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeMesh::ShapeMesh(vtkPolyData *meanMesh)
 		: NQVTK::PolyData(meanMesh)
 	{
+		numPoints = meanMesh->GetNumberOfPoints();
 		NQVTK::AttributeSet *shapeOffsets = 
 			new NQVTK::AttributeSet(GL_DOUBLE, 3);
-		shapeOffsets->SetData(meanMesh->GetNumberOfPoints(), 0);
+		shapeOffsets->SetData(numPoints, 0);
 		AddAttributeSet("shape", shapeOffsets, true);
 	}
 
@@ -54,6 +57,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ShapeMesh::SetShape(const itpp::vec &shape)
 	{
+		assert(shape.size() == GetShapeSpaceDimension());
 		// Create an attributeset for the shape vector
 		NQVTK::AttributeSet *shapeOffsets = 
 			new NQVTK::AttributeSet(GL_DOUBLE, 3);
@@ -62,5 +66,11 @@ namespace Diverse
 		NQVTK::AttributeSet *oldSet = ReplaceAttributeSet(
 			"shape", shapeOffsets);
 		delete oldSet;
+	}
+
+	// ------------------------------------------------------------------------
+	int ShapeMesh::GetShapeSpaceDimension()
+	{
+		return numPoints * 3;
 	}
 }
