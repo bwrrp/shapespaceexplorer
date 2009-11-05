@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 
 	// Set up Qt application
 	QApplication app(argc, argv);
+	app.setApplicationName("Diverse");
 
 	Diverse::MainWindow *window = new Diverse::MainWindow();
 

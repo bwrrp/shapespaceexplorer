@@ -16,6 +16,8 @@
 #include <QFileDialog>
 #include <QImage>
 
+#include <cassert>
+
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
@@ -24,6 +26,12 @@ namespace Diverse
 	{
 		ui.setupUi(this);
 
+		// A user should start by loading a mesh
+		ui.actionLoadPopulation->setEnabled(false);
+		ui.actionPCA->setEnabled(false);
+
+		setWindowTitle(qApp->applicationName());
+
 		scene = new NQVTK::Scene();
 		ui.mainViewer->GetRenderer()->SetScene(scene);
 	}
@@ -31,8 +39,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MainWindow::~MainWindow()
 	{
-		delete population;
 		delete scene;
+		delete population;
 	}
 
 	// ------------------------------------------------------------------------
@@ -54,6 +62,12 @@ namespace Diverse
 			ShapeMesh *mesh = ShapeMesh::Load(filename);
 			if (mesh)
 			{
+				// A new mesh probably means the population is useless
+				delete population;
+				population = 0;
+				ui.actionLoadPopulation->setEnabled(true);
+				ui.actionPCA->setEnabled(false);
+				// Use the new mesh
 				scene->DeleteAllRenderables();
 				scene->AddRenderable(mesh);
 				ui.mainViewer->GetRenderer()->SceneChanged();
@@ -128,6 +142,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::on_mainViewer_fpsChanged(int fps)
 	{
-		setWindowTitle(QString("Diverse - %1 fps").arg(fps));
+		setWindowTitle(QString("%1 - %2 fps")
+			.arg(qApp->applicationName()).arg(fps));
 	}
 }

@@ -20,7 +20,11 @@ namespace Diverse
 
 		void SetShape(const itpp::vec &shape);
 
+		int GetShapeSpaceDimension();
+
 	protected:
 		ShapeMesh(vtkPolyData *meanMesh);
+
+		int numPoints;
 	};
 }
