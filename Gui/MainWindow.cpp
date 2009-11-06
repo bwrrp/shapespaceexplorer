@@ -71,15 +71,9 @@ namespace Diverse
 				ui.actionLoadPopulation->setEnabled(true);
 				ui.actionPCA->setEnabled(false);
 				// Use the new mesh
-				// For now we need to add the mesh both in the scene and as the 
-				// basis for the shape stack. This is due to two limitations in 
-				// NQVTK: 1) Renderables can't access state (shaders, textures, 
-				// attributes) internally. 2) All Renderables should be part of 
-				// the scene to correctly setup most state (camera etc).
 				// TODO: refactor NQVTK so ShapeStack can be a Renderable
-				scene->DeleteAllRenderables();
-				scene->AddRenderable(mesh);
-				ui.mainViewer->GetRenderer()->SceneChanged();
+				// We can't do this yet, as Renderables can't access state 
+				// (shaders, textures, attributes) internally. 
 				// TODO: add some way to select the stack type
 				delete stack;
 				stack = new ShapeStack(mesh);
@@ -106,6 +100,7 @@ namespace Diverse
 				{
 					delete population;
 					population = newPop;
+					ui.actionPCA->setEnabled(true);
 					RedrawViewers();
 				}
 				else
@@ -153,7 +148,7 @@ namespace Diverse
 		screenshot.invertPixels(QImage::InvertRgba);
 		screenshot.invertPixels(QImage::InvertRgb);
 		// Save it
-		screenshot.save(QString("VFE-%1.png").arg(
+		screenshot.save(QString("Diverse-%1.png").arg(
 			now.toString("yyMMdd-hhmmss")), "PNG");
 	}
 
