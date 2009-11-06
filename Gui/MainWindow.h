@@ -9,6 +9,7 @@ namespace NQVTK { class Scene; }
 namespace Diverse
 {
 	class Population;
+	class ShapeStack;
 
 	class MainWindow : public QMainWindow
 	{
@@ -25,7 +26,7 @@ namespace Diverse
 		Ui::MainWindow ui;
 
 		Population *population;
-
+		ShapeStack *stack;
 		NQVTK::Scene *scene;
 
 	private slots:

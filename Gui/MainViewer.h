@@ -4,6 +4,8 @@
 
 namespace Diverse
 {
+	class ShapeStack;
+
 	class MainViewer : public NQVTKWidget
 	{
 		Q_OBJECT;
@@ -11,5 +13,7 @@ namespace Diverse
 	public:
 		MainViewer(QWidget *parent = 0);
 		~MainViewer();
+
+		void SetShapeStack(ShapeStack *stack);
 	};
 }

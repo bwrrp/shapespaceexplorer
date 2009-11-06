@@ -3,11 +3,13 @@
 #include "MainViewer.h"
 #include "MainViewer.moc"
 
-#include "Rendering/ContoursRenderer.h"
+#include "Rendering/ShapeStackRenderer.h"
 
 #include <NQVTK/Interactors/ArcballCameraInteractor.h>
 
 #include <NQVTK/Rendering/ArcballCamera.h>
+
+#include <cassert>
 
 namespace Diverse
 {
@@ -15,7 +17,7 @@ namespace Diverse
 	MainViewer::MainViewer(QWidget *parent) : NQVTKWidget(parent)
 	{
 		// Initialize main viewer
-		ContoursRenderer *renderer = new ContoursRenderer();
+		ShapeStackRenderer *renderer = new ShapeStackRenderer();
 
 		NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
 		renderer->SetCamera(camera);
@@ -27,5 +29,14 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MainViewer::~MainViewer()
 	{
+	}
+
+	// ------------------------------------------------------------------------
+	void MainViewer::SetShapeStack(ShapeStack *stack)
+	{
+		ShapeStackRenderer *renderer = 
+			dynamic_cast<ShapeStackRenderer*>(GetRenderer());
+		assert(renderer != 0);
+		renderer->SetShapeStack(stack);
 	}
 }
