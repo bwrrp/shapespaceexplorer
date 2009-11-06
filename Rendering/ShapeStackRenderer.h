@@ -7,25 +7,26 @@ class GLFramebuffer;
 
 namespace Diverse
 {
-	class Population;
+	class ShapeStack;
 
-	class ContoursRenderer : public NQVTK::SimpleRenderer
+	class ShapeStackRenderer : public NQVTK::SimpleRenderer
 	{
 	public:
 		typedef NQVTK::SimpleRenderer Superclass;
 
-		ContoursRenderer();
-		~ContoursRenderer();
+		ShapeStackRenderer();
+		~ShapeStackRenderer();
 
 		virtual void Clear();
 
-		virtual void Draw();
-
-		// TODO: testing only!
-		Population *pop;
+		void SetShapeStack(ShapeStack *stack);
 
 	protected:
 		virtual bool Initialize();
+
+		virtual void DrawRenderables();
+
+		ShapeStack *stack;
 
 		GLProgram *meshShader;
 		GLProgram *compositeShader;

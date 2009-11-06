@@ -6,7 +6,8 @@
 #include "Data/Population.h"
 #include "Data/ShapeMesh.h"
 
-#include "Rendering/ContoursRenderer.h"
+#include "Rendering/ShapeStack.h"
+#include "Rendering/ShapeStackRenderer.h"
 
 #include <NQVTK/Rendering/Renderer.h>
 #include <NQVTK/Rendering/Scene.h>
@@ -22,7 +23,7 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
-		population(0)
+		population(0), stack(0)
 	{
 		ui.setupUi(this);
 
@@ -30,15 +31,17 @@ namespace Diverse
 		ui.actionLoadPopulation->setEnabled(false);
 		ui.actionPCA->setEnabled(false);
 
-		setWindowTitle(qApp->applicationName());
-
 		scene = new NQVTK::Scene();
 		ui.mainViewer->GetRenderer()->SetScene(scene);
+
+		setWindowTitle(qApp->applicationName());
 	}
 
 	// ------------------------------------------------------------------------
 	MainWindow::~MainWindow()
 	{
+		delete stack;
+		// The mesh is deleted as part of the scene
 		delete scene;
 		delete population;
 	}
@@ -68,9 +71,20 @@ namespace Diverse
 				ui.actionLoadPopulation->setEnabled(true);
 				ui.actionPCA->setEnabled(false);
 				// Use the new mesh
+				// For now we need to add the mesh both in the scene and as the 
+				// basis for the shape stack. This is due to two limitations in 
+				// NQVTK: 1) Renderables can't access state (shaders, textures, 
+				// attributes) internally. 2) All Renderables should be part of 
+				// the scene to correctly setup most state (camera etc).
+				// TODO: refactor NQVTK so ShapeStack can be a Renderable
 				scene->DeleteAllRenderables();
 				scene->AddRenderable(mesh);
 				ui.mainViewer->GetRenderer()->SceneChanged();
+				// TODO: add some way to select the stack type
+				delete stack;
+				stack = new ShapeStack(mesh);
+				ui.mainViewer->SetShapeStack(stack);
+				RedrawViewers();
 			}
 		}
 	}
@@ -88,13 +102,17 @@ namespace Diverse
 			Population *newPop = Population::Load(filename);
 			if (newPop)
 			{
-				delete population;
-				population = newPop;
-
-				// TODO: remove after testing
-				ContoursRenderer *ren = dynamic_cast<ContoursRenderer*>(
-					ui.mainViewer->GetRenderer());
-				if (ren) ren->pop = newPop;
+				if (stack->SetPopulation(newPop))
+				{
+					delete population;
+					population = newPop;
+					RedrawViewers();
+				}
+				else
+				{
+					// The population is useless for the current mesh
+					delete newPop;
+				}
 			}
 		}
 	}

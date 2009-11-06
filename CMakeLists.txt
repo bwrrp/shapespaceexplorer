@@ -115,7 +115,8 @@ SET( ${ProjectName}_Data_Classes
 )
 
 SET( ${ProjectName}_Rendering_Classes
-	ContoursRenderer
+	ShapeStack
+	ShapeStackRenderer
 )
 
 # --------------------------------------------------

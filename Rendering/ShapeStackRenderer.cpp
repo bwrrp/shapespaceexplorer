@@ -1,11 +1,13 @@
 #include <GLBlaat/GL.h>
 
-#include "ContoursRenderer.h"
+#include "ShapeStackRenderer.h"
 
 #include "Data/ShapeMesh.h"
 #include "Data/Population.h"
 
-#include <NQVTK/Rendering/View.h>
+#include "Rendering/ShapeStack.h"
+
+#include <NQVTK/Rendering/Scene.h>
 
 #include <GLBlaat/GLFramebuffer.h>
 #include <GLBlaat/GLProgram.h>
@@ -49,13 +51,13 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	ContoursRenderer::ContoursRenderer() 
-		: meshShader(0), compositeShader(0), meshBuffer(0), pop(0)
+	ShapeStackRenderer::ShapeStackRenderer() 
+		: stack(0), meshShader(0), compositeShader(0), meshBuffer(0)
 	{
 	}
 
 	// ------------------------------------------------------------------------
-	ContoursRenderer::~ContoursRenderer()
+	ShapeStackRenderer::~ShapeStackRenderer()
 	{
 		SetShader(0);
 		delete meshShader;
@@ -64,7 +66,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ContoursRenderer::Clear()
+	void ShapeStackRenderer::Clear()
 	{
 		Superclass::Clear();
 		// TODO: we should integrate this with the NQVTK SimpleRenderer
@@ -89,49 +91,14 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ContoursRenderer::Draw()
+	void ShapeStackRenderer::SetShapeStack(ShapeStack *stack)
 	{
-		// TODO: determine how many contours to draw
-		// TODO: determine drawing order
-		// TODO: for each object...
-		// TODO:     setup camera for object (mesh space) rendering
-		// TODO:     render object to a g-buffer
-		// TODO:     setup camera for final (composite space) rendering
-		// TODO:     detect contours and composite into final scene
-
-		// An extra helper class to hold the entire model could be nice...
-
-		// For now, some testing
-		if (view)
-		{
-			ShapeMesh *mesh = dynamic_cast<ShapeMesh*>(view->GetRenderable(0));
-			static int irk = 0;
-			if (mesh != 0 && pop != 0)
-			{
-				//mesh->SetShape(pop->GetIndividual(irk));
-				//irk = (irk + 1) % pop->GetNumberOfIndividuals();
-				if (pop->GetNumberOfPrincipalComponents() > 0)
-				{
-					// Animate through the principal components
-					QTime now = QTime::currentTime();
-					int time = now.msec() + now.second() * 1000 + 
-						now.minute() * 60000 + now.hour() * 3600000;
-					irk = (time / 5000) % 
-						pop->GetNumberOfPrincipalComponents();
-					double delta = static_cast<double>(time % 5000) / 
-						5000.0 * 6.0 - 3.0;
-					mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
-				}
-			}
-		}
-		SetShader(meshShader);
-
-		// Draw!
-		Superclass::Draw();
+		this->stack = stack;
+		// TODO: make sure the ShapeMesh is also in the scene!
 	}
 
 	// ------------------------------------------------------------------------
-	bool ContoursRenderer::Initialize()
+	bool ShapeStackRenderer::Initialize()
 	{
 		bool ok = Superclass::Initialize();
 		if (!ok) return false;
@@ -192,5 +159,57 @@ namespace Diverse
 		return meshShader != 0 && 
 			compositeShader != 0 &&
 			meshBuffer != 0;
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStackRenderer::DrawRenderables()
+	{
+		// TODO: Add support for adding normal renderables to the scene
+		//Superclass::DrawRenderables();
+
+		// Now render the shape stack...
+		if (!stack)
+		{
+			Superclass::DrawRenderables();
+			return;
+		}
+
+		// TODO: determine how many contours to draw
+		// TODO: determine drawing order
+		// TODO: for each object...
+		// TODO:     setup camera for object (mesh space) rendering
+		// TODO:     render object to a g-buffer
+		// TODO:     setup camera for final (composite space) rendering
+		// TODO:     detect contours and composite into final scene
+
+		// An extra helper class to hold the entire model could be nice...
+
+		// For now, some testing
+		ShapeMesh *mesh = stack->GetMesh();
+		/*
+		static int irk = 0;
+		if (mesh != 0 && pop != 0)
+		{
+			//mesh->SetShape(pop->GetIndividual(irk));
+			//irk = (irk + 1) % pop->GetNumberOfIndividuals();
+			if (pop->GetNumberOfPrincipalComponents() > 0)
+			{
+				// Animate through the principal components
+				QTime now = QTime::currentTime();
+				int time = now.msec() + now.second() * 1000 + 
+					now.minute() * 60000 + now.hour() * 3600000;
+				irk = (time / 5000) % 
+					pop->GetNumberOfPrincipalComponents();
+				double delta = static_cast<double>(time % 5000) / 
+					5000.0 * 6.0 - 3.0;
+				mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
+			}
+		}
+		*/
+		meshShader->Start();
+		mesh->SetupAttributes(meshShader->GetActiveAttributes());
+		mesh->ApplyParamSets(meshShader, tm);
+		mesh->Draw();
+		meshShader->Stop();
 	}
 }
