@@ -7,6 +7,9 @@
 
 #include "Rendering/ShapeStack.h"
 
+#include <itpp/itbase.h>
+
+#include <NQVTK/Rendering/Camera.h>
 #include <NQVTK/Rendering/Scene.h>
 
 #include <GLBlaat/GLFramebuffer.h>
@@ -118,6 +121,7 @@ namespace Diverse
 			delete meshShader;
 			meshShader = 0;
 		}
+		meshAttributes = meshShader->GetActiveAttributes();
 
 		// Set up shader for contour detection and compositing
 		delete compositeShader;
@@ -174,18 +178,36 @@ namespace Diverse
 			return;
 		}
 
-		// TODO: determine how many contours to draw
-		// TODO: determine drawing order
-		// TODO: for each object...
-		// TODO:     setup camera for object (mesh space) rendering
-		// TODO:     render object to a g-buffer
-		// TODO:     setup camera for final (composite space) rendering
-		// TODO:     detect contours and composite into final scene
+		// Determine drawing order
+		double cameraZ = camera->position.z;
+		int numSlices = stack->GetNumberOfSlices();
+		itpp::vec relSliceOffsets(numSlices);
+		for (int i = 0; i < numSlices; ++i)
+		{
+			relSliceOffsets(i) = abs(cameraZ - stack->GetSliceOffset(i));
+		}
+		itpp::ivec order = itpp::sort_index(relSliceOffsets);
 
-		// An extra helper class to hold the entire model could be nice...
+		// Render slices
+		ShapeMesh *mesh = stack->GetMesh();
+		for (int i = 0; i < numSlices; ++i)
+		{
+			// Render this slice
+			int slice = order(i);
+			stack->SetupSliceMesh(slice);
+			// TODO: setup camera for object (mesh space) rendering
+			// TODO: render object to a g-buffer
+			meshShader->Start();
+			mesh->SetupAttributes(meshAttributes);
+			mesh->ApplyParamSets(meshShader, tm);
+			mesh->Draw();
+			meshShader->Stop();
+			// TODO: setup camera for final (composite space) rendering
+			double offset = stack->GetSliceOffset(slice);
+			// TODO: render slice, detect contours and composite
+		}
 
 		// For now, some testing
-		ShapeMesh *mesh = stack->GetMesh();
 		/*
 		static int irk = 0;
 		if (mesh != 0 && pop != 0)
@@ -206,10 +228,5 @@ namespace Diverse
 			}
 		}
 		*/
-		meshShader->Start();
-		mesh->SetupAttributes(meshShader->GetActiveAttributes());
-		mesh->ApplyParamSets(meshShader, tm);
-		mesh->Draw();
-		meshShader->Stop();
 	}
 }

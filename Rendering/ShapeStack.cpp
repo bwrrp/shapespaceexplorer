@@ -3,6 +3,8 @@
 #include "Data/ShapeMesh.h"
 #include "Data/Population.h"
 
+#include <itpp/itbase.h>
+
 #include <QDebug>
 
 namespace Diverse
@@ -37,5 +39,26 @@ namespace Diverse
 	ShapeMesh *ShapeStack::GetMesh()
 	{
 		return mesh;
+	}
+
+	// ------------------------------------------------------------------------
+	int ShapeStack::GetNumberOfSlices()
+	{
+		return 1;
+	}
+
+	// ------------------------------------------------------------------------
+	double ShapeStack::GetSliceOffset(int i)
+	{
+		return 0.0;
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStack::SetupSliceMesh(int i)
+	{
+		// The default implementation only contains the mean
+		itpp::vec shape(mesh->GetShapeSpaceDimension());
+		shape.zeros();
+		mesh->SetShape(shape);
 	}
 }
