@@ -1,6 +1,6 @@
 #pragma once
 
-#include <NQVTK/Rendering/SimpleRenderer.h>
+#include <NQVTK/Rendering/NestedRenderer.h>
 
 #include <GLBlaat/GLShaderInfo.h>
 
@@ -11,24 +11,27 @@ namespace Diverse
 {
 	class ShapeStack;
 
-	class ShapeStackRenderer : public NQVTK::SimpleRenderer
+	class ShapeStackRenderer : public NQVTK::NestedRenderer
 	{
 	public:
-		typedef NQVTK::SimpleRenderer Superclass;
+		typedef NQVTK::NestedRenderer Superclass;
 
 		ShapeStackRenderer();
 		~ShapeStackRenderer();
 
 		virtual void Clear();
 
+		virtual void Draw();
+
+		virtual void SceneChanged();
+
 		void SetShapeStack(ShapeStack *stack);
 
 	protected:
 		virtual bool Initialize();
 
-		virtual void DrawRenderables();
-
 		ShapeStack *stack;
+		NQVTK::Scene *meshSpace;
 
 		GLProgram *meshShader;
 		GLProgram *compositeShader;

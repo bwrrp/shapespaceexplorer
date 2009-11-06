@@ -18,11 +18,11 @@ namespace Diverse
 	{
 		// Initialize main viewer
 		ShapeStackRenderer *renderer = new ShapeStackRenderer();
+		SetRenderer(renderer);
 
 		NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
 		renderer->SetCamera(camera);
 
-		SetRenderer(renderer);
 		SetInteractor(new NQVTK::ArcballCameraInteractor(camera));
 	}
 

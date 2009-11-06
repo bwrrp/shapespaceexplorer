@@ -11,9 +11,11 @@
 
 #include <NQVTK/Rendering/Camera.h>
 #include <NQVTK/Rendering/Scene.h>
+#include <NQVTK/Rendering/SimpleRenderer.h>
 
 #include <GLBlaat/GLFramebuffer.h>
 #include <GLBlaat/GLProgram.h>
+#include <GLBlaat/GLTextureManager.h>
 
 #include <QApplication>
 #include <QTime>
@@ -55,33 +57,142 @@ namespace Diverse
 
 	// ------------------------------------------------------------------------
 	ShapeStackRenderer::ShapeStackRenderer() 
-		: stack(0), meshShader(0), compositeShader(0), meshBuffer(0)
+		: NQVTK::NestedRenderer(new NQVTK::SimpleRenderer()), 
+		stack(0), compositeShader(0), meshBuffer(0)
 	{
+		// Create the mesh space scene with a dummy renderable
+		meshSpace = new NQVTK::Scene();
+		meshSpace->AddRenderable(0);
+		baseRenderer->SetScene(meshSpace);
+		// The gradient background will mess up the G-buffer
+		NQVTK::SimpleRenderer *renderer = 
+			dynamic_cast<NQVTK::SimpleRenderer*>(baseRenderer);
+		renderer->SetDrawBackground(false);
 	}
 
 	// ------------------------------------------------------------------------
 	ShapeStackRenderer::~ShapeStackRenderer()
 	{
-		SetShader(0);
-		delete meshShader;
 		delete compositeShader;
 		delete meshBuffer;
+		// This will also delete the ShapeMesh
+		delete meshSpace;
 	}
 
 	// ------------------------------------------------------------------------
 	void ShapeStackRenderer::Clear()
 	{
 		Superclass::Clear();
-		// TODO: we should integrate this with the NQVTK SimpleRenderer
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStackRenderer::Draw()
+	{
+		// TODO: find out why this doesn't stick...
+		baseRenderer->SetScene(meshSpace);
+
+		// Prepare for rendering
+		if (fboTarget) fboTarget->Bind();
+		glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+
+		// Clear to 1.0 alpha for front-to-back blending
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		Clear();
+		// Clear to 0.0 for the G-buffer
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+		UpdateLighting();
+
+		// TODO: fix the propagation mess in the NQVTK::NestedRenderer
+		//DrawCamera();
+		// TODO: add support for adding normal renderables to the scene
+		//DrawRenderables();
+
+		if (fboTarget) fboTarget->Unbind();
+
+		// Now render the shape stack...
+		if (stack)
+		{
+			// Determine drawing order
+			double cameraZ = camera->position.z;
+			int numSlices = stack->GetNumberOfSlices();
+			itpp::vec relSliceOffsets(numSlices);
+			for (int i = 0; i < numSlices; ++i)
+			{
+				relSliceOffsets(i) = abs(cameraZ - stack->GetSliceOffset(i));
+			}
+			itpp::ivec order = itpp::sort_index(relSliceOffsets);
+
+			// Render slices
+			ShapeMesh *mesh = stack->GetMesh();
+			for (int i = 0; i < numSlices; ++i)
+			{
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+
+				// Render this slice
+				int slice = order(i);
+				stack->SetupSliceMesh(slice);
+				baseRenderer->Draw();
+
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+
+				// Composite into our target
+				if (fboTarget) fboTarget->Bind();
+				// Use front-to-back blending
+				glBlendFuncSeparate(
+					GL_DST_ALPHA, GL_ONE, 
+					GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+				glEnable(GL_BLEND);
+				glDisable(GL_DEPTH_TEST);
+				glDisable(GL_CULL_FACE);
+
+				// TODO: determine slice size automatically
+				double bounds[] = {-10.0, 10.0, -10.0, 10.0, -10.0, 10.0};
+				camera->focus = NQVTK::Vector3();
+				camera->SetZPlanes(bounds);
+				camera->Draw();
+
+				compositeShader->Start();
+				tm->SetupProgram(compositeShader);
+				tm->Bind();
+
+				// Draw the slice
+				double offset = stack->GetSliceOffset(slice);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.0, 1.0);
+				glVertex3d(-10.0, -10.0, offset);
+				glTexCoord2d(1.0, 1.0);
+				glVertex3d(10.0, -10.0, offset);
+				glTexCoord2d(1.0, 0.0);
+				glVertex3d(10.0, 10.0, offset);
+				glTexCoord2d(0.0, 0.0);
+				glVertex3d(-10.0, 10.0, offset);
+				glEnd();
+
+				compositeShader->Stop();
+				tm->Unbind();
+
+				glDisable(GL_BLEND);
+				glEnable(GL_DEPTH_TEST);
+				if (fboTarget) fboTarget->Unbind();
+			}
+		}
+
 		// Blend in the background last
+		if (fboTarget) fboTarget->Bind();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glDisable(GL_LIGHTING);
-		glDisable(GL_BLEND);
-		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
 		glBegin(GL_QUADS);
 		glColor4d(0.2, 0.2, 0.25, 0.0);
 		glVertex3d(-1.0, -1.0, 0.0);
@@ -90,14 +201,54 @@ namespace Diverse
 		glVertex3d(1.0, 1.0, 0.0);
 		glVertex3d(-1.0, 1.0, 0.0);
 		glEnd();
-		glPopAttrib();
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		if (fboTarget) fboTarget->Unbind();
+
+		// Old code: some testing
+		/*
+		static int irk = 0;
+		if (mesh != 0 && pop != 0)
+		{
+			//mesh->SetShape(pop->GetIndividual(irk));
+			//irk = (irk + 1) % pop->GetNumberOfIndividuals();
+			if (pop->GetNumberOfPrincipalComponents() > 0)
+			{
+				// Animate through the principal components
+				QTime now = QTime::currentTime();
+				int time = now.msec() + now.second() * 1000 + 
+					now.minute() * 60000 + now.hour() * 3600000;
+				irk = (time / 5000) % 
+					pop->GetNumberOfPrincipalComponents();
+				double delta = static_cast<double>(time % 5000) / 
+					5000.0 * 6.0 - 3.0;
+				mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
+			}
+		}
+		*/
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStackRenderer::SceneChanged()
+	{
+		// Overridden to prevent propagation to the baseRenderer
+		Renderer::SceneChanged();
 	}
 
 	// ------------------------------------------------------------------------
 	void ShapeStackRenderer::SetShapeStack(ShapeStack *stack)
 	{
 		this->stack = stack;
-		// TODO: make sure the ShapeMesh is also in the scene!
+		if (stack)
+		{
+			meshSpace->SetRenderable(0, stack->GetMesh());
+			baseRenderer->SceneChanged();
+		}
+		else
+		{
+			meshSpace->SetRenderable(0, 0);
+			baseRenderer->SceneChanged();
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -106,9 +257,11 @@ namespace Diverse
 		bool ok = Superclass::Initialize();
 		if (!ok) return false;
 
+		ok = baseRenderer->TryInitialize();
+		if (!ok) return false;
+
 		// Set up shader for g-buffer creation
-		delete meshShader;
-		meshShader = GLProgram::New();
+		GLProgram *meshShader = GLProgram::New();
 		ok = meshShader != 0;
 		if (ok) ok = meshShader->AddVertexShader(
 			LoadShader("MeshShaderVS.txt"));
@@ -122,6 +275,9 @@ namespace Diverse
 			meshShader = 0;
 		}
 		meshAttributes = meshShader->GetActiveAttributes();
+		NQVTK::SimpleRenderer *renderer = 
+			dynamic_cast<NQVTK::SimpleRenderer*>(baseRenderer);
+		renderer->SetShader(meshShader);
 
 		// Set up shader for contour detection and compositing
 		delete compositeShader;
@@ -159,74 +315,13 @@ namespace Diverse
 			delete meshBuffer;
 			meshBuffer = 0;
 		}
+		renderer->SetTarget(meshBuffer);
+		renderer->SetViewport(0, 0, 1024, 1024);
+		tm->AddTexture("meshBuffer", 
+			meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0), false);
 
 		return meshShader != 0 && 
 			compositeShader != 0 &&
 			meshBuffer != 0;
-	}
-
-	// ------------------------------------------------------------------------
-	void ShapeStackRenderer::DrawRenderables()
-	{
-		// TODO: Add support for adding normal renderables to the scene
-		//Superclass::DrawRenderables();
-
-		// Now render the shape stack...
-		if (!stack)
-		{
-			Superclass::DrawRenderables();
-			return;
-		}
-
-		// Determine drawing order
-		double cameraZ = camera->position.z;
-		int numSlices = stack->GetNumberOfSlices();
-		itpp::vec relSliceOffsets(numSlices);
-		for (int i = 0; i < numSlices; ++i)
-		{
-			relSliceOffsets(i) = abs(cameraZ - stack->GetSliceOffset(i));
-		}
-		itpp::ivec order = itpp::sort_index(relSliceOffsets);
-
-		// Render slices
-		ShapeMesh *mesh = stack->GetMesh();
-		for (int i = 0; i < numSlices; ++i)
-		{
-			// Render this slice
-			int slice = order(i);
-			stack->SetupSliceMesh(slice);
-			// TODO: setup camera for object (mesh space) rendering
-			// TODO: render object to a g-buffer
-			meshShader->Start();
-			mesh->SetupAttributes(meshAttributes);
-			mesh->ApplyParamSets(meshShader, tm);
-			mesh->Draw();
-			meshShader->Stop();
-			// TODO: setup camera for final (composite space) rendering
-			double offset = stack->GetSliceOffset(slice);
-			// TODO: render slice, detect contours and composite
-		}
-
-		// For now, some testing
-		/*
-		static int irk = 0;
-		if (mesh != 0 && pop != 0)
-		{
-			//mesh->SetShape(pop->GetIndividual(irk));
-			//irk = (irk + 1) % pop->GetNumberOfIndividuals();
-			if (pop->GetNumberOfPrincipalComponents() > 0)
-			{
-				// Animate through the principal components
-				QTime now = QTime::currentTime();
-				int time = now.msec() + now.second() * 1000 + 
-					now.minute() * 60000 + now.hour() * 3600000;
-				irk = (time / 5000) % 
-					pop->GetNumberOfPrincipalComponents();
-				double delta = static_cast<double>(time % 5000) / 
-					5000.0 * 6.0 - 3.0;
-				mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
-			}
-		}
-		*/
 	}
 }
