@@ -19,7 +19,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="Diverse::MainViewer" name="mainViewer" native="true"/>
+     <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>
     </item>
    </layout>
   </widget>
@@ -126,9 +126,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Diverse::MainViewer</class>
+   <class>Diverse::ShapeStackViewer</class>
    <extends>QWidget</extends>
-   <header>MainViewer.h</header>
+   <header>ShapeStackViewer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

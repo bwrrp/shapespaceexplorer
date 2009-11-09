@@ -1,7 +1,7 @@
 #include <GLBlaat/GL.h>
 
-#include "MainViewer.h"
-#include "MainViewer.moc"
+#include "ShapeStackViewer.h"
+#include "ShapeStackViewer.moc"
 
 #include "Rendering/ShapeStackRenderer.h"
 
@@ -14,7 +14,7 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	MainViewer::MainViewer(QWidget *parent) : NQVTKWidget(parent)
+	ShapeStackViewer::ShapeStackViewer(QWidget *parent) : NQVTKWidget(parent)
 	{
 		// Initialize main viewer
 		ShapeStackRenderer *renderer = new ShapeStackRenderer();
@@ -27,12 +27,12 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	MainViewer::~MainViewer()
+	ShapeStackViewer::~ShapeStackViewer()
 	{
 	}
 
 	// ------------------------------------------------------------------------
-	void MainViewer::SetShapeStack(ShapeStack *stack)
+	void ShapeStackViewer::SetShapeStack(ShapeStack *stack)
 	{
 		ShapeStackRenderer *renderer = 
 			dynamic_cast<ShapeStackRenderer*>(GetRenderer());
