@@ -22,6 +22,9 @@ namespace Diverse
 		int GetNumberOfPrincipalComponents();
 		itpp::vec GetPrincipalComponent(int i);
 
+		itpp::vec PointFromComponents(itpp::vec compVec);
+		itpp::vec ComponentsFromPoint(itpp::vec point, int dims);
+
 	protected:
 		Population(const itpp::mat &population);
 
