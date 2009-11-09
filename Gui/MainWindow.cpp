@@ -37,7 +37,7 @@ namespace Diverse
 		ui.actionPCA->setEnabled(false);
 
 		scene = new NQVTK::Scene();
-		ui.mainViewer->GetRenderer()->SetScene(scene);
+		ui.stackViewer->GetRenderer()->SetScene(scene);
 
 		setWindowTitle(qApp->applicationName());
 
@@ -56,7 +56,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::RedrawViewers()
 	{
-		ui.mainViewer->updateGL();
+		ui.stackViewer->updateGL();
 	}
 
 	// ------------------------------------------------------------------------
@@ -86,7 +86,7 @@ namespace Diverse
 				//stack = stackControls->GetStack(mesh);
 				stack = new PopulationProjectionStack(mesh);
 				//stack = new ShapeSpaceLineStack(mesh);
-				ui.mainViewer->SetShapeStack(stack);
+				ui.stackViewer->SetShapeStack(stack);
 				RedrawViewers();
 			}
 		}
@@ -151,21 +151,21 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionReloadShaders_triggered()
 	{
-		ui.mainViewer->Initialize();
+		ui.stackViewer->Initialize();
 		RedrawViewers();
 	}
 
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionStartBenchmark_triggered()
 	{
-		ui.mainViewer->StartContinuousUpdate();
+		ui.stackViewer->StartContinuousUpdate();
 	}
 
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionScreenshot_triggered()
 	{
 		QDateTime now = QDateTime::currentDateTime();
-		QImage screenshot = ui.mainViewer->grabFrameBuffer(true);
+		QImage screenshot = ui.stackViewer->grabFrameBuffer(true);
 		// Fix alpha values
 		screenshot.invertPixels(QImage::InvertRgba);
 		screenshot.invertPixels(QImage::InvertRgb);
@@ -181,7 +181,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_mainViewer_fpsChanged(int fps)
+	void MainWindow::on_stackViewer_fpsChanged(int fps)
 	{
 		setWindowTitle(QString("%1 - %2 fps")
 			.arg(qApp->applicationName()).arg(fps));

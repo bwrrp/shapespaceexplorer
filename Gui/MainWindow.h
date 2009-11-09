@@ -41,6 +41,6 @@ namespace Diverse
 		void on_actionStartBenchmark_triggered();
 		void on_actionScreenshot_triggered();
 		void on_actionStackOptions_triggered();
-		void on_mainViewer_fpsChanged(int fps);
+		void on_stackViewer_fpsChanged(int fps);
 	};
 }
