@@ -184,4 +184,33 @@ namespace Diverse
 	{
 		return eigComps.get_col(i);
 	}
+
+	// ------------------------------------------------------------------------
+	itpp::vec Population::PointFromComponents(itpp::vec compVec)
+	{
+		int dims = compVec.size();
+		assert(dims <= GetNumberOfPrincipalComponents());
+		itpp::vec result(GetShapeSpaceDimension());
+		result.zeros();
+		for (int i = 0; i < dims; ++i)
+		{
+			result += compVec(i) * GetPrincipalComponent(i);
+		}
+		return result;
+	}
+
+	// ------------------------------------------------------------------------
+	itpp::vec Population::ComponentsFromPoint(itpp::vec point, int dims)
+	{
+		assert(point.size() == GetShapeSpaceDimension());
+		if (dims <= 0) dims = GetNumberOfPrincipalComponents();
+		itpp::vec result(dims);
+		result.zeros();
+		// Project point onto eigenvectors
+		for (int i = 0; i < dims; ++i)
+		{
+			result(i) = itpp::dot(point, GetPrincipalComponent(i));
+		}
+		return result;
+	}
 }
