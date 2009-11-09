@@ -115,8 +115,10 @@ SET( ${ProjectName}_Data_Classes
 )
 
 SET( ${ProjectName}_Rendering_Classes
-	ShapeStack
 	ShapeStackRenderer
+	ShapeStack
+	ShapeSpaceLineStack
+	PopulationProjectionStack
 )
 
 # --------------------------------------------------
