@@ -10,6 +10,7 @@ namespace Diverse
 {
 	class Population;
 	class ShapeStack;
+	class ShapeStackControls;
 
 	class MainWindow : public QMainWindow
 	{
@@ -25,6 +26,8 @@ namespace Diverse
 	protected:
 		Ui::MainWindow ui;
 
+		ShapeStackControls *stackControls;
+
 		Population *population;
 		ShapeStack *stack;
 		NQVTK::Scene *scene;
@@ -37,6 +40,7 @@ namespace Diverse
 		void on_actionReloadShaders_triggered();
 		void on_actionStartBenchmark_triggered();
 		void on_actionScreenshot_triggered();
+		void on_actionStackOptions_triggered();
 		void on_mainViewer_fpsChanged(int fps);
 	};
 }

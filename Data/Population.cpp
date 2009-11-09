@@ -1,6 +1,7 @@
 #include "Population.h"
 
 #include <itpp/itsignal.h>
+#include <itpp/itstat.h>
 
 #include <QFile>
 #include <QStringList>
@@ -15,6 +16,19 @@ namespace Diverse
 	Population::Population(const itpp::mat &population) 
 		: population(population)
 	{
+		// Compute mean
+		int dim = GetShapeSpaceDimension();
+		itpp::vec mean(dim);
+		for (int i = 0; i < dim; ++i)
+		{
+			mean(i) = itpp::mean(population.get_col(i));
+		}
+		// Subtract mean from all individuals
+		int num = GetNumberOfIndividuals();
+		for (int i = 0; i < num; ++i)
+		{
+			this->population.set_row(i, population.get_row(i) - mean);
+		}
 	}
 
 	// ------------------------------------------------------------------------
