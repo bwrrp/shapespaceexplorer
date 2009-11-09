@@ -107,6 +107,7 @@ SET( ${ProjectName}_ModuleNames
 SET( ${ProjectName}_Gui_Classes
 	MainWindow
 	MainViewer
+	ShapeStackControls
 )
 
 SET( ${ProjectName}_Data_Classes

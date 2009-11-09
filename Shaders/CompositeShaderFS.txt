@@ -1,5 +1,7 @@
 uniform sampler2D meshBuffer;
 
+varying float offset;
+
 void main()
 {
 	float step = 2.0 / 1024.0;
@@ -8,8 +10,11 @@ void main()
 	vec4 mbl = texture2D(meshBuffer, tc + vec2(step, 0.0));
 	vec4 mbd = texture2D(meshBuffer, tc + vec2(0.0, step));
 	vec4 color = mb;
-	if (color.a != 0.0) color.a = 0.01;
+	if (color.a != 0.0) color.a = 0.1;
+	vec4 contourcolor = vec4(0.0, 0.0, 0.0, 0.5);
+	if (abs(offset) < 0.05) contourcolor.r = 1.0;
+	if (mb.a != mbl.a || mb.a != mbd.a) color = contourcolor;
+	color.a *= max(1.0 - abs(offset) / 10.0, 0.0);
 	color.rgb *= color.a;
-	if (mb.a != mbl.a || mb.a != mbd.a) color = vec4(0.0, 0.0, 0.0, 0.5);
 	gl_FragColor = color;
 }

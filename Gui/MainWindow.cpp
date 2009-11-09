@@ -3,10 +3,15 @@
 #include "MainWindow.h"
 #include "MainWindow.moc"
 
+#include "ShapeStackControls.h"
+
 #include "Data/Population.h"
 #include "Data/ShapeMesh.h"
 
 #include "Rendering/ShapeStack.h"
+#include "Rendering/PopulationProjectionStack.h"
+#include "Rendering/ShapeSpaceLineStack.h"
+
 #include "Rendering/ShapeStackRenderer.h"
 
 #include <NQVTK/Rendering/Renderer.h>
@@ -35,6 +40,8 @@ namespace Diverse
 		ui.mainViewer->GetRenderer()->SetScene(scene);
 
 		setWindowTitle(qApp->applicationName());
+
+		stackControls = new ShapeStackControls();
 	}
 
 	// ------------------------------------------------------------------------
@@ -74,9 +81,11 @@ namespace Diverse
 				// TODO: refactor NQVTK so ShapeStack can be a Renderable
 				// We can't do this yet, as Renderables can't access state 
 				// (shaders, textures, attributes) internally. 
-				// TODO: add some way to select the stack type
+				// TODO: add UI for selecting the stack type
 				delete stack;
-				stack = new ShapeStack(mesh);
+				//stack = stackControls->GetStack(mesh);
+				stack = new PopulationProjectionStack(mesh);
+				//stack = new ShapeSpaceLineStack(mesh);
 				ui.mainViewer->SetShapeStack(stack);
 				RedrawViewers();
 			}
@@ -101,6 +110,12 @@ namespace Diverse
 					delete population;
 					population = newPop;
 					ui.actionPCA->setEnabled(true);
+					// TODO: Add UI for (eigen)vector selection
+					if (population->GetNumberOfIndividuals() > 0)
+					{
+						dynamic_cast<PopulationProjectionStack*>(
+							stack)->SetVector(population->GetIndividual(0));
+					}
 					RedrawViewers();
 				}
 				else
@@ -118,6 +133,13 @@ namespace Diverse
 		// TODO: this should be computed automatically on load
 		// TODO: do PCA in a background thread
 		if (population) population->DoPCA();
+
+		// TODO: Add UI for (eigen)vector selection
+		if (population->GetNumberOfPrincipalComponents() > 0)
+		{
+			dynamic_cast<PopulationProjectionStack*>(stack)->SetVector(
+				population->GetPrincipalComponent(0));
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -150,6 +172,12 @@ namespace Diverse
 		// Save it
 		screenshot.save(QString("Diverse-%1.png").arg(
 			now.toString("yyMMdd-hhmmss")), "PNG");
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionStackOptions_triggered()
+	{
+		stackControls->show();
 	}
 
 	// ------------------------------------------------------------------------

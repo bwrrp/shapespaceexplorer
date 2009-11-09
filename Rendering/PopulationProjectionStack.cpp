@@ -16,7 +16,9 @@ namespace Diverse
 	{
 		if (vector.size() == mesh->GetShapeSpaceDimension())
 		{
-			this->vector = vector;
+			// Normalize the vector
+			double length = sqrt(itpp::dot(vector, vector));
+			this->vector = vector / length;
 			// TODO: pre-sort the population to avoid sorting per frame
 			return true;
 		}
@@ -29,19 +31,42 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	int PopulationProjectionStack::GetNumberOfSlices()
 	{
-		return population->GetNumberOfIndividuals();
+		if (population)
+		{
+			return population->GetNumberOfIndividuals();
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
 	// ------------------------------------------------------------------------
 	double PopulationProjectionStack::GetSliceOffset(int i)
 	{
-		// TODO: add offset to allow lines not through the origin (mean shape)
-		return itpp::dot(vector, population->GetIndividual(i));
+		if (population)
+		{
+			// TODO: add offset to allow lines not through the origin
+			return itpp::dot(vector, population->GetIndividual(i));
+		}
+		else
+		{
+			return 0.0;
+		}
 	}
 
 	// ------------------------------------------------------------------------
 	void PopulationProjectionStack::SetupSliceMesh(int i)
 	{
-		mesh->SetShape(population->GetIndividual(i));
+		if (population)
+		{
+			mesh->SetShape(population->GetIndividual(i));
+		}
+		else
+		{
+			itpp::vec shape(mesh->GetShapeSpaceDimension());
+			shape.zeros();
+			mesh->SetShape(shape);
+		}
 	}
 }
