@@ -44,17 +44,13 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	int ShapeStack::GetNumberOfSlices()
 	{
-		//return 1;
-		// Testing...
-		return 100;
+		return 1;
 	}
 
 	// ------------------------------------------------------------------------
 	double ShapeStack::GetSliceOffset(int i)
 	{
-		//return 0.0;
-		// Testing...
-		return static_cast<double>(i) / 10.0 - 5.0;
+		return 0.0;
 	}
 
 	// ------------------------------------------------------------------------
@@ -63,10 +59,6 @@ namespace Diverse
 		// The default implementation only contains the mean
 		itpp::vec shape(mesh->GetShapeSpaceDimension());
 		shape.zeros();
-		// Testing...
-		if (population != 0 && 
-			population->GetNumberOfPrincipalComponents() > 0) 
-			shape = population->GetPrincipalComponent(0) * GetSliceOffset(i);
 		mesh->SetShape(shape);
 	}
 }
