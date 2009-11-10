@@ -23,8 +23,8 @@ namespace Diverse
 		itpp::vec GetPrincipalComponent(int i);
 
 		itpp::vec PointFromComponents(itpp::vec compVec);
-		itpp::vec ComponentsFromPoint(itpp::vec point, int dims);
-		Population *ReduceDimensionality(int dims);
+		itpp::vec ComponentsFromPoint(itpp::vec point, int dims = 0);
+		Population *ReduceDimensionality(int dims = 0);
 
 	protected:
 		Population(const itpp::mat &population);
