@@ -108,6 +108,8 @@ SET( ${ProjectName}_Gui_Classes
 	MainWindow
 	ShapeStackViewer
 	ShapeStackControls
+	ScatterPlotViewer
+	ScatterPlotInteractor
 )
 
 SET( ${ProjectName}_Data_Classes
@@ -120,6 +122,7 @@ SET( ${ProjectName}_Rendering_Classes
 	ShapeStack
 	ShapeSpaceLineStack
 	PopulationProjectionStack
+	ScatterPlotRenderer
 )
 
 # --------------------------------------------------

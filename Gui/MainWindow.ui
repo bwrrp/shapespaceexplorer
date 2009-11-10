@@ -6,19 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>576</height>
+    <width>749</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Diverse</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="margin">
      <number>0</number>
     </property>
-    <item row="0" column="0">
+    <item>
+     <widget class="Diverse::ScatterPlotViewer" name="widget" native="true"/>
+    </item>
+    <item>
      <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>
     </item>
    </layout>
@@ -28,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>657</width>
+     <width>749</width>
      <height>19</height>
     </rect>
    </property>
@@ -129,6 +132,12 @@
    <class>Diverse::ShapeStackViewer</class>
    <extends>QWidget</extends>
    <header>ShapeStackViewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Diverse::ScatterPlotViewer</class>
+   <extends>QWidget</extends>
+   <header>ScatterPlotViewer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
