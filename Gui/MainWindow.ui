@@ -19,7 +19,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="Diverse::ScatterPlotViewer" name="widget" native="true"/>
+     <widget class="Diverse::ScatterPlotViewer" name="plotViewer" native="true"/>
     </item>
     <item>
      <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>

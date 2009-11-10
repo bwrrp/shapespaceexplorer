@@ -5,6 +5,7 @@
 namespace Diverse
 {
 	class ScatterPlotRenderer;
+	struct PointWidget;
 
 	// TODO: add messenger class later to emit signals
 
@@ -22,5 +23,10 @@ namespace Diverse
 
 	protected:
 		ScatterPlotRenderer *renderer;
+
+		PointWidget *activeWidget;
+
+		int lastX;
+		int lastY;
 	};
 }

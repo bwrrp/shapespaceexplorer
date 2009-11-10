@@ -4,6 +4,8 @@
 
 namespace Diverse
 {
+	class Population;
+
 	class ScatterPlotViewer : public NQVTKWidget
 	{
 		Q_OBJECT;
@@ -11,5 +13,7 @@ namespace Diverse
 	public:
 		ScatterPlotViewer(QWidget *parent = 0);
 		virtual ~ScatterPlotViewer();
+
+		void SetPopulation(Population *population);
 	};
 }
