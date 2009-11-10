@@ -56,6 +56,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::RedrawViewers()
 	{
+		ui.plotViewer->updateGL();
 		ui.stackViewer->updateGL();
 	}
 
@@ -109,6 +110,7 @@ namespace Diverse
 				{
 					delete population;
 					population = newPop;
+					ui.plotViewer->SetPopulation(population);
 					ui.actionPCA->setEnabled(true);
 					// TODO: Add UI for (eigen)vector selection
 					if (population->GetNumberOfIndividuals() > 0)
@@ -139,6 +141,8 @@ namespace Diverse
 		{
 			dynamic_cast<PopulationProjectionStack*>(stack)->SetVector(
 				population->GetPrincipalComponent(0));
+			// TODO: this currently leaks memory!
+			ui.plotViewer->SetPopulation(population->ReduceDimensionality());
 		}
 	}
 

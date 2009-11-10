@@ -22,4 +22,12 @@ namespace Diverse
 	ScatterPlotViewer::~ScatterPlotViewer()
 	{
 	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::SetPopulation(Population *population)
+	{
+		ScatterPlotRenderer *renderer = 
+			dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+		if (renderer) renderer->SetPopulation(population);
+	}
 }
