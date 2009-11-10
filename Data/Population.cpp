@@ -121,6 +121,12 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void Population::DoPCA()
 	{
+		// TODO: optimize PCA if # individuals < # shape space dimensions
+		// - Build orthonormal basis from individuals 
+		//   (normalize, make independent of earlier vectors)
+		// - Compute PCA on this basis
+		// - Project eigenvectors back to the original shape space
+
 		qDebug("Computing covariance...");
 
 		itpp::mat covariance = itpp::cov(population);
@@ -194,7 +200,8 @@ namespace Diverse
 		result.zeros();
 		for (int i = 0; i < dims; ++i)
 		{
-			result += compVec(i) * GetPrincipalComponent(i);
+			itpp::vec ev = GetPrincipalComponent(i);
+			result += compVec(i) * ev / sqrt(itpp::dot(ev, ev));
 		}
 		return result;
 	}
@@ -209,7 +216,8 @@ namespace Diverse
 		// Project point onto eigenvectors
 		for (int i = 0; i < dims; ++i)
 		{
-			result(i) = itpp::dot(point, GetPrincipalComponent(i));
+			itpp::vec ev = GetPrincipalComponent(i);
+			result(i) = itpp::dot(point, ev) / sqrt(itpp::dot(ev, ev));
 		}
 		return result;
 	}
@@ -218,8 +226,10 @@ namespace Diverse
 	Population *Population::ReduceDimensionality(int dims)
 	{
 		assert(dims <= GetNumberOfPrincipalComponents());
-		itpp::mat result(GetNumberOfIndividuals(), dims);
-		for (int i = 0; i < dims; ++i)
+		if (dims <= 0) dims = GetNumberOfPrincipalComponents();
+		int numIndividuals = GetNumberOfIndividuals();
+		itpp::mat result(numIndividuals, dims);
+		for (int i = 0; i < numIndividuals; ++i)
 		{
 			result.set_row(i, ComponentsFromPoint(GetIndividual(i), dims));
 		}
