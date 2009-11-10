@@ -213,4 +213,16 @@ namespace Diverse
 		}
 		return result;
 	}
+
+	// ------------------------------------------------------------------------
+	Population *Population::ReduceDimensionality(int dims)
+	{
+		assert(dims <= GetNumberOfPrincipalComponents());
+		itpp::mat result(GetNumberOfIndividuals(), dims);
+		for (int i = 0; i < dims; ++i)
+		{
+			result.set_row(i, ComponentsFromPoint(GetIndividual(i), dims));
+		}
+		return new Population(result);
+	}
 }
