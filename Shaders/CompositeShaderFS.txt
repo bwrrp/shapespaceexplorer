@@ -14,7 +14,7 @@ void main()
 	vec4 contourcolor = vec4(0.0, 0.0, 0.0, 0.5);
 	if (abs(offset) < 0.05) contourcolor.r = 1.0;
 	if (mb.a != mbl.a || mb.a != mbd.a) color = contourcolor;
-	color.a *= max(1.0 - abs(offset) / 10.0, 0.0);
+	color.a *= max(1.0 - abs(offset) / 10.0, 0.3);
 	color.rgb *= color.a;
 	gl_FragColor = color;
 }
