@@ -2,16 +2,14 @@
 
 namespace Diverse
 {
+	class ShapeModel;
 	class ShapeMesh;
-	class Population;
 
 	class ShapeStack
 	{
 	public:
-		ShapeStack(ShapeMesh *mesh);
+		ShapeStack(ShapeModel *model);
 		virtual ~ShapeStack();
-
-		bool SetPopulation(Population *population);
 
 		ShapeMesh *GetMesh();
 
@@ -23,7 +21,6 @@ namespace Diverse
 		// for the mesh and composite shaders
 
 	protected:
-		ShapeMesh *mesh;
-		Population *population;
+		ShapeModel *model;
 	};
 }

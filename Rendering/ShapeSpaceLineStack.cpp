@@ -1,21 +1,22 @@
 #include "ShapeSpaceLineStack.h"
 
+#include "Data/ShapeModel.h"
 #include "Data/ShapeMesh.h"
 
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ShapeSpaceLineStack::ShapeSpaceLineStack(ShapeMesh *mesh) 
-		: ShapeStack(mesh)
+	ShapeSpaceLineStack::ShapeSpaceLineStack(ShapeModel *model) 
+		: ShapeStack(model)
 	{
-		vector.set_size(mesh->GetShapeSpaceDimension());
+		vector.set_size(model->GetMesh()->GetShapeSpaceDimension());
 		vector.zeros();
 	}
 
 	// ------------------------------------------------------------------------
 	bool ShapeSpaceLineStack::SetVector(itpp::vec vector)
 	{
-		if (vector.size() == mesh->GetShapeSpaceDimension())
+		if (vector.size() == model->GetMesh()->GetShapeSpaceDimension())
 		{
 			this->vector = vector;
 			return true;
@@ -43,9 +44,9 @@ namespace Diverse
 	void ShapeSpaceLineStack::SetupSliceMesh(int i)
 	{
 		// TODO: add offset to allow lines not through the origin (mean shape)
-		itpp::vec shape(mesh->GetShapeSpaceDimension());
+		itpp::vec shape(model->GetMesh()->GetShapeSpaceDimension());
 		shape.zeros();
 		shape = vector * GetSliceOffset(i);
-		mesh->SetShape(shape);
+		model->GetMesh()->SetShape(shape);
 	}
 }

@@ -1,20 +1,23 @@
 #include "PopulationProjectionStack.h"
 
+#include "Data/ShapeModel.h"
 #include "Data/Population.h"
 #include "Data/ShapeMesh.h"
 
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	PopulationProjectionStack::PopulationProjectionStack(ShapeMesh *mesh)
-		: ShapeStack(mesh)
+	PopulationProjectionStack::PopulationProjectionStack(ShapeModel *model)
+		: ShapeStack(model)
 	{
+		vector.set_size(model->GetMesh()->GetShapeSpaceDimension());
+		vector.zeros();
 	}
 
 	// ------------------------------------------------------------------------
 	bool PopulationProjectionStack::SetVector(itpp::vec vector)
 	{
-		if (vector.size() == mesh->GetShapeSpaceDimension())
+		if (vector.size() == model->GetMesh()->GetShapeSpaceDimension())
 		{
 			// Normalize the vector
 			double length = sqrt(itpp::dot(vector, vector));
@@ -31,6 +34,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	int PopulationProjectionStack::GetNumberOfSlices()
 	{
+		Population *population = model->GetPopulation();
 		if (population)
 		{
 			return population->GetNumberOfIndividuals();
@@ -44,6 +48,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	double PopulationProjectionStack::GetSliceOffset(int i)
 	{
+		Population *population = model->GetPopulation();
 		if (population)
 		{
 			// TODO: add offset to allow lines not through the origin
@@ -58,6 +63,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void PopulationProjectionStack::SetupSliceMesh(int i)
 	{
+		ShapeMesh *mesh = model->GetMesh();
+		Population *population = model->GetPopulation();
 		if (population)
 		{
 			mesh->SetShape(population->GetIndividual(i));

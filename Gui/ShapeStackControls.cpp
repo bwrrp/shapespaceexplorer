@@ -13,12 +13,4 @@ namespace Diverse
 	{
 		ui.setupUi(this);
 	}
-
-	// ------------------------------------------------------------------------
-	ShapeStack *ShapeStackControls::GetStack(ShapeMesh *mesh)
-	{
-		// TODO: add UI to select the stack type
-		stack = new PopulationProjectionStack(mesh);
-		return stack;
-	}
 }

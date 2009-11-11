@@ -113,8 +113,9 @@ SET( ${ProjectName}_Gui_Classes
 )
 
 SET( ${ProjectName}_Data_Classes
-	ShapeMesh
 	Population
+	ShapeMesh
+	ShapeModel
 )
 
 SET( ${ProjectName}_Rendering_Classes

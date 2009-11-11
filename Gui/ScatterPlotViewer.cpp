@@ -3,9 +3,13 @@
 #include "ScatterPlotViewer.h"
 #include "ScatterPlotViewer.moc"
 
+#include "Data/ShapeModel.h"
+
 #include "Rendering/ScatterPlotRenderer.h"
 
 #include "ScatterPlotInteractor.h"
+
+#include <cassert>
 
 namespace Diverse
 {
@@ -24,10 +28,22 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ScatterPlotViewer::SetPopulation(Population *population)
+	void ScatterPlotViewer::SetShapeModel(ShapeModel *model)
 	{
 		ScatterPlotRenderer *renderer = 
 			dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
-		if (renderer) renderer->SetPopulation(population);
+		assert(renderer != 0);
+
+		// TODO: disconnect signals from the old model
+		if (model)
+		{
+			renderer->SetPopulation(model->GetPopulation());
+			// TODO: connect signals for the new model
+		}
+		else
+		{
+			renderer->SetPopulation(0);
+		}
+		this->model = model;
 	}
 }
