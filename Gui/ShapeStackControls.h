@@ -16,8 +16,6 @@ namespace Diverse
 	public:
 		ShapeStackControls(QWidget *parent = 0);
 
-		ShapeStack *GetStack(ShapeMesh *mesh);
-
 	signals:
 		void StackCreated();
 		void StackUpdated();

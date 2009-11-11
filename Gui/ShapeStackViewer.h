@@ -2,8 +2,12 @@
 
 #include <NQVTKGui/Viewports/NQVTKWidget.h>
 
+
+namespace NQVTK { class Scene; }
+
 namespace Diverse
 {
+	class ShapeModel;
 	class ShapeStack;
 
 	class ShapeStackViewer : public NQVTKWidget
@@ -14,6 +18,11 @@ namespace Diverse
 		ShapeStackViewer(QWidget *parent = 0);
 		~ShapeStackViewer();
 
-		void SetShapeStack(ShapeStack *stack);
+		void SetShapeModel(ShapeModel *model);
+
+	protected:
+		ShapeModel *model;
+		ShapeStack *stack;
+		NQVTK::Scene *scene;
 	};
 }

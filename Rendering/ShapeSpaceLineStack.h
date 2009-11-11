@@ -11,7 +11,7 @@ namespace Diverse
 	public:
 		typedef ShapeStack Superclass;
 
-		ShapeSpaceLineStack(ShapeMesh *mesh);
+		ShapeSpaceLineStack(ShapeModel *model);
 
 		bool SetVector(itpp::vec vector);
 

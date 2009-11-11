@@ -75,7 +75,8 @@ namespace Diverse
 	{
 		delete compositeShader;
 		delete meshBuffer;
-		// This will also delete the ShapeMesh
+		// Don't delete the ShapeMesh!
+		meshSpace->SetRenderable(0, 0);
 		delete meshSpace;
 	}
 

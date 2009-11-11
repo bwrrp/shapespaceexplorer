@@ -7,15 +7,7 @@
 
 #include "Data/Population.h"
 #include "Data/ShapeMesh.h"
-
-#include "Rendering/ShapeStack.h"
-#include "Rendering/PopulationProjectionStack.h"
-#include "Rendering/ShapeSpaceLineStack.h"
-
-#include "Rendering/ShapeStackRenderer.h"
-
-#include <NQVTK/Rendering/Renderer.h>
-#include <NQVTK/Rendering/Scene.h>
+#include "Data/ShapeModel.h"
 
 #include <QApplication>
 #include <QDateTime>
@@ -28,16 +20,13 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
-		population(0), stack(0)
+		model(0)
 	{
 		ui.setupUi(this);
 
 		// A user should start by loading a mesh
 		ui.actionLoadPopulation->setEnabled(false);
 		ui.actionPCA->setEnabled(false);
-
-		scene = new NQVTK::Scene();
-		ui.stackViewer->GetRenderer()->SetScene(scene);
 
 		setWindowTitle(qApp->applicationName());
 
@@ -47,10 +36,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MainWindow::~MainWindow()
 	{
-		delete stack;
-		// The mesh is deleted as part of the scene
-		delete scene;
-		delete population;
+		delete model;
 	}
 
 	// ------------------------------------------------------------------------
@@ -58,6 +44,48 @@ namespace Diverse
 	{
 		ui.plotViewer->updateGL();
 		ui.stackViewer->updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::LoadMesh(const QString &filename)
+	{
+		ShapeMesh *mesh = ShapeMesh::Load(filename);
+		if (mesh)
+		{
+			// A new mesh probably means the population is useless
+			// Create a new model
+			delete model;
+			model = new ShapeModel(mesh);
+			// TODO: connect signals
+			ui.actionLoadPopulation->setEnabled(true);
+			ui.actionPCA->setEnabled(false);
+
+			// TODO: refactor NQVTK so ShapeStack can be a Renderable
+			// We can't do this yet, as Renderables can't access state 
+			// (shaders, textures, attributes) internally. 
+			ui.stackViewer->SetShapeModel(model);
+			RedrawViewers();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::LoadPopulation(const QString &filename)
+	{
+		Population *newPop = Population::Load(filename);
+		if (newPop)
+		{
+			if (model->SetPopulation(newPop))
+			{
+				ui.plotViewer->SetShapeModel(model);
+				ui.actionPCA->setEnabled(true);
+				RedrawViewers();
+			}
+			else
+			{
+				// The population is useless for the current mesh
+				delete newPop;
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -70,26 +98,7 @@ namespace Diverse
 		// This returns a null string when cancelled
 		if (!filename.isNull())
 		{
-			ShapeMesh *mesh = ShapeMesh::Load(filename);
-			if (mesh)
-			{
-				// A new mesh probably means the population is useless
-				delete population;
-				population = 0;
-				ui.actionLoadPopulation->setEnabled(true);
-				ui.actionPCA->setEnabled(false);
-				// Use the new mesh
-				// TODO: refactor NQVTK so ShapeStack can be a Renderable
-				// We can't do this yet, as Renderables can't access state 
-				// (shaders, textures, attributes) internally. 
-				// TODO: add UI for selecting the stack type
-				delete stack;
-				//stack = stackControls->GetStack(mesh);
-				stack = new PopulationProjectionStack(mesh);
-				//stack = new ShapeSpaceLineStack(mesh);
-				ui.stackViewer->SetShapeStack(stack);
-				RedrawViewers();
-			}
+			LoadMesh(filename);
 		}
 	}
 
@@ -103,29 +112,7 @@ namespace Diverse
 		// This returns a null string when cancelled
 		if (!filename.isNull())
 		{
-			Population *newPop = Population::Load(filename);
-			if (newPop)
-			{
-				if (stack->SetPopulation(newPop))
-				{
-					delete population;
-					population = newPop;
-					ui.plotViewer->SetPopulation(population);
-					ui.actionPCA->setEnabled(true);
-					// TODO: Add UI for (eigen)vector selection
-					if (population->GetNumberOfIndividuals() > 0)
-					{
-						dynamic_cast<PopulationProjectionStack*>(
-							stack)->SetVector(population->GetIndividual(0));
-					}
-					RedrawViewers();
-				}
-				else
-				{
-					// The population is useless for the current mesh
-					delete newPop;
-				}
-			}
+			LoadPopulation(filename);
 		}
 	}
 
@@ -134,16 +121,8 @@ namespace Diverse
 	{
 		// TODO: this should be computed automatically on load
 		// TODO: do PCA in a background thread
+		Population *population = model->GetPopulation();
 		if (population) population->DoPCA();
-
-		// TODO: Add UI for (eigen)vector selection
-		if (population->GetNumberOfPrincipalComponents() > 0)
-		{
-			dynamic_cast<PopulationProjectionStack*>(stack)->SetVector(
-				population->GetPrincipalComponent(0));
-			// TODO: this currently leaks memory!
-			ui.plotViewer->SetPopulation(population->ReduceDimensionality());
-		}
 	}
 
 	// ------------------------------------------------------------------------

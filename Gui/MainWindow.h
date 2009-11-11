@@ -8,9 +8,9 @@ namespace NQVTK { class Scene; }
 
 namespace Diverse
 {
-	class Population;
-	class ShapeStack;
 	class ShapeStackControls;
+
+	class ShapeModel;
 
 	class MainWindow : public QMainWindow
 	{
@@ -23,14 +23,15 @@ namespace Diverse
 	public slots:
 		void RedrawViewers();
 
+		void LoadMesh(const QString &filename);
+		void LoadPopulation(const QString &filename);
+
 	protected:
 		Ui::MainWindow ui;
 
 		ShapeStackControls *stackControls;
 
-		Population *population;
-		ShapeStack *stack;
-		NQVTK::Scene *scene;
+		ShapeModel *model;
 
 	private slots:
 		void on_actionLoadMesh_triggered();

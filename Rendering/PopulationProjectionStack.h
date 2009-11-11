@@ -11,7 +11,7 @@ namespace Diverse
 	public:
 		typedef ShapeStack Superclass;
 
-		PopulationProjectionStack(ShapeMesh *mesh);
+		PopulationProjectionStack(ShapeModel *model);
 
 		bool SetVector(itpp::vec vector);
 
