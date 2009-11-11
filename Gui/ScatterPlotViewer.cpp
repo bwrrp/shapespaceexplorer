@@ -5,7 +5,7 @@
 
 #include "Data/ShapeModel.h"
 
-#include "Rendering/ScatterPlotRenderer.h"
+#include "Rendering/ScatterShapesRenderer.h"
 
 #include "ScatterPlotInteractor.h"
 
@@ -16,7 +16,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	ScatterPlotViewer::ScatterPlotViewer(QWidget *parent) : NQVTKWidget(parent)
 	{
-		ScatterPlotRenderer *renderer = new ScatterPlotRenderer();
+		ScatterPlotRenderer *renderer = new ScatterShapesRenderer();
 		SetRenderer(renderer);
 
 		SetInteractor(new ScatterPlotInteractor(renderer));
