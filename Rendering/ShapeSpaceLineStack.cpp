@@ -9,22 +9,6 @@ namespace Diverse
 	ShapeSpaceLineStack::ShapeSpaceLineStack(ShapeModel *model) 
 		: ShapeStack(model)
 	{
-		vector.set_size(model->GetMesh()->GetShapeSpaceDimension());
-		vector.zeros();
-	}
-
-	// ------------------------------------------------------------------------
-	bool ShapeSpaceLineStack::SetVector(itpp::vec vector)
-	{
-		if (vector.size() == model->GetMesh()->GetShapeSpaceDimension())
-		{
-			this->vector = vector;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 
 	// ------------------------------------------------------------------------

@@ -72,4 +72,14 @@ namespace Diverse
 
 		this->model = model;
 	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStackViewer::SetVector(itpp::vec vector)
+	{
+		if (stack)
+		{
+			stack->SetVector(vector);
+			updateGL();
+		}
+	}
 }

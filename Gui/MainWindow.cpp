@@ -31,6 +31,9 @@ namespace Diverse
 		setWindowTitle(qApp->applicationName());
 
 		stackControls = new ShapeStackControls();
+
+		connect(ui.plotViewer, SIGNAL(XAxisChanged(itpp::vec)), 
+			ui.stackViewer, SLOT(SetVector(itpp::vec)));
 	}
 
 	// ------------------------------------------------------------------------
