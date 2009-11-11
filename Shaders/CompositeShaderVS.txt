@@ -3,7 +3,6 @@ varying float offset;
 void main()
 {
 	vec4 vertex = gl_Vertex;
-	vertex.z *= 0.02;
 	offset = vertex.z;
 	gl_Position = gl_ModelViewProjectionMatrix * vertex;
 	gl_TexCoord[0] = gl_MultiTexCoord0;
