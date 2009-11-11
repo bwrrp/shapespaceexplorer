@@ -10,25 +10,6 @@ namespace Diverse
 	PopulationProjectionStack::PopulationProjectionStack(ShapeModel *model)
 		: ShapeStack(model)
 	{
-		vector.set_size(model->GetMesh()->GetShapeSpaceDimension());
-		vector.zeros();
-	}
-
-	// ------------------------------------------------------------------------
-	bool PopulationProjectionStack::SetVector(itpp::vec vector)
-	{
-		if (vector.size() == model->GetMesh()->GetShapeSpaceDimension())
-		{
-			// Normalize the vector
-			double length = sqrt(itpp::dot(vector, vector));
-			this->vector = vector / length;
-			// TODO: pre-sort the population to avoid sorting per frame
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 
 	// ------------------------------------------------------------------------

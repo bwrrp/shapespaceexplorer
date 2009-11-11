@@ -2,6 +2,7 @@
 
 #include <NQVTKGui/Viewports/NQVTKWidget.h>
 
+#include <itpp/itbase.h>
 
 namespace NQVTK { class Scene; }
 
@@ -19,6 +20,9 @@ namespace Diverse
 		~ShapeStackViewer();
 
 		void SetShapeModel(ShapeModel *model);
+
+	public slots:
+		void SetVector(itpp::vec vector);
 
 	protected:
 		ShapeModel *model;

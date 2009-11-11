@@ -1,5 +1,7 @@
 #pragma once
 
+#include <itpp/itbase.h>
+
 namespace Diverse
 {
 	class ShapeModel;
@@ -13,6 +15,8 @@ namespace Diverse
 
 		ShapeMesh *GetMesh();
 
+		virtual bool SetVector(itpp::vec vector);
+
 		virtual int GetNumberOfSlices();
 		virtual double GetSliceOffset(int i);
 		virtual void SetupSliceMesh(int i);
@@ -22,5 +26,7 @@ namespace Diverse
 
 	protected:
 		ShapeModel *model;
+
+		itpp::vec vector;
 	};
 }

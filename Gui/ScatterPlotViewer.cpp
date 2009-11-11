@@ -14,7 +14,8 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ScatterPlotViewer::ScatterPlotViewer(QWidget *parent) : NQVTKWidget(parent)
+	ScatterPlotViewer::ScatterPlotViewer(QWidget *parent) 
+		: NQVTKWidget(parent), model(0)
 	{
 		ScatterPlotRenderer *renderer = new ScatterShapesRenderer();
 		SetRenderer(renderer);
@@ -54,6 +55,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterPlotViewer::OnProjectionChanged()
 	{
+		if (!model) return;
+
 		// Ignore changes if no population has been loaded
 		if (model->GetPopulation() != 0)
 		{

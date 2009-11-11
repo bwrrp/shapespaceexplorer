@@ -15,6 +15,8 @@ namespace Diverse
 	ShapeStack::ShapeStack(ShapeModel *model) : model(model)
 	{
 		assert(model != 0);
+		vector.set_size(model->GetMesh()->GetShapeSpaceDimension());
+		vector.zeros();
 	}
 
 	// ------------------------------------------------------------------------
@@ -26,6 +28,20 @@ namespace Diverse
 	ShapeMesh *ShapeStack::GetMesh()
 	{
 		return model->GetMesh();
+	}
+
+	// ------------------------------------------------------------------------
+	bool ShapeStack::SetVector(itpp::vec vector)
+	{
+		if (vector.size() == model->GetMesh()->GetShapeSpaceDimension())
+		{
+			this->vector = vector;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	// ------------------------------------------------------------------------
