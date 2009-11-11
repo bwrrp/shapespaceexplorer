@@ -1,18 +1,33 @@
 #include "ScatterPlotInteractor.h"
+#include "ScatterPlotInteractor.moc"
 
 #include "Rendering/ScatterPlotRenderer.h"
 
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
+	void ScatterPlotMessenger::EmitProjectionChanged()
+	{
+		emit ProjectionChanged();
+	}
+
+	// ------------------------------------------------------------------------
 	ScatterPlotInteractor::ScatterPlotInteractor(ScatterPlotRenderer *renderer)
 		: renderer(renderer), activeWidget(0)
 	{
+		messenger = new ScatterPlotMessenger();
 	}
 
 	// ------------------------------------------------------------------------
 	ScatterPlotInteractor::~ScatterPlotInteractor()
 	{
+		delete messenger;
+	}
+
+	// ------------------------------------------------------------------------
+	ScatterPlotMessenger *ScatterPlotInteractor::GetMessenger()
+	{
+		return messenger;
 	}
 
 	// ------------------------------------------------------------------------
@@ -21,25 +36,30 @@ namespace Diverse
 		bool update = false;
 		if (event.buttons & NQVTK::MouseEvent::LeftButton)
 		{
+			// Dragging a node
 			if (activeWidget)
 			{
 				// TODO: origin needs special treatment
 				activeWidget->pos = renderer->ViewportToPos(event.x, event.y);
 				activeWidget->state = PointWidget::Drag;
 				update = true;
+				messenger->EmitProjectionChanged();
 			}
 		}
 		else if (event.buttons & NQVTK::MouseEvent::RightButton)
 		{
+			// Zooming
 			double delta = 1.0 + static_cast<double>(event.y - lastY) * 0.01;
 			if (delta < 0.01) delta = 0.01;
 			if (delta > 100.0) delta = 100.0;
 			renderer->zoom *= delta;
 			if (renderer->zoom < 0.0001) renderer->zoom = 0.0001;
 			update = true;
+			messenger->EmitProjectionChanged();
 		}
 		else
 		{
+			// Hovering
 			PointWidget *widget = renderer->WidgetAtPoint(event.x, event.y);
 			if (widget)
 			{

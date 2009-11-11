@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+
 #include <NQVTK/Interactors/Interactor.h>
 
 namespace Diverse
@@ -7,7 +9,16 @@ namespace Diverse
 	class ScatterPlotRenderer;
 	struct PointWidget;
 
-	// TODO: add messenger class later to emit signals
+	class ScatterPlotMessenger : public QObject
+	{
+		Q_OBJECT;
+
+	public:
+		void EmitProjectionChanged();
+
+	signals:
+		void ProjectionChanged();
+	};
 
 	class ScatterPlotInteractor : public NQVTK::Interactor
 	{
@@ -17,11 +28,15 @@ namespace Diverse
 		ScatterPlotInteractor(ScatterPlotRenderer *renderer);
 		virtual ~ScatterPlotInteractor();
 
+		ScatterPlotMessenger *GetMessenger();
+
 		virtual bool MouseMoveEvent(NQVTK::MouseEvent event);
 		virtual bool MousePressEvent(NQVTK::MouseEvent event);
 		virtual bool MouseReleaseEvent(NQVTK::MouseEvent event);
 
 	protected:
+		ScatterPlotMessenger *messenger;
+
 		ScatterPlotRenderer *renderer;
 
 		PointWidget *activeWidget;

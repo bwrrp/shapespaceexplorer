@@ -2,6 +2,8 @@
 
 #include <NQVTKGui/Viewports/NQVTKWidget.h>
 
+#include <itpp/itbase.h>
+
 namespace Diverse
 {
 	class ShapeModel;
@@ -16,7 +18,13 @@ namespace Diverse
 
 		void SetShapeModel(ShapeModel *model);
 
+	signals:
+		void XAxisChanged(itpp::vec axis);
+
 	protected:
 		ShapeModel *model;
+
+	private slots:
+		void OnProjectionChanged();
 	};
 }

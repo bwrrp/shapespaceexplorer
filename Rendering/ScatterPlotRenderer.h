@@ -4,6 +4,8 @@
 
 #include <NQVTK/Math/Vector3.h>
 
+#include <itpp/itbase.h>
+
 #include <vector>
 
 namespace Diverse
@@ -39,6 +41,8 @@ namespace Diverse
 		NQVTK::Vector3 PosToViewport(const NQVTK::Vector3 &pos);
 
 		PointWidget *WidgetAtPoint(int x, int y);
+
+		itpp::vec GetProjectionXAxis();
 
 		double zoom;
 
