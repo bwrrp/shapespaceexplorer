@@ -124,6 +124,7 @@ SET( ${ProjectName}_Rendering_Classes
 	ShapeSpaceLineStack
 	PopulationProjectionStack
 	ScatterPlotRenderer
+	ScatterShapesRenderer
 )
 
 # --------------------------------------------------
