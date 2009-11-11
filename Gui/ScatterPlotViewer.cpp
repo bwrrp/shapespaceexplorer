@@ -19,7 +19,11 @@ namespace Diverse
 		ScatterPlotRenderer *renderer = new ScatterShapesRenderer();
 		SetRenderer(renderer);
 
-		SetInteractor(new ScatterPlotInteractor(renderer));
+		ScatterPlotInteractor *interactor = 
+			new ScatterPlotInteractor(renderer);
+		SetInteractor(interactor);
+		connect(interactor->GetMessenger(), SIGNAL(ProjectionChanged()), 
+			this, SLOT(OnProjectionChanged()));
 	}
 
 	// ------------------------------------------------------------------------
@@ -45,5 +49,19 @@ namespace Diverse
 			renderer->SetPopulation(0);
 		}
 		this->model = model;
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::OnProjectionChanged()
+	{
+		// Ignore changes if no population has been loaded
+		if (model->GetPopulation() != 0)
+		{
+			ScatterPlotRenderer *renderer = 
+				dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+			assert(renderer != 0);
+
+			emit XAxisChanged(renderer->GetProjectionXAxis());
+		}
 	}
 }

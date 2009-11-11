@@ -188,6 +188,26 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	itpp::vec ScatterPlotRenderer::GetProjectionXAxis()
+	{
+		// Should only be called when there is a population
+		assert(population);
+
+		itpp::vec result(population->GetShapeSpaceDimension());
+		result.zeros();
+
+		// Loop over widgets
+		NQVTK::Vector3 origin = widgets[0].pos;
+		for (unsigned int i = 0; i < widgets.size(); ++i)
+		{
+			result(i) = widgets[i].pos.x - origin.x;
+		}
+
+		// TODO: Transform vector back to original space
+		return result;
+	}
+
+	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::DrawPoints()
 	{
 		if (!population) return;
