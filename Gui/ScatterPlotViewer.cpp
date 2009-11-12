@@ -40,16 +40,17 @@ namespace Diverse
 		assert(renderer != 0);
 
 		// TODO: disconnect signals from the old model
+		this->model = model;
 		if (model)
 		{
 			renderer->SetPopulation(model->GetPopulation());
 			// TODO: connect signals for the new model
+			OnProjectionChanged();
 		}
 		else
 		{
 			renderer->SetPopulation(0);
 		}
-		this->model = model;
 	}
 
 	// ------------------------------------------------------------------------
