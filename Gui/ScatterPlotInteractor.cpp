@@ -49,7 +49,7 @@ namespace Diverse
 		else if (event.buttons & NQVTK::MouseEvent::RightButton)
 		{
 			// Zooming
-			double delta = 1.0 + static_cast<double>(event.y - lastY) * 0.01;
+			double delta = 1.0 + static_cast<double>(lastY - event.y) * 0.01;
 			if (delta < 0.01) delta = 0.01;
 			if (delta > 100.0) delta = 100.0;
 			renderer->zoom *= delta;
