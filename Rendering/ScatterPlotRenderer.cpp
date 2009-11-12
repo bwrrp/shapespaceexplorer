@@ -198,9 +198,9 @@ namespace Diverse
 
 		// Loop over widgets
 		NQVTK::Vector3 origin = widgets[0].pos;
-		for (unsigned int i = 0; i < widgets.size(); ++i)
+		for (unsigned int i = 1; i < widgets.size(); ++i)
 		{
-			result(i) = widgets[i].pos.x - origin.x;
+			result(i - 1) = widgets[i].pos.x - origin.x;
 		}
 
 		// TODO: Transform vector back to original space
