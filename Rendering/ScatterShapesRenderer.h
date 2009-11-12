@@ -13,6 +13,8 @@ namespace NQVTK
 
 namespace Diverse
 {
+	class ShapeMesh;
+
 	class ScatterShapesRenderer : public ScatterPlotRenderer
 	{
 	public:
@@ -21,10 +23,14 @@ namespace Diverse
 		ScatterShapesRenderer();
 		virtual ~ScatterShapesRenderer();
 
+		void SetMesh(ShapeMesh *mesh);
+
 	protected:
 		virtual bool Initialize();
 
 		virtual void DrawPoint(const itpp::vec &point);
+
+		ShapeMesh *mesh;
 
 		GLFramebuffer *meshBuffer;
 		NQVTK::SimpleRenderer *meshRenderer;
