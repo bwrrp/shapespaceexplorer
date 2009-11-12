@@ -116,6 +116,7 @@ SET( ${ProjectName}_Data_Classes
 	Population
 	ShapeMesh
 	ShapeModel
+	Utility
 )
 
 SET( ${ProjectName}_Rendering_Classes

@@ -5,6 +5,8 @@
 #include "Data/ShapeMesh.h"
 #include "Data/Population.h"
 
+#include "Data/Utility.h"
+
 #include "Rendering/ShapeStack.h"
 
 #include <itpp/itbase.h>
@@ -17,44 +19,8 @@
 #include <GLBlaat/GLProgram.h>
 #include <GLBlaat/GLTextureManager.h>
 
-#include <QApplication>
-#include <QTime>
-
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-
 namespace Diverse
 {
-	// ------------------------------------------------------------------------
-	// Helper function
-	static std::string LoadShader(const std::string &filename)
-	{
-		// TODO: embed shader sources in the app for final version
-		std::string apppath = QApplication::applicationDirPath().toStdString();
-		// Check up to 4 levels up in the directory hierarchy
-		std::string searchpath = "/Shaders/" + filename;
-		std::ifstream infile((apppath + searchpath).c_str());
-		for (int i = 0; i < 4 && !infile; ++i)
-		{
-			searchpath =  "/.." + searchpath;
-			infile.close();
-			infile.clear();
-			infile.open((apppath + searchpath).c_str());
-		}
-		std::ostringstream contents;
-		if (infile.good())
-		{
-			contents << infile.rdbuf();
-		}
-		else
-		{
-			std::cerr << "Error loading shader!" << std::endl;
-		}
-		return contents.str();
-	}
-
 	// ------------------------------------------------------------------------
 	ShapeStackRenderer::ShapeStackRenderer() 
 		: NQVTK::NestedRenderer(new NQVTK::SimpleRenderer()), 
@@ -265,9 +231,9 @@ namespace Diverse
 		GLProgram *meshShader = GLProgram::New();
 		ok = meshShader != 0;
 		if (ok) ok = meshShader->AddVertexShader(
-			LoadShader("MeshShaderVS.txt"));
+			Utility::LoadShader("MeshShaderVS.txt"));
 		if (ok) ok = meshShader->AddFragmentShader(
-			LoadShader("MeshShaderFS.txt"));
+			Utility::LoadShader("MeshShaderFS.txt"));
 		if (ok) ok = meshShader->Link();
 		if (!ok)
 		{
@@ -275,7 +241,6 @@ namespace Diverse
 			delete meshShader;
 			meshShader = 0;
 		}
-		meshAttributes = meshShader->GetActiveAttributes();
 		NQVTK::SimpleRenderer *renderer = 
 			dynamic_cast<NQVTK::SimpleRenderer*>(baseRenderer);
 		renderer->SetShader(meshShader);
@@ -285,9 +250,9 @@ namespace Diverse
 		compositeShader = GLProgram::New();
 		ok = compositeShader != 0;
 		if (ok) ok = compositeShader->AddVertexShader(
-			LoadShader("CompositeShaderVS.txt"));
+			Utility::LoadShader("CompositeShaderVS.txt"));
 		if (ok) ok = compositeShader->AddFragmentShader(
-			LoadShader("CompositeShaderFS.txt"));
+			Utility::LoadShader("CompositeShaderFS.txt"));
 		if (ok) ok = compositeShader->Link();
 		if (!ok)
 		{
