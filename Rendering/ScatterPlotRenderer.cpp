@@ -93,6 +93,9 @@ namespace Diverse
 		glEnd();
 
 		// Draw points
+		glPointSize(5.0);
+		glColor3d(1.0, 1.0, 1.0);
+		glEnable(GL_POINT_SMOOTH);
 		DrawPoints();
 
 		// Draw widget circles
@@ -215,25 +218,27 @@ namespace Diverse
 		int numPoints = population->GetNumberOfIndividuals();
 		for (int i = 0; i < numPoints; ++i)
 		{
-			NQVTK::Vector3 pos = widgets[0].pos;
-			itpp::vec point = population->GetIndividual(i);
-			for (unsigned int j = 1; j < widgets.size(); ++j)
-			{
-				pos += point(j - 1) * (widgets[j].pos - widgets[0].pos);
-			}
-			DrawPoint(pos);
+			DrawPoint(population->GetIndividual(i));
 		}
 	}
 
 	// ------------------------------------------------------------------------
-	void ScatterPlotRenderer::DrawPoint(const NQVTK::Vector3 &pos)
+	void ScatterPlotRenderer::DrawPoint(const itpp::vec &point)
 	{
-		// TODO: draw miniature (if there's room)
-		glPointSize(5.0);
-		glColor3d(1.0, 1.0, 1.0);
-		glEnable(GL_POINT_SMOOTH);
+		NQVTK::Vector3 pos = ProjectPoint(point);
 		glBegin(GL_POINTS);
 		glVertex3dv(PosToViewport(pos * zoom).V);
 		glEnd();
+	}
+
+	// ------------------------------------------------------------------------
+	NQVTK::Vector3 ScatterPlotRenderer::ProjectPoint(const itpp::vec &point)
+	{
+		NQVTK::Vector3 pos = widgets[0].pos;
+		for (unsigned int j = 1; j < widgets.size(); ++j)
+		{
+			pos += point(j - 1) * (widgets[j].pos - widgets[0].pos);
+		}
+		return pos;
 	}
 }

@@ -48,7 +48,9 @@ namespace Diverse
 
 	protected:
 		virtual void DrawPoints();
-		virtual void DrawPoint(const NQVTK::Vector3 &pos);
+		virtual void DrawPoint(const itpp::vec &point);
+
+		NQVTK::Vector3 ProjectPoint(const itpp::vec &point);
 
 		Population *population;
 
