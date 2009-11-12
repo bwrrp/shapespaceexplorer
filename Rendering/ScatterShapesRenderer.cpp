@@ -16,7 +16,7 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ScatterShapesRenderer::ScatterShapesRenderer() : meshBuffer(0)
+	ScatterShapesRenderer::ScatterShapesRenderer() : mesh(0), meshBuffer(0)
 	{
 		meshRenderer = new NQVTK::SimpleRenderer();
 		meshSpace = new NQVTK::Scene();
@@ -28,8 +28,18 @@ namespace Diverse
 	ScatterShapesRenderer::~ScatterShapesRenderer()
 	{
 		delete meshRenderer;
+		meshSpace->SetRenderable(0, 0);
 		delete meshSpace;
 		delete meshBuffer;
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterShapesRenderer::SetMesh(ShapeMesh *mesh)
+	{
+		if (this->mesh == mesh) return;
+		this->mesh = mesh;
+		meshSpace->SetRenderable(0, mesh);
+		// TODO: pre-render shape miniatures for the population
 	}
 
 	// ------------------------------------------------------------------------
@@ -60,7 +70,7 @@ namespace Diverse
 
 		// Initialize mesh FBO
 		delete meshBuffer;
-		meshBuffer = GLFramebuffer::New(128, 128);
+		meshBuffer = GLFramebuffer::New(256, 256);
 		ok = meshBuffer != 0;
 		if (ok)
 		{
@@ -79,7 +89,7 @@ namespace Diverse
 			meshBuffer = 0;
 		}
 		meshRenderer->SetTarget(meshBuffer);
-		meshRenderer->SetViewport(0, 0, 128, 128);
+		meshRenderer->SetViewport(0, 0, 256, 256);
 		tm->AddTexture("meshBuffer", 
 			meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0), false);
 
@@ -89,6 +99,9 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterShapesRenderer::DrawPoint(const itpp::vec &point)
 	{
+		// TODO: find out why this doesn't stick...
+		meshRenderer->SetScene(meshSpace);
+
 		// Store matrices and state
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -98,7 +111,7 @@ namespace Diverse
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 		// TODO: Render the mesh
-		//mesh->SetShape(point);
+		if (mesh) mesh->SetShape(point);
 		meshRenderer->Draw();
 
 		// Restore state and matrices
@@ -109,8 +122,29 @@ namespace Diverse
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 
-		// TODO: Draw a quad showing the mesh
+		// TODO: Could use another shader for this
+		GLTexture *tex = meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0);
+		tex->BindToCurrent();
+		glEnable(tex->GetTextureTarget());
 
-		Superclass::DrawPoint(point);
+		// Draw a quad showing the mesh
+		NQVTK::Vector3 pos = ProjectPoint(point);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0.0, 1.0);
+		glVertex3dv(PosToViewport((pos + 
+			NQVTK::Vector3(-1.0, 1.0, 0.0)) * zoom).V);
+		glTexCoord2d(1.0, 1.0);
+		glVertex3dv(PosToViewport((pos + 
+			NQVTK::Vector3(1.0, 1.0, 0.0)) * zoom).V);
+		glTexCoord2d(1.0, 0.0);
+		glVertex3dv(PosToViewport((pos + 
+			NQVTK::Vector3(1.0, -1.0, 0.0)) * zoom).V);
+		glTexCoord2d(0.0, 0.0);
+		glVertex3dv(PosToViewport((pos + 
+			NQVTK::Vector3(-1.0, -1.0, 0.0)) * zoom).V);
+		glEnd();
+
+		glDisable(tex->GetTextureTarget());
+		tex->UnbindCurrent();
 	}
 }

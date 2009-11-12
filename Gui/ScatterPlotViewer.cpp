@@ -44,12 +44,20 @@ namespace Diverse
 		if (model)
 		{
 			renderer->SetPopulation(model->GetPopulation());
+			// TODO: maybe just pass the model instead?
+			ScatterShapesRenderer *shapesRenderer = 
+				dynamic_cast<ScatterShapesRenderer*>(renderer);
+			if (shapesRenderer) shapesRenderer->SetMesh(model->GetMesh());
+
 			// TODO: connect signals for the new model
 			OnProjectionChanged();
 		}
 		else
 		{
 			renderer->SetPopulation(0);
+			ScatterShapesRenderer *shapesRenderer = 
+				dynamic_cast<ScatterShapesRenderer*>(renderer);
+			if (shapesRenderer) shapesRenderer->SetMesh(0);
 		}
 	}
 
