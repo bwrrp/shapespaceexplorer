@@ -2,8 +2,6 @@
 
 #include <NQVTK/Rendering/NestedRenderer.h>
 
-#include <GLBlaat/GLShaderInfo.h>
-
 class GLProgram;
 class GLFramebuffer;
 
@@ -33,11 +31,7 @@ namespace Diverse
 		ShapeStack *stack;
 		NQVTK::Scene *meshSpace;
 
-		GLProgram *meshShader;
 		GLProgram *compositeShader;
-
-		// Cached attributes required by the mesh shader
-		std::vector<GLAttributeInfo> meshAttributes;
 
 		GLFramebuffer *meshBuffer;
 	};
