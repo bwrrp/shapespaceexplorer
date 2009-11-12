@@ -8,6 +8,8 @@
 
 class vtkPolyData;
 
+namespace NQVTK { class AttributeSet; }
+
 namespace Diverse
 {
 	class ShapeMesh : public NQVTK::PolyData
@@ -24,6 +26,8 @@ namespace Diverse
 
 	protected:
 		ShapeMesh(vtkPolyData *meanMesh);
+
+		NQVTK::AttributeSet *shapeAttr;
 
 		int numPoints;
 	};

@@ -20,10 +20,9 @@ namespace Diverse
 		: NQVTK::PolyData(meanMesh)
 	{
 		numPoints = meanMesh->GetNumberOfPoints();
-		NQVTK::AttributeSet *shapeOffsets = 
-			new NQVTK::AttributeSet(GL_DOUBLE, 3);
-		shapeOffsets->SetData(numPoints, 0);
-		AddAttributeSet("shape", shapeOffsets, true);
+		shapeAttr = new NQVTK::AttributeSet(GL_DOUBLE, 3);
+		shapeAttr->SetData(numPoints, 0, GL_DYNAMIC_DRAW);
+		AddAttributeSet("shape", shapeAttr, true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -58,14 +57,8 @@ namespace Diverse
 	void ShapeMesh::SetShape(const itpp::vec &shape)
 	{
 		assert(shape.size() == GetShapeSpaceDimension());
-		// Create an attributeset for the shape vector
-		NQVTK::AttributeSet *shapeOffsets = 
-			new NQVTK::AttributeSet(GL_DOUBLE, 3);
-		shapeOffsets->SetData(shape.size() / 3, (void*)shape._data());
-		// TODO: if slow, try re-using the same set and specifying r/w usage
-		NQVTK::AttributeSet *oldSet = ReplaceAttributeSet(
-			"shape", shapeOffsets);
-		delete oldSet;
+		shapeAttr->SetData(shape.size() / 3, (void*)shape._data(), 
+			GL_DYNAMIC_DRAW);
 	}
 
 	// ------------------------------------------------------------------------
