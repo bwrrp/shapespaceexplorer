@@ -67,6 +67,7 @@ namespace Diverse
 			// We can't do this yet, as Renderables can't access state 
 			// (shaders, textures, attributes) internally. 
 			ui.stackViewer->SetShapeModel(model);
+			ui.plotViewer->SetShapeModel(model);
 			RedrawViewers();
 		}
 	}
@@ -79,6 +80,7 @@ namespace Diverse
 		{
 			if (model->SetPopulation(newPop))
 			{
+				// TODO: implement this as a signal from the model instead
 				ui.plotViewer->SetShapeModel(model);
 				ui.actionPCA->setEnabled(true);
 				RedrawViewers();
