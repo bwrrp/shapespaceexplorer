@@ -47,6 +47,7 @@ namespace Diverse
 	{
 		ui.plotViewer->updateGL();
 		ui.stackViewer->updateGL();
+		ui.meshViewer->updateGL();
 	}
 
 	// ------------------------------------------------------------------------
@@ -68,6 +69,7 @@ namespace Diverse
 			// (shaders, textures, attributes) internally. 
 			ui.stackViewer->SetShapeModel(model);
 			ui.plotViewer->SetShapeModel(model);
+			ui.meshViewer->SetShapeModel(model);
 			RedrawViewers();
 		}
 	}

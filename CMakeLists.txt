@@ -110,6 +110,7 @@ SET( ${ProjectName}_Gui_Classes
 	ShapeStackControls
 	ScatterPlotViewer
 	ScatterPlotInteractor
+	MeshViewer
 )
 
 SET( ${ProjectName}_Data_Classes

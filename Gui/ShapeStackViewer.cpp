@@ -23,7 +23,7 @@ namespace Diverse
 	ShapeStackViewer::ShapeStackViewer(QWidget *parent) 
 		: NQVTKWidget(parent), model(0), stack(0)
 	{
-		// Initialize main viewer
+		// Initialize renderer
 		ShapeStackRenderer *renderer = new ShapeStackRenderer();
 		SetRenderer(renderer);
 

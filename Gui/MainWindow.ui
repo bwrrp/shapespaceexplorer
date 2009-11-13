@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>749</width>
-    <height>482</height>
+    <width>738</width>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,22 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="Diverse::ScatterPlotViewer" name="plotViewer" native="true"/>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="Diverse::ScatterPlotViewer" name="plotViewer" native="true"/>
+      </item>
+      <item>
+       <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true">
+        <zorder>plotViewer</zorder>
+        <zorder>plotViewer</zorder>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>
+     <widget class="Diverse::MeshViewer" name="meshViewer" native="true">
+      <zorder></zorder>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -31,7 +43,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>749</width>
+     <width>738</width>
      <height>19</height>
     </rect>
    </property>
@@ -138,6 +150,12 @@
    <class>Diverse::ScatterPlotViewer</class>
    <extends>QWidget</extends>
    <header>ScatterPlotViewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Diverse::MeshViewer</class>
+   <extends>QWidget</extends>
+   <header>MeshViewer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
