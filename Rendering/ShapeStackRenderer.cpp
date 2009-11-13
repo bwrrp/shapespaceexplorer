@@ -23,22 +23,21 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeStackRenderer::ShapeStackRenderer() 
-		: NQVTK::NestedRenderer(new NQVTK::SimpleRenderer()), 
-		stack(0), compositeShader(0), meshBuffer(0)
+		: stack(0), compositeShader(0), meshBuffer(0)
 	{
+		meshRenderer = new NQVTK::SimpleRenderer();
 		// Create the mesh space scene with a dummy renderable
 		meshSpace = new NQVTK::Scene();
 		meshSpace->AddRenderable(0);
-		baseRenderer->SetScene(meshSpace);
+		meshRenderer->SetScene(meshSpace);
 		// The gradient background will mess up the G-buffer
-		NQVTK::SimpleRenderer *renderer = 
-			dynamic_cast<NQVTK::SimpleRenderer*>(baseRenderer);
-		renderer->SetDrawBackground(false);
+		meshRenderer->SetDrawBackground(false);
 	}
 
 	// ------------------------------------------------------------------------
 	ShapeStackRenderer::~ShapeStackRenderer()
 	{
+		delete meshRenderer;
 		delete compositeShader;
 		delete meshBuffer;
 		// Don't delete the ShapeMesh!
@@ -47,16 +46,10 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackRenderer::Clear()
-	{
-		Superclass::Clear();
-	}
-
-	// ------------------------------------------------------------------------
 	void ShapeStackRenderer::Draw()
 	{
 		// TODO: find out why this doesn't stick...
-		baseRenderer->SetScene(meshSpace);
+		meshRenderer->SetScene(meshSpace);
 
 		// Prepare for rendering
 		if (fboTarget) fboTarget->Bind();
@@ -70,8 +63,6 @@ namespace Diverse
 
 		UpdateLighting();
 
-		// TODO: fix the propagation mess in the NQVTK::NestedRenderer
-		//DrawCamera();
 		// TODO: add support for adding normal renderables to the scene
 		//DrawRenderables();
 
@@ -102,7 +93,7 @@ namespace Diverse
 				// Render this slice
 				int slice = order(i);
 				stack->SetupSliceMesh(slice);
-				baseRenderer->Draw();
+				meshRenderer->Draw();
 
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
@@ -196,36 +187,28 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackRenderer::SceneChanged()
-	{
-		// Overridden to prevent propagation to the baseRenderer
-		Renderer::SceneChanged();
-	}
-
-	// ------------------------------------------------------------------------
 	void ShapeStackRenderer::SetShapeStack(ShapeStack *stack)
 	{
 		this->stack = stack;
 		if (stack)
 		{
 			meshSpace->SetRenderable(0, stack->GetMesh());
-			baseRenderer->SceneChanged();
 		}
 		else
 		{
 			meshSpace->SetRenderable(0, 0);
-			baseRenderer->SceneChanged();
 		}
+		meshRenderer->SceneChanged();
 	}
 
 	// ------------------------------------------------------------------------
 	bool ShapeStackRenderer::Initialize()
 	{
-		bool ok = Superclass::Initialize();
-		if (!ok) return false;
+		if (!Superclass::Initialize()) return false;
 
-		ok = baseRenderer->TryInitialize();
-		if (!ok) return false;
+		if (!meshRenderer->TryInitialize()) return false;
+
+		bool ok;
 
 		// Set up shader for g-buffer creation
 		GLProgram *meshShader = GLProgram::New();
@@ -241,9 +224,7 @@ namespace Diverse
 			delete meshShader;
 			meshShader = 0;
 		}
-		NQVTK::SimpleRenderer *renderer = 
-			dynamic_cast<NQVTK::SimpleRenderer*>(baseRenderer);
-		renderer->SetShader(meshShader);
+		meshRenderer->SetShader(meshShader);
 
 		// Set up shader for contour detection and compositing
 		delete compositeShader;
@@ -281,8 +262,8 @@ namespace Diverse
 			delete meshBuffer;
 			meshBuffer = 0;
 		}
-		renderer->SetTarget(meshBuffer);
-		renderer->SetViewport(0, 0, 1024, 1024);
+		meshRenderer->SetTarget(meshBuffer);
+		meshRenderer->SetViewport(0, 0, 1024, 1024);
 		tm->AddTexture("meshBuffer", 
 			meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0), false);
 
