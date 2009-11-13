@@ -118,9 +118,11 @@ namespace Diverse
 		if (fboTarget) fboTarget->Unbind();
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-		// TODO: Render the mesh
+		// Render the mesh
+		glEnable(GL_DEPTH_TEST);
 		if (mesh) mesh->SetShape(point);
 		meshRenderer->Draw();
+		glDisable(GL_DEPTH_TEST);
 
 		// Restore state and matrices
 		glPopAttrib();
