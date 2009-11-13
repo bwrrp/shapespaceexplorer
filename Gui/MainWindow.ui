@@ -6,35 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>738</width>
-    <height>558</height>
+    <width>666</width>
+    <height>736</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Diverse</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="margin">
      <number>0</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="Diverse::ScatterPlotViewer" name="plotViewer" native="true"/>
       </item>
       <item>
-       <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true">
-        <zorder>plotViewer</zorder>
-        <zorder>plotViewer</zorder>
-       </widget>
+       <widget class="Diverse::MeshViewer" name="meshViewer" native="true"/>
       </item>
      </layout>
     </item>
     <item>
-     <widget class="Diverse::MeshViewer" name="meshViewer" native="true">
-      <zorder></zorder>
-     </widget>
+     <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>
     </item>
    </layout>
   </widget>
@@ -43,7 +38,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>738</width>
+     <width>666</width>
      <height>19</height>
     </rect>
    </property>

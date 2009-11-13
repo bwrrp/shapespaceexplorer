@@ -23,6 +23,7 @@ namespace Diverse
 
 	public slots:
 		void SetVector(itpp::vec vector);
+		void SyncMeshCamera(NQVTK::Camera *cam);
 
 	protected:
 		ShapeModel *model;

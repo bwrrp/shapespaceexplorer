@@ -34,6 +34,11 @@ namespace Diverse
 
 		connect(ui.plotViewer, SIGNAL(XAxisChanged(itpp::vec)), 
 			ui.stackViewer, SLOT(SetVector(itpp::vec)));
+
+		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
+			ui.plotViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
+		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
+			ui.stackViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
 	}
 
 	// ------------------------------------------------------------------------

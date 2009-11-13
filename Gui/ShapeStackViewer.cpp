@@ -10,9 +10,9 @@
 #include "Rendering/ShapeStackRenderer.h"
 #include "Rendering/PopulationProjectionStack.h"
 
-#include <NQVTK/Interactors/ArcballCameraInteractor.h>
+#include <NQVTK/Interactors/OrbitCameraInteractor.h>
 
-#include <NQVTK/Rendering/ArcballCamera.h>
+#include <NQVTK/Rendering/OrbitCamera.h>
 #include <NQVTK/Rendering/Scene.h>
 
 #include <cassert>
@@ -32,9 +32,9 @@ namespace Diverse
 		scene->AddRenderable(0);
 
 		// Create camera and interactor
-		NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
+		NQVTK::OrbitCamera *camera = new NQVTK::OrbitCamera();
 		renderer->SetCamera(camera);
-		SetInteractor(new NQVTK::ArcballCameraInteractor(camera));
+		SetInteractor(new NQVTK::OrbitCameraInteractor(camera));
 	}
 
 	// ------------------------------------------------------------------------
@@ -79,6 +79,23 @@ namespace Diverse
 		if (stack)
 		{
 			stack->SetVector(vector);
+			updateGL();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeStackViewer::SyncMeshCamera(NQVTK::Camera *cam)
+	{
+		ShapeStackRenderer *renderer = 
+			dynamic_cast<ShapeStackRenderer*>(GetRenderer());
+		if (!renderer) return;
+
+		NQVTK::Camera *meshCam = renderer->GetMeshCamera();
+		if (meshCam)
+		{
+			meshCam->position = cam->position;
+			meshCam->focus = cam->focus;
+			meshCam->up = cam->up;
 			updateGL();
 		}
 	}

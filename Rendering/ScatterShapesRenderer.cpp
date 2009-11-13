@@ -44,6 +44,13 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	NQVTK::Camera *ScatterShapesRenderer::GetMeshCamera()
+	{
+		if (!meshRenderer) return 0;
+		return meshRenderer->GetCamera();
+	}
+
+	// ------------------------------------------------------------------------
 	bool ScatterShapesRenderer::Initialize()
 	{
 		if (!Superclass::Initialize()) return false;
@@ -131,16 +138,16 @@ namespace Diverse
 		// Draw a quad showing the mesh
 		NQVTK::Vector3 pos = ProjectPoint(point);
 		glBegin(GL_QUADS);
-		glTexCoord2d(0.0, 1.0);
+		glTexCoord2d(0.0, 0.0);
 		glVertex3dv(PosToViewport((pos + 
 			NQVTK::Vector3(-1.0, 1.0, 0.0)) * zoom).V);
-		glTexCoord2d(1.0, 1.0);
-		glVertex3dv(PosToViewport((pos + 
-			NQVTK::Vector3(1.0, 1.0, 0.0)) * zoom).V);
 		glTexCoord2d(1.0, 0.0);
 		glVertex3dv(PosToViewport((pos + 
+			NQVTK::Vector3(1.0, 1.0, 0.0)) * zoom).V);
+		glTexCoord2d(1.0, 1.0);
+		glVertex3dv(PosToViewport((pos + 
 			NQVTK::Vector3(1.0, -1.0, 0.0)) * zoom).V);
-		glTexCoord2d(0.0, 0.0);
+		glTexCoord2d(0.0, 1.0);
 		glVertex3dv(PosToViewport((pos + 
 			NQVTK::Vector3(-1.0, -1.0, 0.0)) * zoom).V);
 		glEnd();

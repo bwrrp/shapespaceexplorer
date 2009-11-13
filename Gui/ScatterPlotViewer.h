@@ -21,6 +21,9 @@ namespace Diverse
 	signals:
 		void XAxisChanged(itpp::vec axis);
 
+	public slots:
+		void SyncMeshCamera(NQVTK::Camera *cam);
+
 	protected:
 		ShapeModel *model;
 

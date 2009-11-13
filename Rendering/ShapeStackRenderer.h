@@ -27,6 +27,8 @@ namespace Diverse
 
 		void SetShapeStack(ShapeStack *stack);
 
+		NQVTK::Camera *GetMeshCamera();
+
 	protected:
 		virtual bool Initialize();
 

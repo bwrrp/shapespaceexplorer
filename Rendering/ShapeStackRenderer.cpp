@@ -123,14 +123,14 @@ namespace Diverse
 				// Draw the slice
 				double offset = stack->GetSliceOffset(slice);
 				glBegin(GL_QUADS);
-				glTexCoord2d(0.0, 1.0);
-				glVertex3d(-10.0, -10.0, offset);
 				glTexCoord2d(1.0, 1.0);
-				glVertex3d(10.0, -10.0, offset);
-				glTexCoord2d(1.0, 0.0);
+				glVertex3d(-10.0, 10.0, offset);
+				glTexCoord2d(0.0, 1.0);
 				glVertex3d(10.0, 10.0, offset);
 				glTexCoord2d(0.0, 0.0);
-				glVertex3d(-10.0, 10.0, offset);
+				glVertex3d(10.0, -10.0, offset);
+				glTexCoord2d(1.0, 0.0);
+				glVertex3d(-10.0, -10.0, offset);
 				glEnd();
 
 				compositeShader->Stop();
@@ -199,6 +199,13 @@ namespace Diverse
 			meshSpace->SetRenderable(0, 0);
 		}
 		meshRenderer->SceneChanged();
+	}
+
+	// ------------------------------------------------------------------------
+	NQVTK::Camera *ShapeStackRenderer::GetMeshCamera()
+	{
+		if (!meshRenderer) return 0;
+		return meshRenderer->GetCamera();
 	}
 
 	// ------------------------------------------------------------------------
