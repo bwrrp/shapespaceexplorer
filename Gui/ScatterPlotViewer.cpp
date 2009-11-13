@@ -9,6 +9,8 @@
 
 #include "ScatterPlotInteractor.h"
 
+#include <NQVTK/Rendering/Camera.h>
+
 #include <cassert>
 
 namespace Diverse
@@ -58,6 +60,23 @@ namespace Diverse
 			ScatterShapesRenderer *shapesRenderer = 
 				dynamic_cast<ScatterShapesRenderer*>(renderer);
 			if (shapesRenderer) shapesRenderer->SetMesh(0);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::SyncMeshCamera(NQVTK::Camera *cam)
+	{
+		ScatterShapesRenderer *renderer = 
+			dynamic_cast<ScatterShapesRenderer*>(GetRenderer());
+		if (!renderer) return;
+
+		NQVTK::Camera *meshCam = renderer->GetMeshCamera();
+		if (meshCam)
+		{
+			meshCam->position = cam->position;
+			meshCam->focus = cam->focus;
+			meshCam->up = cam->up;
+			updateGL();
 		}
 	}
 

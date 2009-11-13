@@ -25,6 +25,8 @@ namespace Diverse
 
 		void SetMesh(ShapeMesh *mesh);
 
+		NQVTK::Camera *GetMeshCamera();
+
 	protected:
 		virtual bool Initialize();
 
