@@ -22,6 +22,7 @@ namespace Diverse
 		meshSpace = new NQVTK::Scene();
 		meshSpace->AddRenderable(0);
 		meshRenderer->SetScene(meshSpace);
+		meshRenderer->SetDrawBackground(false);
 	}
 
 	// ------------------------------------------------------------------------

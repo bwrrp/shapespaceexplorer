@@ -1,27 +1,29 @@
 #pragma once
 
-#include <NQVTK/Rendering/NestedRenderer.h>
+#include <NQVTK/Rendering/Renderer.h>
 
 class GLProgram;
 class GLFramebuffer;
+
+namespace NQVTK
+{
+	class Scene;
+	class SimpleRenderer;
+}
 
 namespace Diverse
 {
 	class ShapeStack;
 
-	class ShapeStackRenderer : public NQVTK::NestedRenderer
+	class ShapeStackRenderer : public NQVTK::Renderer
 	{
 	public:
-		typedef NQVTK::NestedRenderer Superclass;
+		typedef NQVTK::Renderer Superclass;
 
 		ShapeStackRenderer();
 		~ShapeStackRenderer();
 
-		virtual void Clear();
-
 		virtual void Draw();
-
-		virtual void SceneChanged();
 
 		void SetShapeStack(ShapeStack *stack);
 
@@ -29,10 +31,11 @@ namespace Diverse
 		virtual bool Initialize();
 
 		ShapeStack *stack;
-		NQVTK::Scene *meshSpace;
 
 		GLProgram *compositeShader;
 
 		GLFramebuffer *meshBuffer;
+		NQVTK::SimpleRenderer *meshRenderer;
+		NQVTK::Scene *meshSpace;
 	};
 }
