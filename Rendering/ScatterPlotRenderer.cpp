@@ -139,6 +139,8 @@ namespace Diverse
 		this->population = population;
 		// Re-evaluate the number of axes
 		SetNumberOfAxes(widgets.size() - 1);
+		// Update picking info
+		UpdatePickInfo();
 	}
 
 	// ------------------------------------------------------------------------
