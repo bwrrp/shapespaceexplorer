@@ -6,6 +6,12 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
+	void ScatterPlotMessenger::EmitCursorPosChanged(int x, int y)
+	{
+		emit CursorPosChanged(x, y);
+	}
+
+	// ------------------------------------------------------------------------
 	void ScatterPlotMessenger::EmitProjectionChanged()
 	{
 		emit ProjectionChanged();
@@ -44,6 +50,8 @@ namespace Diverse
 				activeWidget->state = PointWidget::Drag;
 				update = true;
 				messenger->EmitProjectionChanged();
+				// Recompute the picking structure
+				renderer->UpdatePickInfo();
 			}
 		}
 		else if (event.buttons & NQVTK::MouseEvent::RightButton)
@@ -78,6 +86,7 @@ namespace Diverse
 		}
 		lastX = event.x;
 		lastY = event.y;
+		messenger->EmitCursorPosChanged(event.x, event.y);
 		return update;
 	}
 

@@ -14,9 +14,11 @@ namespace Diverse
 		Q_OBJECT;
 
 	public:
+		void EmitCursorPosChanged(int x, int y);
 		void EmitProjectionChanged();
 
 	signals:
+		void CursorPosChanged(int x, int y);
 		void ProjectionChanged();
 	};
 

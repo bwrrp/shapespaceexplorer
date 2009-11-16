@@ -52,4 +52,11 @@ namespace Diverse
 		}
 		GetRenderer()->SceneChanged();
 	}
+
+	// ------------------------------------------------------------------------
+	void MeshViewer::SetShape(itpp::vec shape)
+	{
+		// TODO
+		qDebug("TODO");
+	}
 }

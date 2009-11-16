@@ -5,6 +5,7 @@
 #include "ScatterPlotRenderer.h"
 
 #include "Data/Population.h"
+#include "Data/PickInfo.h"
 
 #include <cassert>
 #include <cmath>
@@ -22,6 +23,8 @@ namespace Diverse
 		// Start with four axes
 		SetNumberOfAxes(5);
 
+		pickInfo = new PickInfo();
+
 		// Use some useful initial positions
 		// TODO: should be handled by SetNumberOfAxes
 		for (unsigned int i = 0; i < widgets.size() - 1; ++i)
@@ -36,6 +39,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	ScatterPlotRenderer::~ScatterPlotRenderer()
 	{
+		delete pickInfo;
 	}
 
 	// ------------------------------------------------------------------------
@@ -188,6 +192,53 @@ namespace Diverse
 			}
 		}
 		return 0;
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotRenderer::UpdatePickInfo()
+	{
+		if (!population) return;
+
+		std::vector<NQVTK::Vector3> points;
+		int numPoints = population->GetNumberOfIndividuals();
+		for (int i = 0; i < numPoints; ++i)
+		{
+			points.push_back(ProjectPoint(population->GetIndividual(i)));
+		}
+		pickInfo->UpdateInfo(points);
+	}
+
+	// ------------------------------------------------------------------------
+	itpp::vec ScatterPlotRenderer::PickShape(int x, int y)
+	{
+		// Should only be called when there is a population
+		assert(population);
+
+		NQVTK::Vector3 pos = ViewportToPos(x, y);
+		pos = pos / zoom;
+
+		// Find cell containing point
+		int id1, id2, id3;
+		double u, v;
+		bool inHull = pickInfo->Pick(pos, id1, id2, id3, u, v);
+
+		// Interpolate shape vectors
+		itpp::vec result(population->GetShapeSpaceDimension());
+		result.zeros();
+		if (inHull)
+		{
+			double w = 1.0 - u - v;
+			itpp::vec a = population->GetIndividual(id1);
+			itpp::vec b = population->GetIndividual(id2);
+			itpp::vec c = population->GetIndividual(id3);
+			result = w * a + u * b + v * c;
+		}
+		else
+		{
+			// TODO: perform extrapolation when pointing outside the hull
+		}
+
+		return result;
 	}
 
 	// ------------------------------------------------------------------------
