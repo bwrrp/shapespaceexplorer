@@ -1,8 +1,12 @@
 varying vec3 normal;
 
+varying float deformation;
+
 void main()
 {
 	vec3 color = vec3(1.0, 1.0, 0.5);
+	vec3 defcol = deformation < 0.0 ? vec3(0.5, 0.5, 1.0) : vec3(1.0, 0.5, 0.5);
+	color = mix(color, defcol, min(1.0, abs(deformation) / 10.0));
 	float alpha = 1.0;
 	color *= 0.5 + 0.5 * max(dot(normalize(normal), normalize(gl_LightSource[0].position)), 0.0);
 	gl_FragColor = vec4(color * alpha, alpha);
