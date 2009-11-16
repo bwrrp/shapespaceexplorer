@@ -231,7 +231,7 @@ namespace Diverse
 			itpp::vec a = population->GetIndividual(id1);
 			itpp::vec b = population->GetIndividual(id2);
 			itpp::vec c = population->GetIndividual(id3);
-			result = w * a + u * b + v * c;
+			result = w * a + v * b + u * c;
 		}
 		else
 		{

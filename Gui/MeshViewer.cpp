@@ -6,10 +6,13 @@
 #include "Data/ShapeMesh.h"
 #include "Data/ShapeModel.h"
 
+#include "Rendering/MeshRenderer.h"
+
 #include <NQVTK/Rendering/Scene.h>
-#include <NQVTK/Rendering/SimpleRenderer.h>
 #include <NQVTK/Rendering/ArcballCamera.h>
 #include <NQVTK/Interactors/ArcballCameraInteractor.h>
+
+#include <cassert>
 
 namespace Diverse
 {
@@ -17,7 +20,7 @@ namespace Diverse
 	MeshViewer::MeshViewer(QWidget *parent) : NQVTKWidget(parent), model(0)
 	{
 		// Initialize renderer
-		NQVTK::SimpleRenderer *renderer = new NQVTK::SimpleRenderer();
+		MeshRenderer *renderer = new MeshRenderer();
 		SetRenderer(renderer);
 
 		// Create a scene with dummy renderable
@@ -41,14 +44,19 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MeshViewer::SetShapeModel(ShapeModel *model)
 	{
+		MeshRenderer *renderer = dynamic_cast<MeshRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
 		this->model = model;
 		if (model)
 		{
 			scene->SetRenderable(0, model->GetMesh());
+			renderer->SetMesh(model->GetMesh());
 		}
 		else
 		{
 			scene->SetRenderable(0, 0);
+			renderer->SetMesh(0);
 		}
 		GetRenderer()->SceneChanged();
 	}
@@ -56,7 +64,13 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MeshViewer::SetShape(itpp::vec shape)
 	{
-		// TODO
-		qDebug("TODO");
+		if (!model) return;
+		if (!model->GetMesh()) return;
+
+		MeshRenderer *renderer = dynamic_cast<MeshRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		renderer->SetShape(shape);
+		updateGL();
 	}
 }

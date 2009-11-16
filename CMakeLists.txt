@@ -128,6 +128,7 @@ SET( ${ProjectName}_Rendering_Classes
 	PopulationProjectionStack
 	ScatterPlotRenderer
 	ScatterShapesRenderer
+	MeshRenderer
 )
 
 # --------------------------------------------------
