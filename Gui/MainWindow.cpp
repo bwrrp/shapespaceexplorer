@@ -146,7 +146,9 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionReloadShaders_triggered()
 	{
+		ui.plotViewer->Initialize();
 		ui.stackViewer->Initialize();
+		ui.meshViewer->Initialize();
 		RedrawViewers();
 	}
 

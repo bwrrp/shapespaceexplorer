@@ -2,6 +2,8 @@ attribute vec3 shape;
 
 varying vec3 normal;
 
+varying float deformation;
+
 void main()
 {
 	vec4 vertex = gl_Vertex;
@@ -9,4 +11,6 @@ void main()
 	gl_Position = gl_ModelViewProjectionMatrix * vertex;
 	// TODO: normals are invalid after deformation, use image-based shading instead
 	normal = gl_NormalMatrix * gl_Normal;
+	deformation = length(shape);
+	if (dot(shape, gl_Normal) < 0) deformation *= -1.0;
 }
