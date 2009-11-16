@@ -118,6 +118,7 @@ SET( ${ProjectName}_Data_Classes
 	ShapeMesh
 	ShapeModel
 	Utility
+	PickInfo
 )
 
 SET( ${ProjectName}_Rendering_Classes

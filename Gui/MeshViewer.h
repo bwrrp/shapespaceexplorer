@@ -2,6 +2,8 @@
 
 #include <NQVTKGui/Viewports/NQVTKWidget.h>
 
+#include <itpp/itbase.h>
+
 namespace NQVTK { class Scene; }
 
 namespace Diverse
@@ -17,6 +19,9 @@ namespace Diverse
 		virtual ~MeshViewer();
 
 		void SetShapeModel(ShapeModel *model);
+
+	public slots:
+		void SetShape(itpp::vec shape);
 
 	protected:
 		ShapeModel *model;

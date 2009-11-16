@@ -20,6 +20,7 @@ namespace Diverse
 		} state;
 	};
 
+	class PickInfo;
 	class Population;
 
 	class ScatterPlotRenderer : public NQVTK::Renderer
@@ -42,6 +43,9 @@ namespace Diverse
 
 		PointWidget *WidgetAtPoint(int x, int y);
 
+		void UpdatePickInfo();
+		itpp::vec PickShape(int x, int y);
+
 		itpp::vec GetProjectionXAxis();
 
 		double zoom;
@@ -51,6 +55,8 @@ namespace Diverse
 		virtual void DrawPoint(const itpp::vec &point);
 
 		NQVTK::Vector3 ProjectPoint(const itpp::vec &point);
+
+		PickInfo *pickInfo;
 
 		Population *population;
 

@@ -19,6 +19,7 @@ namespace Diverse
 		void SetShapeModel(ShapeModel *model);
 
 	signals:
+		void PointSelected(itpp::vec shape);
 		void XAxisChanged(itpp::vec axis);
 
 	public slots:
@@ -28,6 +29,7 @@ namespace Diverse
 		ShapeModel *model;
 
 	private slots:
+		void OnCursorPosChanged(int x, int y);
 		void OnProjectionChanged();
 	};
 }

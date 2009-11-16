@@ -25,6 +25,8 @@ namespace Diverse
 		ScatterPlotInteractor *interactor = 
 			new ScatterPlotInteractor(renderer);
 		SetInteractor(interactor);
+		connect(interactor->GetMessenger(), SIGNAL(CursorPosChanged(int, int)), 
+			this, SLOT(OnCursorPosChanged(int, int)));
 		connect(interactor->GetMessenger(), SIGNAL(ProjectionChanged()), 
 			this, SLOT(OnProjectionChanged()));
 	}
@@ -77,6 +79,22 @@ namespace Diverse
 			meshCam->focus = cam->focus;
 			meshCam->up = cam->up;
 			updateGL();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::OnCursorPosChanged(int x, int y)
+	{
+		if (!model) return;
+
+		// Ignore changes if no population has been loaded
+		if (model->GetPopulation() != 0)
+		{
+			ScatterPlotRenderer *renderer = 
+				dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+			assert(renderer != 0);
+
+			emit PointSelected(renderer->PickShape(x, y));
 		}
 	}
 
