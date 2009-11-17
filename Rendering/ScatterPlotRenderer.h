@@ -68,5 +68,6 @@ namespace Diverse
 		double widgetRadius;
 		double widgetScale;
 		NQVTK::Vector3 widgetOrigin;
+		int lastWidget;
 	};
 }

@@ -37,6 +37,8 @@ namespace Diverse
 			widgets[i + 1].pos.x = std::cos(t);
 			widgets[i + 1].pos.y = std::sin(t);
 		}
+
+		lastWidget = 0;
 	}
 
 	// ------------------------------------------------------------------------
@@ -172,6 +174,7 @@ namespace Diverse
 			PointWidget widgetTemplate = {};
 			widgets.resize(num + 1, widgetTemplate);
 		}
+		lastWidget = 0;
 	}
 
 	// ------------------------------------------------------------------------
@@ -198,6 +201,7 @@ namespace Diverse
 			NQVTK::Vector3 wp = PosToViewport(widgets[i].pos);
 			if ((wp - cp).length() <= widgetRadius)
 			{
+				lastWidget = i;
 				return &widgets[i];
 			}
 		}
@@ -304,9 +308,37 @@ namespace Diverse
 		if (!population) return;
 
 		int numPoints = population->GetNumberOfIndividuals();
+
+		// Determine drawing order
+		itpp::vec axis(population->GetShapeSpaceDimension());
+		axis.zeros();
+		if (lastWidget > 0)
+		{
+			// Sort by the last widget picked
+			axis(lastWidget - 1) = 1.0;
+		}
+		else
+		{
+			// If the origin is dragged, sort by the combination of all vectors
+			// TODO: take weights into account here?
+			int numAxes = widgets.size() - 1;
+			if (numAxes == 0) axis(0) = 1.0;
+			double v = -sqrt(1.0 / static_cast<double>(numAxes));
+			for (int i = 0; i < numAxes; ++i)
+			{
+				axis(i) = v;
+			}
+		}
+		itpp::vec projections(numPoints);
 		for (int i = 0; i < numPoints; ++i)
 		{
-			DrawPoint(population->GetIndividual(i));
+			projections(i) = itpp::dot(axis, population->GetIndividual(i));
+		}
+		itpp::ivec order = itpp::sort_index(projections);
+
+		for (int i = 0; i < numPoints; ++i)
+		{
+			DrawPoint(population->GetIndividual(order(i)));
 		}
 	}
 
