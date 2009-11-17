@@ -50,8 +50,6 @@ namespace Diverse
 				activeWidget->state = PointWidget::Drag;
 				update = true;
 				messenger->EmitProjectionChanged();
-				// Recompute the picking structure
-				renderer->UpdatePickInfo();
 			}
 		}
 		else if (event.buttons & NQVTK::MouseEvent::RightButton)

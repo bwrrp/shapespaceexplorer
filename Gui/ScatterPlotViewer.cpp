@@ -94,6 +94,7 @@ namespace Diverse
 				dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
 			assert(renderer != 0);
 
+			makeCurrent();
 			emit PointSelected(renderer->PickShape(x, y));
 		}
 	}
@@ -109,6 +110,10 @@ namespace Diverse
 			ScatterPlotRenderer *renderer = 
 				dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
 			assert(renderer != 0);
+
+			// Recompute the picking structure
+			makeCurrent();
+			renderer->UpdatePickInfo();
 
 			emit XAxisChanged(renderer->GetProjectionXAxis());
 		}

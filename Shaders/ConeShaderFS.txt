@@ -1,0 +1,11 @@
+uniform vec2 point;
+uniform float size;
+uniform bool test;
+
+void main()
+{
+	vec2 pos = gl_TexCoord[0].xy;
+	float depth = length(point - pos) / size;
+	gl_FragDepth = depth;
+	gl_FragColor = vec4(vec3(depth), 1.0);
+}

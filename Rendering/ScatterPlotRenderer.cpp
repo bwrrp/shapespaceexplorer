@@ -7,6 +7,8 @@
 #include "Data/Population.h"
 #include "Data/PickInfo.h"
 
+#include "GPUVoronoi.h"
+
 #include <cassert>
 #include <cmath>
 
@@ -23,7 +25,8 @@ namespace Diverse
 		// Start with four axes
 		SetNumberOfAxes(5);
 
-		pickInfo = new PickInfo();
+		//pickInfo = new PickInfo();
+		voronoi = new GPUVoronoi();
 
 		// Use some useful initial positions
 		// TODO: should be handled by SetNumberOfAxes
@@ -39,7 +42,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	ScatterPlotRenderer::~ScatterPlotRenderer()
 	{
-		delete pickInfo;
+		//delete pickInfo;
+		delete voronoi;
 	}
 
 	// ------------------------------------------------------------------------
@@ -56,6 +60,10 @@ namespace Diverse
 			0.0);
 		widgetScale = std::min(static_cast<double>(viewportWidth), 
 			static_cast<double>(viewportHeight)) * 0.3;
+
+		// Update the Voronoi buffer
+		voronoi->Resize(w, h);
+		UpdatePickInfo();
 	}
 
 	// ------------------------------------------------------------------------
@@ -205,9 +213,12 @@ namespace Diverse
 		int numPoints = population->GetNumberOfIndividuals();
 		for (int i = 0; i < numPoints; ++i)
 		{
-			points.push_back(ProjectPoint(population->GetIndividual(i)));
+			//points.push_back(ProjectPoint(population->GetIndividual(i)));
+			points.push_back(PosToViewport(zoom * 
+				ProjectPoint(population->GetIndividual(i))));
 		}
-		pickInfo->UpdateInfo(points);
+		//pickInfo->UpdateInfo(points);
+		voronoi->UpdateVoronoi(points);
 	}
 
 	// ------------------------------------------------------------------------
@@ -216,6 +227,21 @@ namespace Diverse
 		// Should only be called when there is a population
 		assert(population);
 
+		NQVTK::Vector3 pos(static_cast<double>(x), 
+			static_cast<double>(y), 0.0);
+
+		// Get weights
+		std::vector<double> weights = voronoi->QueryPoint(pos);
+
+		// Interpolate shape vectors
+		itpp::vec result(population->GetShapeSpaceDimension());
+		result.zeros();
+		for (unsigned int i = 0; i < weights.size(); ++i)
+		{
+			result += weights[i] * population->GetIndividual(i);
+		}
+
+		/*
 		NQVTK::Vector3 pos = ViewportToPos(x, y);
 		pos = pos / zoom;
 
@@ -239,6 +265,7 @@ namespace Diverse
 		{
 			// TODO: perform extrapolation when pointing outside the hull
 		}
+		*/
 
 		return result;
 	}
@@ -261,6 +288,14 @@ namespace Diverse
 
 		// TODO: Transform vector back to original space
 		return result;
+	}
+
+	// ------------------------------------------------------------------------
+	bool ScatterPlotRenderer::Initialize()
+	{
+		if (!Superclass::Initialize()) return false;
+
+		return voronoi->Initialize();
 	}
 
 	// ------------------------------------------------------------------------

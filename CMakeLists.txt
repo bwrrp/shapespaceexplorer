@@ -129,6 +129,7 @@ SET( ${ProjectName}_Rendering_Classes
 	ScatterPlotRenderer
 	ScatterShapesRenderer
 	MeshRenderer
+	GPUVoronoi
 )
 
 # --------------------------------------------------
