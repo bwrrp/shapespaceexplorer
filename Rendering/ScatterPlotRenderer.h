@@ -20,6 +20,7 @@ namespace Diverse
 		} state;
 	};
 
+	class GPUVoronoi;
 	class PickInfo;
 	class Population;
 
@@ -51,12 +52,15 @@ namespace Diverse
 		double zoom;
 
 	protected:
+		virtual bool Initialize();
+
 		virtual void DrawPoints();
 		virtual void DrawPoint(const itpp::vec &point);
 
 		NQVTK::Vector3 ProjectPoint(const itpp::vec &point);
 
 		PickInfo *pickInfo;
+		GPUVoronoi *voronoi;
 
 		Population *population;
 
