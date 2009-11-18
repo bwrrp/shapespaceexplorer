@@ -71,6 +71,8 @@ IF( WIN32 )
 		-D_CRT_NONSTDC_NO_DEPRECATE
 	)
 ENDIF( WIN32 )
+# This seems to fix some linker issues
+ADD_DEFINITIONS( -DHAVE_BLAS )
 
 # The complete set of libraries required by the project
 SET( ${ProjectName}_Libraries

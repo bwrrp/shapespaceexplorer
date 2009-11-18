@@ -121,15 +121,44 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void Population::DoPCA()
 	{
-		// TODO: optimize PCA if # individuals < # shape space dimensions
-		// - Build orthonormal basis from individuals 
-		//   (normalize, make independent of earlier vectors)
-		// - Compute PCA on this basis
-		// - Project eigenvectors back to the original shape space
+		itpp::mat pop;
+		itpp::mat basis;
+		// Optimize PCA if # individuals < # shape space dimensions
+		int numIndividuals = GetNumberOfIndividuals();
+		int numDimensions = GetShapeSpaceDimension();
+		if (numIndividuals < numDimensions)
+		{
+			qDebug("Reducing dimensionality prior to PCA");
+
+			// Build orthonormal basis from individuals
+			basis.set_size(numDimensions, numIndividuals);
+			for (int i = 0; i < numIndividuals; ++i)
+			{
+				itpp::vec indiv = GetIndividual(i);
+				// Make orthogonal to earlier vectors
+				for (int j = 0; j < i; ++j)
+				{
+					itpp::vec basisVec = basis.get_col(j);
+					indiv -= itpp::dot(indiv, basisVec) * basisVec;
+				}
+				// Normalize vector
+				indiv /= sqrt(itpp::dot(indiv, indiv));
+				// Add to basis
+				basis.set_col(i, indiv);
+			}
+
+			// Transform population to the new basis
+			pop = population * basis;
+		}
+		else
+		{
+			// Perform PCA on the original population vectors
+			pop = population;
+		}
 
 		qDebug("Computing covariance...");
 
-		itpp::mat covariance = itpp::cov(population);
+		itpp::mat covariance = itpp::cov(pop);
 
 		qDebug("Computing eigenvectors...");
 
@@ -137,6 +166,12 @@ namespace Diverse
 		itpp::mat eigVecs;
 
 		itpp::eig_sym(covariance, eigVals, eigVecs);
+
+		if (numIndividuals < numDimensions)
+		{
+			// Project eigenvectors back to the original shape space
+			eigVecs = basis * eigVecs;
+		}
 
 		qDebug("Computing components...");
 
