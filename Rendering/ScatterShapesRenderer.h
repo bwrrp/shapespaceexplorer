@@ -5,15 +5,12 @@
 class GLProgram;
 class GLFramebuffer;
 
-namespace NQVTK
-{
-	class Scene;
-	class SimpleRenderer;
-}
+namespace NQVTK { class Scene; }
 
 namespace Diverse
 {
 	class ShapeMesh;
+	class MeshRenderer;
 
 	class ScatterShapesRenderer : public ScatterPlotRenderer
 	{
@@ -35,7 +32,7 @@ namespace Diverse
 		ShapeMesh *mesh;
 
 		GLFramebuffer *meshBuffer;
-		NQVTK::SimpleRenderer *meshRenderer;
+		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
 	};
 }
