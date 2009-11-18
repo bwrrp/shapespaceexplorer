@@ -5,15 +5,12 @@
 class GLProgram;
 class GLFramebuffer;
 
-namespace NQVTK
-{
-	class Scene;
-	class SimpleRenderer;
-}
+namespace NQVTK { class Scene; }
 
 namespace Diverse
 {
 	class ShapeStack;
+	class MeshRenderer;
 
 	class ShapeStackRenderer : public NQVTK::Renderer
 	{
@@ -37,7 +34,7 @@ namespace Diverse
 		GLProgram *compositeShader;
 
 		GLFramebuffer *meshBuffer;
-		NQVTK::SimpleRenderer *meshRenderer;
+		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
 	};
 }

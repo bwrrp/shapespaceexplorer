@@ -8,12 +8,12 @@
 #include "Data/Utility.h"
 
 #include "Rendering/ShapeStack.h"
+#include "Rendering/MeshRenderer.h"
 
 #include <itpp/itbase.h>
 
 #include <NQVTK/Rendering/Camera.h>
 #include <NQVTK/Rendering/Scene.h>
-#include <NQVTK/Rendering/SimpleRenderer.h>
 
 #include <GLBlaat/GLFramebuffer.h>
 #include <GLBlaat/GLProgram.h>
@@ -25,7 +25,7 @@ namespace Diverse
 	ShapeStackRenderer::ShapeStackRenderer() 
 		: stack(0), compositeShader(0), meshBuffer(0)
 	{
-		meshRenderer = new NQVTK::SimpleRenderer();
+		meshRenderer = new MeshRenderer();
 		// Create the mesh space scene with a dummy renderable
 		meshSpace = new NQVTK::Scene();
 		meshSpace->AddRenderable(0);
@@ -162,28 +162,6 @@ namespace Diverse
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		if (fboTarget) fboTarget->Unbind();
-
-		// Old code: some testing
-		/*
-		static int irk = 0;
-		if (mesh != 0 && pop != 0)
-		{
-			//mesh->SetShape(pop->GetIndividual(irk));
-			//irk = (irk + 1) % pop->GetNumberOfIndividuals();
-			if (pop->GetNumberOfPrincipalComponents() > 0)
-			{
-				// Animate through the principal components
-				QTime now = QTime::currentTime();
-				int time = now.msec() + now.second() * 1000 + 
-					now.minute() * 60000 + now.hour() * 3600000;
-				irk = (time / 5000) % 
-					pop->GetNumberOfPrincipalComponents();
-				double delta = static_cast<double>(time % 5000) / 
-					5000.0 * 6.0 - 3.0;
-				mesh->SetShape(delta * pop->GetPrincipalComponent(irk));
-			}
-		}
-		*/
 	}
 
 	// ------------------------------------------------------------------------
@@ -217,23 +195,7 @@ namespace Diverse
 
 		bool ok;
 
-		// Set up shader for g-buffer creation
-		GLProgram *meshShader = GLProgram::New();
-		ok = meshShader != 0;
-		if (ok) ok = meshShader->AddVertexShader(
-			Utility::LoadShader("MeshShaderVS.txt"));
-		if (ok) ok = meshShader->AddFragmentShader(
-			Utility::LoadShader("MeshShaderFS.txt"));
-		if (ok) ok = meshShader->Link();
-		if (!ok)
-		{
-			std::cerr << "Error creating mesh shader" << std::endl;
-			delete meshShader;
-			meshShader = 0;
-		}
-		meshRenderer->SetShader(meshShader);
-
-		// Set up shader for contour detection and compositing
+		// Set up shader for compositing
 		delete compositeShader;
 		compositeShader = GLProgram::New();
 		ok = compositeShader != 0;
@@ -274,8 +236,7 @@ namespace Diverse
 		tm->AddTexture("meshBuffer", 
 			meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0), false);
 
-		return meshShader != 0 && 
-			compositeShader != 0 &&
+		return compositeShader != 0 &&
 			meshBuffer != 0;
 	}
 }

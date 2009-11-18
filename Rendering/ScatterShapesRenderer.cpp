@@ -6,8 +6,9 @@
 
 #include "Data/Utility.h"
 
+#include "MeshRenderer.h"
+
 #include <NQVTK/Rendering/Scene.h>
-#include <NQVTK/Rendering/SimpleRenderer.h>
 
 #include <GLBlaat/GLFramebuffer.h>
 #include <GLBlaat/GLProgram.h>
@@ -18,7 +19,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	ScatterShapesRenderer::ScatterShapesRenderer() : mesh(0), meshBuffer(0)
 	{
-		meshRenderer = new NQVTK::SimpleRenderer();
+		meshRenderer = new MeshRenderer();
 		meshSpace = new NQVTK::Scene();
 		meshSpace->AddRenderable(0);
 		meshRenderer->SetScene(meshSpace);
@@ -57,29 +58,10 @@ namespace Diverse
 
 		if (!meshRenderer->TryInitialize()) return false;
 
-		bool ok;
-
-		// Initialize mesh shader
-		GLProgram *meshShader = GLProgram::New();
-		ok = meshShader != 0;
-		if (ok) ok = meshShader->AddVertexShader(
-			Utility::LoadShader("MeshShaderVS.txt"));
-		if (ok) ok = meshShader->AddFragmentShader(
-			Utility::LoadShader("MeshShaderFS.txt"));
-		if (ok) ok = meshShader->Link();
-		if (!ok)
-		{
-			std::cerr << "Error creating mesh shader" << std::endl;
-			delete meshShader;
-			meshShader = 0;
-		}
-		GLProgram *oldShader = meshRenderer->SetShader(meshShader);
-		delete oldShader;
-
 		// Initialize mesh FBO
 		delete meshBuffer;
 		meshBuffer = GLFramebuffer::New(256, 256);
-		ok = meshBuffer != 0;
+		bool ok = meshBuffer != 0;
 		if (ok)
 		{
 			meshBuffer->CreateDepthBuffer();
@@ -101,7 +83,7 @@ namespace Diverse
 		tm->AddTexture("meshBuffer", 
 			meshBuffer->GetTexture2D(GL_COLOR_ATTACHMENT0), false);
 
-		return meshShader != 0 && meshBuffer != 0;
+		return ok;
 	}
 
 	// ------------------------------------------------------------------------
