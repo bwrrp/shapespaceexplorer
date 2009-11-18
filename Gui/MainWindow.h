@@ -36,7 +36,6 @@ namespace Diverse
 	private slots:
 		void on_actionLoadMesh_triggered();
 		void on_actionLoadPopulation_triggered();
-		void on_actionPCA_triggered();
 		void on_actionQuit_triggered();
 		void on_actionReloadShaders_triggered();
 		void on_actionStartBenchmark_triggered();

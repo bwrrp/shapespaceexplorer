@@ -26,7 +26,6 @@ namespace Diverse
 
 		// A user should start by loading a mesh
 		ui.actionLoadPopulation->setEnabled(false);
-		ui.actionPCA->setEnabled(false);
 
 		setWindowTitle(qApp->applicationName());
 
@@ -70,7 +69,6 @@ namespace Diverse
 			model = new ShapeModel(mesh);
 			// TODO: connect signals
 			ui.actionLoadPopulation->setEnabled(true);
-			ui.actionPCA->setEnabled(false);
 
 			// TODO: refactor NQVTK so ShapeStack can be a Renderable
 			// We can't do this yet, as Renderables can't access state 
@@ -92,7 +90,6 @@ namespace Diverse
 			{
 				// TODO: implement this as a signal from the model instead
 				ui.plotViewer->SetShapeModel(model);
-				ui.actionPCA->setEnabled(true);
 				RedrawViewers();
 			}
 			else
@@ -129,15 +126,6 @@ namespace Diverse
 		{
 			LoadPopulation(filename);
 		}
-	}
-
-	// ------------------------------------------------------------------------
-	void MainWindow::on_actionPCA_triggered()
-	{
-		// TODO: this should be computed automatically on load
-		// TODO: do PCA in a background thread
-		Population *population = model->GetPopulation();
-		if (population) population->DoPCA();
 	}
 
 	// ------------------------------------------------------------------------

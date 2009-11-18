@@ -30,7 +30,8 @@ namespace Diverse
 
 		delete this->population;
 		this->population = population;
-		// TODO: start PCA computation (on background thread?)
+		// Automatically compute PCA (it's fast now anyway...)
+		if (population) population->DoPCA();
 		return true;
 	}
 
