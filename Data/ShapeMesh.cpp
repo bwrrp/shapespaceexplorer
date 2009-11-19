@@ -23,6 +23,9 @@ namespace Diverse
 		shapeAttr = new NQVTK::AttributeSet(GL_DOUBLE, 3);
 		shapeAttr->SetData(numPoints, 0, GL_DYNAMIC_DRAW);
 		AddAttributeSet("shape", shapeAttr, true);
+		refAttr = new NQVTK::AttributeSet(GL_DOUBLE, 3);
+		refAttr->SetData(numPoints, 0, GL_DYNAMIC_DRAW);
+		AddAttributeSet("reference", refAttr, true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -58,6 +61,14 @@ namespace Diverse
 	{
 		assert(shape.size() == GetShapeSpaceDimension());
 		shapeAttr->SetData(shape.size() / 3, (void*)shape._data(), 
+			GL_DYNAMIC_DRAW);
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeMesh::SetReference(const itpp::vec &shape)
+	{
+		assert(shape.size() == GetShapeSpaceDimension());
+		refAttr->SetData(shape.size() / 3, (void*)shape._data(), 
 			GL_DYNAMIC_DRAW);
 	}
 

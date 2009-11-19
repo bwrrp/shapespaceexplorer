@@ -21,6 +21,7 @@ namespace Diverse
 		virtual ~ShapeMesh();
 
 		void SetShape(const itpp::vec &shape);
+		void SetReference(const itpp::vec &shape);
 
 		int GetShapeSpaceDimension();
 
@@ -28,6 +29,7 @@ namespace Diverse
 		ShapeMesh(vtkPolyData *meanMesh);
 
 		NQVTK::AttributeSet *shapeAttr;
+		NQVTK::AttributeSet *refAttr;
 
 		int numPoints;
 	};
