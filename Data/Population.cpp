@@ -181,6 +181,7 @@ namespace Diverse
 		itpp::ivec index = itpp::reverse(itpp::sort_index(eigVals));
 
 		eigComps.set_size(eigVecs.rows(), eigVecs.cols());
+		this->eigVals.set_size(eigVals.size());
 
 		// Multiply the eigVecs by sqrt(eigVals) and remove insignificant ones
 		int compcol = 0;
@@ -193,6 +194,7 @@ namespace Diverse
 			{
 				evec *= sqrt(eval);
 				eigComps.set_col(compcol, evec);
+				this->eigVals(compcol) = eval;
 				++compcol;
 			}
 			else
@@ -207,6 +209,7 @@ namespace Diverse
 		}
 		// Discard zero-valued components
 		eigComps.set_size(eigVecs.rows(), compcol, true);
+		this->eigVals.set_size(compcol);
 
 		assert(eigComps.rows() == GetShapeSpaceDimension());
 
@@ -224,6 +227,12 @@ namespace Diverse
 	itpp::vec Population::GetPrincipalComponent(int i)
 	{
 		return eigComps.get_col(i);
+	}
+
+	// ------------------------------------------------------------------------
+	double Population::GetComponentVariance(int i)
+	{
+		return eigVals(i);
 	}
 
 	// ------------------------------------------------------------------------
