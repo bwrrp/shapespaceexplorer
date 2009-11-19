@@ -48,11 +48,14 @@ namespace Diverse
 		itpp::vec PickShape(int x, int y);
 
 		itpp::vec GetProjectionXAxis();
+		itpp::vec GetProjectionYAxis();
 
 		double zoom;
 
 	protected:
 		virtual bool Initialize();
+
+		void DrawDistribution();
 
 		virtual void DrawPoints();
 		virtual void DrawPoint(const itpp::vec &point);
