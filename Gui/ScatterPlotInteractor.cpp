@@ -40,6 +40,14 @@ namespace Diverse
 	bool ScatterPlotInteractor::MouseMoveEvent(NQVTK::MouseEvent event)
 	{
 		bool update = false;
+		if (event.buttons != 0)
+		{
+			int dragThreshold = 5;
+			if (abs(downX - event.x) + abs(downY - event.y) > dragThreshold)
+			{
+				drag = true;
+			}
+		}
 		if (event.buttons & NQVTK::MouseEvent::LeftButton)
 		{
 			// Dragging a node
@@ -84,19 +92,27 @@ namespace Diverse
 		}
 		lastX = event.x;
 		lastY = event.y;
-		messenger->EmitCursorPosChanged(event.x, event.y);
+		if (picking) messenger->EmitCursorPosChanged(event.x, event.y);
 		return update;
 	}
 
 	// ------------------------------------------------------------------------
 	bool ScatterPlotInteractor::MousePressEvent(NQVTK::MouseEvent event)
 	{
+		downX = event.x;
+		downY = event.y;
+		drag = false;
 		return MouseMoveEvent(event);
 	}
 
 	// ------------------------------------------------------------------------
 	bool ScatterPlotInteractor::MouseReleaseEvent(NQVTK::MouseEvent event)
 	{
+		if (event.button == NQVTK::MouseEvent::LeftButton && !drag)
+		{
+			// Click toggles picking on hover
+			picking = !picking;
+		}
 		return MouseMoveEvent(event);
 	}
 }

@@ -45,5 +45,10 @@ namespace Diverse
 
 		int lastX;
 		int lastY;
+		int downX;
+		int downY;
+		bool drag;
+
+		bool picking;
 	};
 }
