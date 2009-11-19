@@ -73,6 +73,9 @@ namespace Diverse
 	{
 		Clear();
 
+		// Draw a visualization of the shape model distribution
+		DrawDistribution();
+
 		// This is a 2D view, no renderables are supported (for now)
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -295,11 +298,56 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	itpp::vec ScatterPlotRenderer::GetProjectionYAxis()
+	{
+		// Should only be called when there is a population
+		assert(population);
+
+		itpp::vec result(population->GetShapeSpaceDimension());
+		result.zeros();
+
+		// Loop over widgets
+		NQVTK::Vector3 origin = widgets[0].pos;
+		for (unsigned int i = 1; i < widgets.size(); ++i)
+		{
+			result(i - 1) = widgets[i].pos.y - origin.y;
+		}
+
+		// TODO: Transform vector back to original space
+		return result;
+	}
+
+	// ------------------------------------------------------------------------
 	bool ScatterPlotRenderer::Initialize()
 	{
 		if (!Superclass::Initialize()) return false;
 
-		return voronoi->Initialize();
+		if (!voronoi->Initialize()) return false;
+
+		// TODO: initialize shape model distribution shader
+
+		return true;
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotRenderer::DrawDistribution()
+	{
+		// TODO: check how to determine distribution in current projection 
+		int numComponents = widgets.size() - 1;
+		// Construct projection matrix
+		itpp::mat projection(2, numComponents);
+		NQVTK::Vector3 &origin = widgets[0].pos;
+		for (int i = 0; i < numComponents; ++i)
+		{
+			itpp::vec axis((widgets[i + 1].pos - origin).V, 2);
+			projection.set_col(i, axis);
+		}
+		// TODO: Create covariance matrix for the PCA distribution
+		itpp::mat covariance; // = ...?
+		// Project the covariance matrix
+		itpp::mat projCovariance = projection * covariance;
+		// TODO: Perform eigenanalysis to find 2D Gaussian parameters
+		// TODO: use a shader to render the distribution gaussian (contours?)
 	}
 
 	// ------------------------------------------------------------------------
