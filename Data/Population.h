@@ -21,6 +21,7 @@ namespace Diverse
 
 		int GetNumberOfPrincipalComponents();
 		itpp::vec GetPrincipalComponent(int i);
+		double GetComponentVariance(int i);
 
 		itpp::vec PointFromComponents(itpp::vec compVec);
 		itpp::vec ComponentsFromPoint(itpp::vec point, int dims = 0);
@@ -34,5 +35,6 @@ namespace Diverse
 
 		// Principal components, stored as eigvec * sqrt(eigval)
 		itpp::mat eigComps;
+		itpp::vec eigVals;
 	};
 }
