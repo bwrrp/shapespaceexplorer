@@ -78,5 +78,6 @@ namespace Diverse
 		double widgetScale;
 		NQVTK::Vector3 widgetOrigin;
 		int lastWidget;
+		unsigned int requestedNumAxes;
 	};
 }

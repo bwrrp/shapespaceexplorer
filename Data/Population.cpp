@@ -18,19 +18,15 @@ namespace Diverse
 	Population::Population(const itpp::mat &population) 
 		: population(population)
 	{
-		// Compute mean
-		int dim = GetShapeSpaceDimension();
-		itpp::vec mean(dim);
-		for (int i = 0; i < dim; ++i)
-		{
-			mean(i) = itpp::mean(population.get_col(i));
-		}
-		// Subtract mean from all individuals
-		int num = GetNumberOfIndividuals();
-		for (int i = 0; i < num; ++i)
-		{
-			this->population.set_row(i, population.get_row(i) - mean);
-		}
+		Center();
+	}
+
+	// ------------------------------------------------------------------------
+	Population::Population(const itpp::mat &population, 
+		const itpp::mat &covariance) 
+		: population(population), covariance(covariance)
+	{
+		Center();
 	}
 
 	// ------------------------------------------------------------------------
@@ -160,7 +156,7 @@ namespace Diverse
 
 		qDebug("Computing covariance...");
 
-		itpp::mat covariance = itpp::cov(pop);
+		covariance = itpp::cov(pop);
 
 		qDebug("Computing eigenvectors...");
 
@@ -173,6 +169,8 @@ namespace Diverse
 		{
 			// Project eigenvectors back to the original shape space
 			unsortedEigVecs = basis * unsortedEigVecs;
+			// Project covariance back to the original shape space
+			covariance = basis * covariance * basis.transpose();
 		}
 
 		qDebug("Sorting components...");
@@ -229,9 +227,11 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	double Population::GetComponentVariance(int i)
+	itpp::mat Population::GetCovariance(int dims)
 	{
-		return eigVals(i);
+		if (dims <= 0) dims = covariance.rows();
+		assert(dims <= covariance.rows());
+		return covariance.get(0, dims - 1, 0, dims - 1);
 	}
 
 	// ------------------------------------------------------------------------
@@ -240,7 +240,26 @@ namespace Diverse
 		CoordinateFrame *frame = basis;
 		if (!basis) frame = GetPrincipalComponentBasis();
 		itpp::mat result = frame->TransformIn(population);
+		itpp::mat cov = frame->TransformCovarianceIn(covariance);
 		if (!basis) delete frame;
-		return new Population(result);
+		return new Population(result, cov);
+	}
+
+	// ------------------------------------------------------------------------
+	void Population::Center()
+	{
+		// Compute mean
+		int dim = GetShapeSpaceDimension();
+		itpp::vec mean(dim);
+		for (int i = 0; i < dim; ++i)
+		{
+			mean(i) = itpp::mean(population.get_col(i));
+		}
+		// Subtract mean from all individuals
+		int num = GetNumberOfIndividuals();
+		for (int i = 0; i < num; ++i)
+		{
+			population.set_row(i, population.get_row(i) - mean);
+		}
 	}
 }

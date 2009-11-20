@@ -169,8 +169,10 @@ namespace Diverse
 		// If no frame is given, use the default (identity)
 		if (population != 0 && frame == 0)
 		{
-			frame = CoordinateFrame::IdentityBasis(
-				population->GetShapeSpaceDimension());
+			int numAxes = static_cast<int>(requestedNumAxes);
+			int spaceDim = population->GetShapeSpaceDimension();
+			numAxes = std::min(numAxes, spaceDim);
+			frame = CoordinateFrame::PartialIdentityBasis(spaceDim, numAxes);
 		}
 
 		this->frame = frame;
@@ -195,6 +197,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::SetNumberOfAxes(unsigned int num)
 	{
+		requestedNumAxes = num;
+
 		if (populationInFrame)
 		{
 			num = std::min(static_cast<int>(num), 
@@ -400,14 +404,8 @@ namespace Diverse
 			itpp::vec axis((widgets[i + 1].pos - origin).V, 2);
 			projection.set_col(i, axis);
 		}
-		// Create covariance matrix for the PCA distribution
-		itpp::vec variances(numComponents);
-		for (int i = 0; i < numComponents; ++i)
-		{
-			variances(i) = population->GetComponentVariance(i);
-		}
-		itpp::mat covariance = itpp::diag(variances);
-		// TODO: This matrix is in the PCA frame... transform it back
+		// Get covariance matrix
+		itpp::mat covariance = populationInFrame->GetCovariance(numComponents);
 		// Project the covariance matrix
 		itpp::mat projCovariance = 
 			projection * covariance * projection.transpose();
