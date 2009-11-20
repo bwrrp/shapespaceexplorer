@@ -19,6 +19,20 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	CoordinateFrame *CoordinateFrame::PartialIdentityBasis(
+		int fromDim, int toDim)
+	{
+		assert(fromDim >= toDim);
+		itpp::mat basis(fromDim, toDim);
+		basis.zeros();
+		for (int i = 0; i < toDim; ++i)
+		{
+			basis(i, i) = 1.0;
+		}
+		return new CoordinateFrame(basis);
+	}
+
+	// ------------------------------------------------------------------------
 	int CoordinateFrame::GetOuterDimension() const
 	{
 		return basis.rows();
@@ -63,5 +77,12 @@ namespace Diverse
 		// Points as rows
 		assert(pointsInOuter.cols() == GetOuterDimension());
 		return pointsInOuter * basis;
+	}
+
+	// ------------------------------------------------------------------------
+	itpp::mat CoordinateFrame::TransformCovarianceIn(
+		const itpp::mat &outerCov) const
+	{
+		return basis.transpose() * outerCov * basis;
 	}
 }

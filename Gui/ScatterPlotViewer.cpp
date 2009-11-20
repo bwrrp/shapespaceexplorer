@@ -109,6 +109,7 @@ namespace Diverse
 		{
 			renderer->SetFrame(0);
 		}
+		OnProjectionChanged();
 		updateGL();
 	}
 

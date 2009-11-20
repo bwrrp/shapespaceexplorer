@@ -21,17 +21,21 @@ namespace Diverse
 
 		void DoPCA();
 		CoordinateFrame *GetPrincipalComponentBasis(int dims = 0);
-		double GetComponentVariance(int i);
+		itpp::mat GetCovariance(int dims = 0);
 
 		Population *TransformTo(CoordinateFrame *basis = 0);
 
 	protected:
 		Population(const itpp::mat &population);
+		Population(const itpp::mat &population, const itpp::mat &covariance);
+
+		void Center();
 
 		// Population matrix
 		itpp::mat population;
 
-		// Principal component basis
+		// Principal component basis and covariance
+		itpp::mat covariance;
 		itpp::mat eigVecs;
 		itpp::vec eigVals;
 	};
