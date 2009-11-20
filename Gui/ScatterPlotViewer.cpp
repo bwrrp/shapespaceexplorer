@@ -3,6 +3,7 @@
 #include "ScatterPlotViewer.h"
 #include "ScatterPlotViewer.moc"
 
+#include "Data/Population.h"
 #include "Data/ShapeModel.h"
 
 #include "Rendering/ScatterShapesRenderer.h"
@@ -17,7 +18,7 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ScatterPlotViewer::ScatterPlotViewer(QWidget *parent) 
-		: NQVTKWidget(parent), model(0)
+		: NQVTKWidget(parent), model(0), usePCAFrame(false)
 	{
 		ScatterPlotRenderer *renderer = new ScatterShapesRenderer();
 		SetRenderer(renderer);
@@ -47,7 +48,12 @@ namespace Diverse
 		this->model = model;
 		if (model)
 		{
-			renderer->SetPopulation(model->GetPopulation());
+			Population *population = model->GetPopulation();
+			renderer->SetPopulation(population);
+			if (usePCAFrame && population != 0)
+			{
+				renderer->SetFrame(population->GetPrincipalComponentBasis());
+			}
 			// TODO: maybe just pass the model instead?
 			ScatterShapesRenderer *shapesRenderer = 
 				dynamic_cast<ScatterShapesRenderer*>(renderer);
@@ -79,6 +85,29 @@ namespace Diverse
 			meshCam->focus = cam->focus;
 			meshCam->up = cam->up;
 			updateGL();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::SetUsePCAFrame(bool use)
+	{
+		if (use == usePCAFrame) return;
+		usePCAFrame = use;
+
+		Population *population = model->GetPopulation();
+		if (!population) return;
+
+		ScatterPlotRenderer *renderer = 
+			dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		if (use)
+		{
+			renderer->SetFrame(population->GetPrincipalComponentBasis());
+		}
+		else
+		{
+			renderer->SetFrame(0);
 		}
 	}
 

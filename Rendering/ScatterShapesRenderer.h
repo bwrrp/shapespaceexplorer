@@ -27,7 +27,7 @@ namespace Diverse
 	protected:
 		virtual bool Initialize();
 
-		virtual void DrawPoint(const itpp::vec &point);
+		virtual void DrawPoint(int individual);
 
 		ShapeMesh *mesh;
 
