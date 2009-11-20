@@ -6,6 +6,8 @@
 
 namespace Diverse
 {
+	class CoordinateFrame;
+
 	class Population
 	{
 	public:
@@ -18,14 +20,10 @@ namespace Diverse
 		itpp::vec GetIndividual(int i);
 
 		void DoPCA();
-
-		int GetNumberOfPrincipalComponents();
-		itpp::vec GetPrincipalComponent(int i);
+		CoordinateFrame *GetPrincipalComponentBasis(int dims = 0);
 		double GetComponentVariance(int i);
 
-		itpp::vec PointFromComponents(itpp::vec compVec);
-		itpp::vec ComponentsFromPoint(itpp::vec point, int dims = 0);
-		Population *ReduceDimensionality(int dims = 0);
+		Population *TransformTo(CoordinateFrame *basis = 0);
 
 	protected:
 		Population(const itpp::mat &population);
@@ -33,8 +31,8 @@ namespace Diverse
 		// Population matrix
 		itpp::mat population;
 
-		// Principal components, stored as eigvec * sqrt(eigval)
-		itpp::mat eigComps;
+		// Principal component basis
+		itpp::mat eigVecs;
 		itpp::vec eigVals;
 	};
 }

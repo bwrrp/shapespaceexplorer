@@ -4,6 +4,7 @@
 
 #include "ScatterPlotRenderer.h"
 
+#include "Data/CoordinateFrame.h"
 #include "Data/Population.h"
 #include "Data/PickInfo.h"
 
@@ -15,7 +16,8 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ScatterPlotRenderer::ScatterPlotRenderer() : population(0)
+	ScatterPlotRenderer::ScatterPlotRenderer() 
+		: population(0), frame(0), populationInFrame(0)
 	{
 		widgetRadius = 6.0;
 		zoom = 1.0;
@@ -46,6 +48,8 @@ namespace Diverse
 	{
 		//delete pickInfo;
 		delete voronoi;
+		delete frame;
+		delete populationInFrame;
 	}
 
 	// ------------------------------------------------------------------------
@@ -74,7 +78,7 @@ namespace Diverse
 		Clear();
 
 		// Draw a visualization of the shape model distribution
-		DrawDistribution();
+		//DrawDistribution();
 
 		// This is a 2D view, no renderables are supported (for now)
 		glMatrixMode(GL_PROJECTION);
@@ -150,21 +154,53 @@ namespace Diverse
 	void ScatterPlotRenderer::SetPopulation(Population *population)
 	{
 		this->population = population;
-		// Re-evaluate the number of axes
-		SetNumberOfAxes(widgets.size() - 1);
+		// Reset the coordinate frame to identity and recompute cache
+		SetFrame(0);
 		// Update picking info
 		UpdatePickInfo();
 	}
 
 	// ------------------------------------------------------------------------
-	void ScatterPlotRenderer::SetNumberOfAxes(unsigned int num)
+	void ScatterPlotRenderer::SetFrame(CoordinateFrame *frame)
 	{
-		if (population)
+		if (frame != 0 && frame == this->frame) return;
+
+		delete this->frame;
+
+		// If no frame is given, use the default (identity)
+		if (population != 0 && frame == 0)
 		{
-			num = std::min(static_cast<int>(num), 
+			frame = CoordinateFrame::IdentityBasis(
 				population->GetShapeSpaceDimension());
 		}
+
+		this->frame = frame;
+
+		// Update cached population
+		delete populationInFrame;
+		if (population)
+		{
+			populationInFrame = population->TransformTo(frame);
+		}
+		else
+		{
+			populationInFrame = 0;
+		}
+
+		// Re-evaluate the number of axes
+		SetNumberOfAxes(widgets.size() - 1);
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotRenderer::SetNumberOfAxes(unsigned int num)
+	{
+		if (populationInFrame)
+		{
+			num = std::min(static_cast<int>(num), 
+				populationInFrame->GetShapeSpaceDimension());
+		}
 		if (num == widgets.size() - 1) return;
+
 		// Adjust the set of point widgets
 		// widgets[0] is the origin
 		if (widgets.size() > num + 1)
@@ -214,15 +250,16 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::UpdatePickInfo()
 	{
-		if (!population) return;
+		if (!populationInFrame) return;
 
 		std::vector<NQVTK::Vector3> points;
-		int numPoints = population->GetNumberOfIndividuals();
+		int numPoints = populationInFrame->GetNumberOfIndividuals();
 		for (int i = 0; i < numPoints; ++i)
 		{
-			//points.push_back(ProjectPoint(population->GetIndividual(i)));
+			//points.push_back(ProjectPoint(
+			//	populationInFrame->GetIndividual(i)));
 			points.push_back(PosToViewport(zoom * 
-				ProjectPoint(population->GetIndividual(i))));
+				ProjectPoint(populationInFrame->GetIndividual(i))));
 		}
 		//pickInfo->UpdateInfo(points);
 		voronoi->UpdateVoronoi(points);
@@ -232,7 +269,8 @@ namespace Diverse
 	itpp::vec ScatterPlotRenderer::PickShape(int x, int y)
 	{
 		// Should only be called when there is a population
-		assert(population);
+		// TODO: choose between original and reconstructed shape
+		assert(population != 0);
 
 		NQVTK::Vector3 pos(static_cast<double>(x), 
 			static_cast<double>(y), 0.0);
@@ -281,9 +319,9 @@ namespace Diverse
 	itpp::vec ScatterPlotRenderer::GetProjectionXAxis()
 	{
 		// Should only be called when there is a population
-		assert(population);
+		assert(populationInFrame);
 
-		itpp::vec result(population->GetShapeSpaceDimension());
+		itpp::vec result(populationInFrame->GetShapeSpaceDimension());
 		result.zeros();
 
 		// Loop over widgets
@@ -293,8 +331,8 @@ namespace Diverse
 			result(i - 1) = widgets[i].pos.x - origin.x;
 		}
 
-		// TODO: Transform vector back to original space
-		return result;
+		// Transform vector back to original space
+		return frame->TransformOut(result);
 	}
 
 	// ------------------------------------------------------------------------
@@ -303,7 +341,7 @@ namespace Diverse
 		// Should only be called when there is a population
 		assert(population);
 
-		itpp::vec result(population->GetShapeSpaceDimension());
+		itpp::vec result(populationInFrame->GetShapeSpaceDimension());
 		result.zeros();
 
 		// Loop over widgets
@@ -313,8 +351,8 @@ namespace Diverse
 			result(i - 1) = widgets[i].pos.y - origin.y;
 		}
 
-		// TODO: Transform vector back to original space
-		return result;
+		// Transform vector back to original space
+		return frame->TransformOut(result);
 	}
 
 	// ------------------------------------------------------------------------
@@ -353,12 +391,12 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::DrawPoints()
 	{
-		if (!population) return;
+		if (!populationInFrame) return;
 
-		int numPoints = population->GetNumberOfIndividuals();
+		int numPoints = populationInFrame->GetNumberOfIndividuals();
 
 		// Determine drawing order
-		itpp::vec axis(population->GetShapeSpaceDimension());
+		itpp::vec axis(populationInFrame->GetShapeSpaceDimension());
 		axis.zeros();
 		if (lastWidget > 0)
 		{
@@ -380,13 +418,14 @@ namespace Diverse
 		itpp::vec projections(numPoints);
 		for (int i = 0; i < numPoints; ++i)
 		{
-			projections(i) = itpp::dot(axis, population->GetIndividual(i));
+			projections(i) = itpp::dot(axis, 
+				populationInFrame->GetIndividual(i));
 		}
 		itpp::ivec order = itpp::sort_index(projections);
 
 		for (int i = 0; i < numPoints; ++i)
 		{
-			DrawPoint(population->GetIndividual(order(i)));
+			DrawPoint(populationInFrame->GetIndividual(order(i)));
 		}
 	}
 

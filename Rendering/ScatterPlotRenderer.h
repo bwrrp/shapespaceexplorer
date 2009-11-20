@@ -23,6 +23,7 @@ namespace Diverse
 	class GPUVoronoi;
 	class PickInfo;
 	class Population;
+	class CoordinateFrame;
 
 	class ScatterPlotRenderer : public NQVTK::Renderer
 	{
@@ -37,6 +38,7 @@ namespace Diverse
 		virtual void Draw();
 
 		void SetPopulation(Population *population);
+		void SetFrame(CoordinateFrame *frame);
 		void SetNumberOfAxes(unsigned int num);
 
 		NQVTK::Vector3 ViewportToPos(int x, int y);
@@ -66,6 +68,8 @@ namespace Diverse
 		GPUVoronoi *voronoi;
 
 		Population *population;
+		CoordinateFrame *frame;
+		Population *populationInFrame;
 
 		std::vector<PointWidget> widgets;
 		double widgetRadius;
