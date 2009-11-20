@@ -25,6 +25,8 @@ namespace Diverse
 		meshSpace->AddRenderable(0);
 		meshRenderer->SetScene(meshSpace);
 		meshRenderer->SetDrawBackground(false);
+
+		shapeSize = 1.0;
 	}
 
 	// ------------------------------------------------------------------------
@@ -50,6 +52,15 @@ namespace Diverse
 	{
 		if (!meshRenderer) return 0;
 		return meshRenderer->GetCamera();
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterShapesRenderer::ZoomToFit()
+	{
+		Superclass::ZoomToFit();
+
+		// Set shape size to something reasonable
+		shapeSize = 0.1 / zoom;
 	}
 
 	// ------------------------------------------------------------------------
@@ -126,16 +137,16 @@ namespace Diverse
 		NQVTK::Vector3 pos = ProjectPoint(point);
 		glBegin(GL_QUADS);
 		glTexCoord2d(0.0, 0.0);
-		glVertex3dv(PosToViewport((pos + 
+		glVertex3dv(PosToViewport((pos + shapeSize * 
 			NQVTK::Vector3(-1.0, 1.0, 0.0)) * zoom).V);
 		glTexCoord2d(1.0, 0.0);
-		glVertex3dv(PosToViewport((pos + 
+		glVertex3dv(PosToViewport((pos + shapeSize * 
 			NQVTK::Vector3(1.0, 1.0, 0.0)) * zoom).V);
 		glTexCoord2d(1.0, 1.0);
-		glVertex3dv(PosToViewport((pos + 
+		glVertex3dv(PosToViewport((pos + shapeSize * 
 			NQVTK::Vector3(1.0, -1.0, 0.0)) * zoom).V);
 		glTexCoord2d(0.0, 1.0);
-		glVertex3dv(PosToViewport((pos + 
+		glVertex3dv(PosToViewport((pos + shapeSize * 
 			NQVTK::Vector3(-1.0, -1.0, 0.0)) * zoom).V);
 		glEnd();
 

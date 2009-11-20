@@ -52,6 +52,8 @@ namespace Diverse
 		itpp::vec GetProjectionXAxis();
 		itpp::vec GetProjectionYAxis();
 
+		virtual void ZoomToFit();
+
 		double zoom;
 
 	protected:
