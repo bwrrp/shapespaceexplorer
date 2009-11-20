@@ -77,9 +77,6 @@ namespace Diverse
 	{
 		Clear();
 
-		// Draw a visualization of the shape model distribution
-		//DrawDistribution();
-
 		// This is a 2D view, no renderables are supported (for now)
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -88,11 +85,15 @@ namespace Diverse
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// Draw axes
 		glEnable(GL_LINE_SMOOTH);
 		glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
+
+		// Draw a visualization of the shape model distribution
+		DrawDistribution();
+
+		// Draw axes
 		NQVTK::Vector3 origin = widgets[0].pos;
 		NQVTK::Vector3 vporigin = PosToViewport(origin);
 		NQVTK::Vector3 color1(1.0, 0.5, 0.0);
@@ -391,22 +392,49 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::DrawDistribution()
 	{
-		// TODO: check how to determine distribution in current projection 
+		if (!population) return;
+
+		// TODO: fix this... it doesn't work...
+		// TODO: check if projecting the covariance is correct
 		int numComponents = widgets.size() - 1;
 		// Construct projection matrix
-		itpp::mat projection(2, numComponents);
+		itpp::mat projection(numComponents, numComponents);
+		projection.zeros();
 		NQVTK::Vector3 &origin = widgets[0].pos;
 		for (int i = 0; i < numComponents; ++i)
 		{
-			itpp::vec axis((widgets[i + 1].pos - origin).V, 2);
-			projection.set_col(i, axis);
+			NQVTK::Vector3 axis = widgets[i + 1].pos - origin;
+			projection(0, i) = axis.x;
+			projection(1, i) = axis.y;
 		}
-		// TODO: Create covariance matrix for the PCA distribution
-		itpp::mat covariance; // = ...?
+		// Create covariance matrix for the PCA distribution
+		itpp::vec variances(numComponents);
+		for (int i = 0; i < numComponents; ++i)
+		{
+			variances(i) = population->GetComponentVariance(i);
+		}
+		itpp::mat covariance = itpp::diag(variances);
+		// TODO: This matrix is in the PCA frame... transform it back
 		// Project the covariance matrix
 		itpp::mat projCovariance = projection * covariance;
-		// TODO: Perform eigenanalysis to find 2D Gaussian parameters
+		// Perform eigenanalysis to find 2D Gaussian parameters
+		itpp::vec eigVals;
+		itpp::mat eigVecs;
+		itpp::eig_sym(projCovariance, eigVals, eigVecs);
+		itpp::ivec index = itpp::sort_index(eigVals);
+		index = itpp::reverse(index);
 		// TODO: use a shader to render the distribution gaussian (contours?)
+		NQVTK::Vector3 v1(eigVecs(0, index(0)), eigVecs(1, index(0)), 0.0);
+		NQVTK::Vector3 v2(eigVecs(0, index(1)), eigVecs(1, index(1)), 0.0);
+		v1 = v1.normalized() * 3.0 * sqrt(eigVals(index(0)));
+		v2 = v2.normalized() * 3.0 * sqrt(eigVals(index(1)));
+		glBegin(GL_LINES);
+		glColor3d(1.0, 0.0, 0.0);
+		glVertex3dv(PosToViewport(origin * zoom).V);
+		glVertex3dv(PosToViewport((origin + v1) * zoom).V);
+		glVertex3dv(PosToViewport(origin * zoom).V);
+		glVertex3dv(PosToViewport((origin + v2) * zoom).V);
+		glEnd();
 	}
 
 	// ------------------------------------------------------------------------
