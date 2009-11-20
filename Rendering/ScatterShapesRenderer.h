@@ -24,6 +24,8 @@ namespace Diverse
 
 		NQVTK::Camera *GetMeshCamera();
 
+		virtual void ZoomToFit();
+
 	protected:
 		virtual bool Initialize();
 
@@ -34,5 +36,7 @@ namespace Diverse
 		GLFramebuffer *meshBuffer;
 		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
+
+		double shapeSize;
 	};
 }

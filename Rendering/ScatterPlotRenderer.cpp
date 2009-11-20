@@ -156,8 +156,6 @@ namespace Diverse
 		this->population = population;
 		// Reset the coordinate frame to identity and recompute cache
 		SetFrame(0);
-		// Update picking info
-		UpdatePickInfo();
 	}
 
 	// ------------------------------------------------------------------------
@@ -189,6 +187,8 @@ namespace Diverse
 
 		// Re-evaluate the number of axes
 		SetNumberOfAxes(widgets.size() - 1);
+
+		ZoomToFit();
 	}
 
 	// ------------------------------------------------------------------------
@@ -353,6 +353,27 @@ namespace Diverse
 
 		// Transform vector back to original space
 		return frame->TransformOut(result);
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotRenderer::ZoomToFit()
+	{
+		if (!populationInFrame) return;
+
+		int numPoints = populationInFrame->GetNumberOfIndividuals();
+
+		// Compute extents for current projection
+		double max = 0.0;
+		for (int i = 0; i < numPoints; ++i)
+		{
+			itpp::vec point = populationInFrame->GetIndividual(i);
+			NQVTK::Vector3 pos = ProjectPoint(point);
+			max = std::max(max, std::max(std::abs(pos.x), std::abs(pos.y)));
+		}
+		zoom = 1.0 / max;
+
+		// Update picking info
+		UpdatePickInfo();
 	}
 
 	// ------------------------------------------------------------------------
