@@ -117,6 +117,7 @@ SET( ${ProjectName}_Gui_Classes
 
 SET( ${ProjectName}_Data_Classes
 	Population
+	CoordinateFrame
 	ShapeMesh
 	ShapeModel
 	Utility

@@ -1,5 +1,7 @@
 #include "Population.h"
 
+#include "CoordinateFrame.h"
+
 #include <itpp/itsignal.h>
 #include <itpp/itstat.h>
 
@@ -162,40 +164,40 @@ namespace Diverse
 
 		qDebug("Computing eigenvectors...");
 
-		itpp::vec eigVals;
-		itpp::mat eigVecs;
+		itpp::vec unsortedEigVals;
+		itpp::mat unsortedEigVecs;
 
-		itpp::eig_sym(covariance, eigVals, eigVecs);
+		itpp::eig_sym(covariance, unsortedEigVals, unsortedEigVecs);
 
 		if (numIndividuals < numDimensions)
 		{
 			// Project eigenvectors back to the original shape space
-			eigVecs = basis * eigVecs;
+			unsortedEigVecs = basis * unsortedEigVecs;
 		}
 
-		qDebug("Computing components...");
+		qDebug("Sorting components...");
 
 		assert(eigVals.size() == eigVecs.cols());
 
 		// Sort by the eigVals in decreasing order
-		itpp::ivec index = itpp::reverse(itpp::sort_index(eigVals));
+		itpp::ivec index = itpp::reverse(itpp::sort_index(unsortedEigVals));
 
-		eigComps.set_size(eigVecs.rows(), eigVecs.cols());
-		this->eigVals.set_size(eigVals.size());
+		// Allocate space
+		eigVals.set_size(unsortedEigVals.size());
+		eigVecs.set_size(unsortedEigVecs.rows(), unsortedEigVecs.cols());
 
-		// Multiply the eigVecs by sqrt(eigVals) and remove insignificant ones
-		int compcol = 0;
+		// Sort and remove insignificant pairs
+		int comp = 0;
 		for (int col = 0; col < eigVecs.cols(); ++col)
 		{
-			itpp::vec evec = eigVecs.get_col(index(col));
-			double eval = eigVals(index(col));
+			itpp::vec evec = unsortedEigVecs.get_col(index(col));
+			double eval = unsortedEigVals(index(col));
 			const double epsilon = 0.000001;
 			if (eval > epsilon)
 			{
-				evec *= sqrt(eval);
-				eigComps.set_col(compcol, evec);
-				this->eigVals(compcol) = eval;
-				++compcol;
+				eigVecs.set_col(comp, evec);
+				eigVals(comp) = eval;
+				++comp;
 			}
 			else
 			{
@@ -208,25 +210,21 @@ namespace Diverse
 			}
 		}
 		// Discard zero-valued components
-		eigComps.set_size(eigVecs.rows(), compcol, true);
-		this->eigVals.set_size(compcol);
+		eigVecs.set_size(eigVecs.rows(), comp, true);
+		eigVals.set_size(comp, true);
 
-		assert(eigComps.rows() == GetShapeSpaceDimension());
+		assert(eigVecs.rows() == GetShapeSpaceDimension());
 
 		qDebug(QString("PCA complete! Found %1 significant components")
-			.arg(compcol).toAscii());
+			.arg(comp).toAscii());
 	}
 
 	// ------------------------------------------------------------------------
-	int Population::GetNumberOfPrincipalComponents()
+	CoordinateFrame *Population::GetPrincipalComponentBasis(int dims)
 	{
-		return eigComps.cols();
-	}
-
-	// ------------------------------------------------------------------------
-	itpp::vec Population::GetPrincipalComponent(int i)
-	{
-		return eigComps.get_col(i);
+		assert(dims <= eigVecs.cols());
+		return new CoordinateFrame(
+			eigVecs.get(0, GetShapeSpaceDimension(), 0, dims));
 	}
 
 	// ------------------------------------------------------------------------
@@ -236,47 +234,12 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	itpp::vec Population::PointFromComponents(itpp::vec compVec)
+	Population *Population::TransformTo(CoordinateFrame *basis)
 	{
-		int dims = compVec.size();
-		assert(dims <= GetNumberOfPrincipalComponents());
-		itpp::vec result(GetShapeSpaceDimension());
-		result.zeros();
-		for (int i = 0; i < dims; ++i)
-		{
-			itpp::vec ev = GetPrincipalComponent(i);
-			result += compVec(i) * ev / sqrt(itpp::dot(ev, ev));
-		}
-		return result;
-	}
-
-	// ------------------------------------------------------------------------
-	itpp::vec Population::ComponentsFromPoint(itpp::vec point, int dims)
-	{
-		assert(point.size() == GetShapeSpaceDimension());
-		if (dims <= 0) dims = GetNumberOfPrincipalComponents();
-		itpp::vec result(dims);
-		result.zeros();
-		// Project point onto eigenvectors
-		for (int i = 0; i < dims; ++i)
-		{
-			itpp::vec ev = GetPrincipalComponent(i);
-			result(i) = itpp::dot(point, ev) / sqrt(itpp::dot(ev, ev));
-		}
-		return result;
-	}
-
-	// ------------------------------------------------------------------------
-	Population *Population::ReduceDimensionality(int dims)
-	{
-		assert(dims <= GetNumberOfPrincipalComponents());
-		if (dims <= 0) dims = GetNumberOfPrincipalComponents();
-		int numIndividuals = GetNumberOfIndividuals();
-		itpp::mat result(numIndividuals, dims);
-		for (int i = 0; i < numIndividuals; ++i)
-		{
-			result.set_row(i, ComponentsFromPoint(GetIndividual(i), dims));
-		}
+		CoordinateFrame *frame = basis;
+		if (!basis) frame = GetPrincipalComponentBasis();
+		itpp::mat result = frame->TransformIn(population);
+		if (!basis) delete frame;
 		return new Population(result);
 	}
 }
