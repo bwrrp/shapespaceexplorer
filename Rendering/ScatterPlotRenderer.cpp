@@ -382,11 +382,7 @@ namespace Diverse
 	{
 		if (!Superclass::Initialize()) return false;
 
-		if (!voronoi->Initialize()) return false;
-
-		// TODO: initialize shape model distribution shader
-
-		return true;
+		return voronoi->Initialize();
 	}
 
 	// ------------------------------------------------------------------------
@@ -394,18 +390,15 @@ namespace Diverse
 	{
 		if (!population) return;
 
-		// TODO: fix this... it doesn't work...
-		// TODO: check if projecting the covariance is correct
 		int numComponents = widgets.size() - 1;
 		// Construct projection matrix
-		itpp::mat projection(numComponents, numComponents);
+		itpp::mat projection(2, numComponents);
 		projection.zeros();
 		NQVTK::Vector3 &origin = widgets[0].pos;
 		for (int i = 0; i < numComponents; ++i)
 		{
-			NQVTK::Vector3 axis = widgets[i + 1].pos - origin;
-			projection(0, i) = axis.x;
-			projection(1, i) = axis.y;
+			itpp::vec axis((widgets[i + 1].pos - origin).V, 2);
+			projection.set_col(i, axis);
 		}
 		// Create covariance matrix for the PCA distribution
 		itpp::vec variances(numComponents);
@@ -416,25 +409,35 @@ namespace Diverse
 		itpp::mat covariance = itpp::diag(variances);
 		// TODO: This matrix is in the PCA frame... transform it back
 		// Project the covariance matrix
-		itpp::mat projCovariance = projection * covariance;
+		itpp::mat projCovariance = 
+			projection * covariance * projection.transpose();
 		// Perform eigenanalysis to find 2D Gaussian parameters
 		itpp::vec eigVals;
 		itpp::mat eigVecs;
 		itpp::eig_sym(projCovariance, eigVals, eigVecs);
 		itpp::ivec index = itpp::sort_index(eigVals);
 		index = itpp::reverse(index);
-		// TODO: use a shader to render the distribution gaussian (contours?)
+		// Draw ellipses at 1, 2, 3 * stdev
 		NQVTK::Vector3 v1(eigVecs(0, index(0)), eigVecs(1, index(0)), 0.0);
 		NQVTK::Vector3 v2(eigVecs(0, index(1)), eigVecs(1, index(1)), 0.0);
-		v1 = v1.normalized() * 3.0 * sqrt(eigVals(index(0)));
-		v2 = v2.normalized() * 3.0 * sqrt(eigVals(index(1)));
-		glBegin(GL_LINES);
-		glColor3d(1.0, 0.0, 0.0);
-		glVertex3dv(PosToViewport(origin * zoom).V);
-		glVertex3dv(PosToViewport((origin + v1) * zoom).V);
-		glVertex3dv(PosToViewport(origin * zoom).V);
-		glVertex3dv(PosToViewport((origin + v2) * zoom).V);
-		glEnd();
+		v1 = v1.normalized() * sqrt(eigVals(index(0)));
+		v2 = v2.normalized() * sqrt(eigVals(index(1)));
+		NQVTK::Vector3 color1(1.0, 0.1, 0.1);
+		NQVTK::Vector3 color2(0.5, 0.1, 0.1);
+		for (int n = 0; n < 3; ++n)
+		{
+			double r = static_cast<double>(n + 1);
+			double t = static_cast<double>(n) / 2.0;
+			glBegin(GL_LINE_LOOP);
+			glColor3dv((color1 * (1.0 - t) + color2 * t).V);
+			for (int i = 0; i < 100; ++i)
+			{
+				double a = static_cast<double>(i) / 100.0 * 2.0 * M_PI;
+				glVertex3dv(PosToViewport((origin + 
+					sin(a) * r * v1 + cos(a) * r * v2) * zoom).V);
+			}
+			glEnd();
+		}
 	}
 
 	// ------------------------------------------------------------------------
