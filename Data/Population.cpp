@@ -223,8 +223,9 @@ namespace Diverse
 	CoordinateFrame *Population::GetPrincipalComponentBasis(int dims)
 	{
 		assert(dims <= eigVecs.cols());
+		if (dims <= 0) dims = eigVecs.cols();
 		return new CoordinateFrame(
-			eigVecs.get(0, GetShapeSpaceDimension(), 0, dims));
+			eigVecs.get(0, GetShapeSpaceDimension() - 1, 0, dims - 1));
 	}
 
 	// ------------------------------------------------------------------------

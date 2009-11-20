@@ -51,17 +51,25 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuOptions">
+   <widget class="QMenu" name="menuDebug">
     <property name="title">
-     <string>&amp;Options</string>
+     <string>&amp;Debug</string>
     </property>
     <addaction name="actionReloadShaders"/>
     <addaction name="actionStartBenchmark"/>
-    <addaction name="actionScreenshot"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionUsePCA"/>
+    <addaction name="separator"/>
     <addaction name="actionStackOptions"/>
+    <addaction name="actionScreenshot"/>
    </widget>
    <addaction name="menuModel"/>
-   <addaction name="menuOptions"/>
+   <addaction name="menuView"/>
+   <addaction name="menuDebug"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadMesh">
@@ -124,6 +132,17 @@
    </property>
    <property name="toolTip">
     <string>Show the shape stack options dialog</string>
+   </property>
+  </action>
+  <action name="actionUsePCA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use &amp;PCA axes in scatterplot</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>

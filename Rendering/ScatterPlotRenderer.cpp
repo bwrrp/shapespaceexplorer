@@ -425,13 +425,14 @@ namespace Diverse
 
 		for (int i = 0; i < numPoints; ++i)
 		{
-			DrawPoint(populationInFrame->GetIndividual(order(i)));
+			DrawPoint(order(i));
 		}
 	}
 
 	// ------------------------------------------------------------------------
-	void ScatterPlotRenderer::DrawPoint(const itpp::vec &point)
+	void ScatterPlotRenderer::DrawPoint(int individual)
 	{
+		itpp::vec point = populationInFrame->GetIndividual(individual);
 		NQVTK::Vector3 pos = ProjectPoint(point);
 		glBegin(GL_POINTS);
 		glVertex3dv(PosToViewport(pos * zoom).V);

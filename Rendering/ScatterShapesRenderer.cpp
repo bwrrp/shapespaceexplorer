@@ -1,5 +1,6 @@
 #include "ScatterShapesRenderer.h"
 
+#include "Data/CoordinateFrame.h"
 #include "Data/Population.h"
 #include "Data/ShapeModel.h"
 #include "Data/ShapeMesh.h"
@@ -87,8 +88,9 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ScatterShapesRenderer::DrawPoint(const itpp::vec &point)
+	void ScatterShapesRenderer::DrawPoint(int individual)
 	{
+		itpp::vec point = populationInFrame->GetIndividual(individual);
 		// TODO: find out why this doesn't stick...
 		meshRenderer->SetScene(meshSpace);
 
@@ -102,7 +104,8 @@ namespace Diverse
 
 		// Render the mesh
 		glEnable(GL_DEPTH_TEST);
-		if (mesh) mesh->SetShape(point);
+		// TODO: cache reconstructed meshes for comparison
+		if (mesh) mesh->SetShape(population->GetIndividual(individual));
 		meshRenderer->Draw();
 		glDisable(GL_DEPTH_TEST);
 

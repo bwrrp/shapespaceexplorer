@@ -60,7 +60,7 @@ namespace Diverse
 		void DrawDistribution();
 
 		virtual void DrawPoints();
-		virtual void DrawPoint(const itpp::vec &point);
+		virtual void DrawPoint(int individual);
 
 		NQVTK::Vector3 ProjectPoint(const itpp::vec &point);
 

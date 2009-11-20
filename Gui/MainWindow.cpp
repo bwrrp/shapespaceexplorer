@@ -41,6 +41,9 @@ namespace Diverse
 			ui.plotViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
 		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
 			ui.stackViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
+
+		connect(ui.actionUsePCA, SIGNAL(toggled(bool)), 
+			ui.plotViewer, SLOT(SetUsePCAFrame(bool)));
 	}
 
 	// ------------------------------------------------------------------------

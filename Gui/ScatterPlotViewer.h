@@ -24,9 +24,11 @@ namespace Diverse
 
 	public slots:
 		void SyncMeshCamera(NQVTK::Camera *cam);
+		void SetUsePCAFrame(bool use);
 
 	protected:
 		ShapeModel *model;
+		bool usePCAFrame;
 
 	private slots:
 		void OnCursorPosChanged(int x, int y);
