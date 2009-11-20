@@ -30,16 +30,6 @@ namespace Diverse
 		//pickInfo = new PickInfo();
 		voronoi = new GPUVoronoi();
 
-		// Use some useful initial positions
-		// TODO: should be handled by SetNumberOfAxes
-		for (unsigned int i = 0; i < widgets.size() - 1; ++i)
-		{
-			double t = static_cast<double>(i) / 
-				static_cast<double>(widgets.size() - 1) * 2.0 * M_PI;
-			widgets[i + 1].pos.x = std::cos(t);
-			widgets[i + 1].pos.y = std::sin(t);
-		}
-
 		lastWidget = 0;
 	}
 
@@ -189,7 +179,7 @@ namespace Diverse
 		}
 
 		// Re-evaluate the number of axes
-		SetNumberOfAxes(widgets.size() - 1);
+		SetNumberOfAxes(requestedNumAxes);
 
 		ZoomToFit();
 	}
@@ -214,11 +204,44 @@ namespace Diverse
 		}
 		else
 		{
-			// TODO: intelligently position new widgets
 			PointWidget widgetTemplate = {};
+			unsigned int first = widgets.size();
+			assert(first > 0);
 			widgets.resize(num + 1, widgetTemplate);
+			if (first <= 5)
+			{
+				// Position first 5 widgets on a circle
+				for (unsigned int i = first; i < num + 1; ++i)
+				{
+					double t = static_cast<double>(i - 1) / 5.0 * 2.0 * M_PI;
+					widgets[i].pos.x = std::cos(t);
+					widgets[i].pos.y = std::sin(t);
+				}
+			}
+			else
+			{
+				// Nicely interpolate between the last and first widget
+				double delta = 1.0 / static_cast<double>(num + 2 - first);
+				NQVTK::Vector3 v1 = widgets[1].pos - widgets[0].pos;
+				NQVTK::Vector3 v2 = widgets[first - 1].pos - widgets[0].pos;
+				double r1 = v1.length();
+				double r2 = v2.length();
+				for (unsigned int i = first; i < num + 1; ++i)
+				{
+					double d = static_cast<double>(i - first + 1) * delta;
+					NQVTK::Vector3 offset = (1.0 - d) * v1 + d * v2;
+					double r = (1.0 - d) * r1 + d * r2;
+					widgets[i].pos = widgets[0].pos + r * offset.normalized();
+				}
+			}
 		}
 		lastWidget = 0;
+	}
+
+	// ------------------------------------------------------------------------
+	unsigned int ScatterPlotRenderer::GetNumberOfAxes()
+	{
+		return widgets.size() - 1;
 	}
 
 	// ------------------------------------------------------------------------

@@ -30,6 +30,9 @@ namespace Diverse
 			this, SLOT(OnCursorPosChanged(int, int)));
 		connect(interactor->GetMessenger(), SIGNAL(ProjectionChanged()), 
 			this, SLOT(OnProjectionChanged()));
+
+		// To allow receiving keyboard events
+		setFocusPolicy(Qt::ClickFocus);
 	}
 
 	// ------------------------------------------------------------------------
@@ -111,6 +114,45 @@ namespace Diverse
 		}
 		OnProjectionChanged();
 		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::keyPressEvent(QKeyEvent *event)
+	{
+		ScatterPlotRenderer *renderer = 
+			dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		ScatterPlotInteractor *interactor = 
+			dynamic_cast<ScatterPlotInteractor*>(GetInteractor());
+
+		if (event->key() == Qt::Key_Plus || event->key() == Qt::Key_Minus)
+		{
+			int numAxes = renderer->GetNumberOfAxes();
+			if (event->key() == Qt::Key_Plus) 
+			{
+				numAxes += 1;
+			}
+			else
+			{
+				numAxes -= 1;
+			}
+			if (numAxes >= 0)
+			{
+				// Widgets might move in memory, so prevent dangling pointers
+				interactor->ReleaseWidgets();
+				renderer->SetNumberOfAxes(numAxes);
+			}
+
+			event->accept();
+			// Recreate the default frame if necessary
+			if (!usePCAFrame) renderer->SetFrame(0);
+			updateGL();
+		}
+		else
+		{
+			event->ignore();
+		}
 	}
 
 	// ------------------------------------------------------------------------

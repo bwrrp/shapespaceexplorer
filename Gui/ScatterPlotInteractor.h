@@ -36,6 +36,8 @@ namespace Diverse
 		virtual bool MousePressEvent(NQVTK::MouseEvent event);
 		virtual bool MouseReleaseEvent(NQVTK::MouseEvent event);
 
+		void ReleaseWidgets();
+
 	protected:
 		ScatterPlotMessenger *messenger;
 

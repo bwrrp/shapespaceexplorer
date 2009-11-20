@@ -2,6 +2,8 @@
 
 #include <NQVTKGui/Viewports/NQVTKWidget.h>
 
+#include <QKeyEvent>
+
 #include <itpp/itbase.h>
 
 namespace Diverse
@@ -29,6 +31,10 @@ namespace Diverse
 	protected:
 		ShapeModel *model;
 		bool usePCAFrame;
+
+	private:
+		// Qt event handler
+		void keyPressEvent(QKeyEvent *event);
 
 	private slots:
 		void OnCursorPosChanged(int x, int y);

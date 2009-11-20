@@ -115,4 +115,11 @@ namespace Diverse
 		}
 		return MouseMoveEvent(event);
 	}
+
+	// ------------------------------------------------------------------------
+	void ScatterPlotInteractor::ReleaseWidgets()
+	{
+		if (activeWidget) activeWidget->state = PointWidget::Normal;
+		activeWidget = 0;
+	}
 }
