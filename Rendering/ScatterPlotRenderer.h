@@ -40,6 +40,7 @@ namespace Diverse
 		void SetPopulation(Population *population);
 		void SetFrame(CoordinateFrame *frame);
 		void SetNumberOfAxes(unsigned int num);
+		unsigned int GetNumberOfAxes();
 
 		NQVTK::Vector3 ViewportToPos(int x, int y);
 		NQVTK::Vector3 PosToViewport(const NQVTK::Vector3 &pos);
