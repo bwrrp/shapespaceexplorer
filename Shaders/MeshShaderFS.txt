@@ -26,6 +26,7 @@ sample GetSample(vec2 coord)
 	result.deformation = gb1.rgb;
 
 	result.depth = distance(result.position, cameraPos);
+	if (result.background) result.depth = 1000000.0;
 
 	return result;
 }
