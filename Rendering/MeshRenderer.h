@@ -4,6 +4,9 @@
 
 #include <itpp/itbase.h>
 
+class GLFramebuffer;
+class GLProgram;
+
 namespace Diverse
 {
 	class ShapeMesh;
@@ -16,6 +19,8 @@ namespace Diverse
 		MeshRenderer();
 		virtual ~MeshRenderer();
 
+		virtual void SetViewport(int x, int y, int w, int h);
+
 		virtual void Draw();
 
 		void SetMesh(ShapeMesh *mesh);
@@ -25,6 +30,12 @@ namespace Diverse
 		ShapeMesh *mesh;
 		itpp::vec shape;
 
+		GLProgram *meshShader;
+
+		GLFramebuffer *meshBuffer;
+
 		virtual bool Initialize();
+
+		virtual void DrawShadingPass();
 	};
 }
