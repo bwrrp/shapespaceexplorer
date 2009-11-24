@@ -60,9 +60,6 @@ namespace Diverse
 						bufs[i], GL_RGBA16F_ARB, GL_RGBA, GL_FLOAT);
 					GLTexture *buf = meshBuffer->GetTexture2D(bufs[i]);
 					GLUtility::SetDefaultColorTextureParameters(buf);
-					std::ostringstream name;
-					name << "gbuffer" << i;
-					tm->AddTexture(name.str(), buf, false);
 				}
 				glDrawBuffers(nBufs, bufs);
 				ok = meshBuffer->IsOk();
@@ -74,6 +71,20 @@ namespace Diverse
 				delete meshBuffer;
 				meshBuffer = 0;
 			}
+		}
+
+		// Re-register the textures as they might have moved
+		if (meshBuffer)
+		{
+			tm->AddTexture("gbuffer0", meshBuffer->GetTexture2D(
+				GL_COLOR_ATTACHMENT0), false);
+			tm->AddTexture("gbuffer1", meshBuffer->GetTexture2D(
+				GL_COLOR_ATTACHMENT0), false);
+		}
+		else
+		{
+			tm->RemoveTexture("gbuffer0");
+			tm->RemoveTexture("gbuffer1");
 		}
 	}
 
@@ -92,9 +103,8 @@ namespace Diverse
 		}
 
 		// G-buffer creation pass
-		GLFramebuffer *oldTarget = fboTarget;
+		GLFramebuffer *oldTarget = SetTarget(meshBuffer);
 		bool oldDrawBackground = drawBackground;
-		SetTarget(meshBuffer);
 		SetDrawBackground(false);
 		Superclass::Draw();
 
@@ -165,6 +175,8 @@ namespace Diverse
 		}
 
 		// The G-buffer FBO is created when the viewport is resized
+		tm->RemoveTexture("gbuffer0");
+		tm->RemoveTexture("gbuffer1");
 		delete meshBuffer;
 		meshBuffer = 0;
 
