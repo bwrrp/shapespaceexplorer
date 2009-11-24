@@ -63,7 +63,7 @@ namespace Diverse
 		}
 		if (!voronoiBuffer)
 		{
-			// TODO: create FBO with depth/stencil
+			// Create FBO with depth/stencil
 			voronoiBuffer = GLFramebuffer::New(w, h);
 			bool ok = voronoiBuffer != 0;
 			if (ok)
