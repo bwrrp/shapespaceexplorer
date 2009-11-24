@@ -1,16 +1,14 @@
 attribute vec3 shape;
+attribute vec3 reference;
 
 varying vec3 position;
-
-varying float deformation;
+varying vec3 deformation;
 
 void main()
 {
 	vec4 vertex = gl_Vertex;
 	vertex += vec4(shape, 0.0);
-	vec4 pos = gl_ModelViewMatrix * vertex;
-	position = pos.xyz / pos.w;
-	gl_Position = gl_ProjectionMatrix * pos;
-	deformation = length(shape);
-	if (dot(shape, gl_Normal) < 0.0) deformation *= -1.0;
+	position = vertex.xyz / vertex.w;
+	gl_Position = gl_ModelViewProjectionMatrix * vertex;
+	deformation = shape - reference;
 }

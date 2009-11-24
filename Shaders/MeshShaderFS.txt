@@ -1,13 +1,61 @@
-varying vec3 normal;
+uniform sampler2DRect gbuffer0;
+uniform sampler2DRect gbuffer1;
 
-varying float deformation;
+uniform float viewportX;
+uniform float viewportY;
+
+uniform vec3 cameraPos;
+
+struct sample
+{
+	vec2 coord;
+	vec3 position;
+	vec3 deformation;
+	bool background;
+	float depth;
+};
+
+sample GetSample(vec2 coord)
+{
+	sample result;
+	result.coord = coord;
+	vec4 gb0 = texture2DRect(gbuffer0, coord);
+	vec4 gb1 = texture2DRect(gbuffer1, coord);
+	result.position = gb0.rgb;
+	result.background = gb0.a == 0.0;
+	result.deformation = gb1.rgb;
+
+	result.depth = distance(result.position, cameraPos);
+
+	return result;
+}
 
 void main()
 {
+	vec2 coord = gl_FragCoord.xy;
+	coord -= vec2(viewportX, viewportY);
+
+	sample fragment = GetSample(coord);
+
+	if (fragment.background) discard;
+
 	vec3 color = vec3(1.0, 1.0, 0.5);
+
+	// Compute screen-space normal
+	// TODO: combine with SSAO for smoother normals
+	// see http://www.spinnet.org/sven/ssn_ssao.frag
+	float wx1 = GetSample(fragment.coord + vec2(-1.0, 0.0)).depth;
+	float wx2 = GetSample(fragment.coord + vec2(1.0, 0.0)).depth;
+	float wy1 = GetSample(fragment.coord + vec2(0.0, -1.0)).depth;
+	float wy2 = GetSample(fragment.coord + vec2(0.0, 1.0)).depth;
+	float dwx = (wx2 - wx1) * 0.5;
+	float dwy = (wy2 - wy1) * 0.5;
+	vec3 normal = normalize(cross(vec3(1.0, 0.0, dwx), vec3(0.0, 1.0, dwy)));
+
+	float deformation = length(fragment.deformation);//dot(gl_NormalMatrix * fragment.deformation, normal);
 	vec3 defcol = deformation < 0.0 ? vec3(0.5, 0.5, 1.0) : vec3(1.0, 0.5, 0.5);
 	color = mix(color, defcol, min(1.0, abs(deformation) / 10.0));
 	float alpha = 1.0;
-	color *= 0.5 + 0.5 * max(dot(normalize(normal), normalize(gl_LightSource[0].position)), 0.0);
+	color *= 0.5 + 0.5 * max(dot(normal, normalize(gl_LightSource[0].position)), 0.0);
 	gl_FragColor = vec4(color * alpha, alpha);
 }
