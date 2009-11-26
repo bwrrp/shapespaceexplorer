@@ -11,13 +11,13 @@ namespace Diverse
 	class ShapeModel;
 	class ShapeStack;
 
-	class ShapeStackViewer : public NQVTKWidget
+	class ShapeEvolutionViewer : public NQVTKWidget
 	{
 		Q_OBJECT;
 
 	public:
-		ShapeStackViewer(QWidget *parent = 0);
-		~ShapeStackViewer();
+		ShapeEvolutionViewer(QWidget *parent = 0);
+		~ShapeEvolutionViewer();
 
 		void SetShapeModel(ShapeModel *model);
 

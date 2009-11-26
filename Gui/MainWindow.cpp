@@ -3,8 +3,6 @@
 #include "MainWindow.h"
 #include "MainWindow.moc"
 
-#include "ShapeStackControls.h"
-
 #include "Data/Population.h"
 #include "Data/ShapeMesh.h"
 #include "Data/ShapeModel.h"
@@ -29,10 +27,8 @@ namespace Diverse
 
 		setWindowTitle(qApp->applicationName());
 
-		stackControls = new ShapeStackControls();
-
 		connect(ui.plotViewer, SIGNAL(XAxisChanged(itpp::vec)), 
-			ui.stackViewer, SLOT(SetVector(itpp::vec)));
+			ui.evolutionViewer, SLOT(SetVector(itpp::vec)));
 
 		connect(ui.plotViewer, SIGNAL(PointSelected(itpp::vec)), 
 			ui.meshViewer, SLOT(SetShape(itpp::vec)));
@@ -40,7 +36,7 @@ namespace Diverse
 		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
 			ui.plotViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
 		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
-			ui.stackViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
+			ui.evolutionViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
 
 		connect(ui.actionUsePCA, SIGNAL(toggled(bool)), 
 			ui.plotViewer, SLOT(SetUsePCAFrame(bool)));
@@ -56,7 +52,7 @@ namespace Diverse
 	void MainWindow::RedrawViewers()
 	{
 		ui.plotViewer->updateGL();
-		ui.stackViewer->updateGL();
+		ui.evolutionViewer->updateGL();
 		ui.meshViewer->updateGL();
 	}
 
@@ -76,7 +72,7 @@ namespace Diverse
 			// TODO: refactor NQVTK so ShapeStack can be a Renderable
 			// We can't do this yet, as Renderables can't access state 
 			// (shaders, textures, attributes) internally. 
-			ui.stackViewer->SetShapeModel(model);
+			ui.evolutionViewer->SetShapeModel(model);
 			ui.plotViewer->SetShapeModel(model);
 			ui.meshViewer->SetShapeModel(model);
 			RedrawViewers();
@@ -105,12 +101,16 @@ namespace Diverse
 
 	// ------------------------------------------------------------------------
 	void MainWindow::SaveScreenshot(NQVTKWidget *viewer, 
-		const QString &filename)
+		const QString &filename, bool invertAlpha)
 	{
+		// TODO: add support for subpixel rendering to the NQVTKViewer
 		QImage screenshot = viewer->grabFrameBuffer(true);
-		// Fix alpha values
-		screenshot.invertPixels(QImage::InvertRgba);
-		screenshot.invertPixels(QImage::InvertRgb);
+		if (invertAlpha)
+		{
+			// Fix alpha values
+			screenshot.invertPixels(QImage::InvertRgba);
+			screenshot.invertPixels(QImage::InvertRgb);
+		}
 		// Save it
 		screenshot.save(filename, "PNG");
 	}
@@ -153,7 +153,7 @@ namespace Diverse
 	void MainWindow::on_actionReloadShaders_triggered()
 	{
 		ui.plotViewer->Initialize();
-		ui.stackViewer->Initialize();
+		ui.evolutionViewer->Initialize();
 		ui.meshViewer->Initialize();
 		RedrawViewers();
 	}
@@ -161,7 +161,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionStartBenchmark_triggered()
 	{
-		ui.stackViewer->StartContinuousUpdate();
+		ui.evolutionViewer->StartContinuousUpdate();
 	}
 
 	// ------------------------------------------------------------------------
@@ -169,15 +169,12 @@ namespace Diverse
 	{
 		QString now = QDateTime::currentDateTime().toString("yyMMdd-hhmmss");
 		// Save screenshots of all viewers
-		SaveScreenshot(ui.plotViewer, QString("Diverse-%1-Plot.png").arg(now));
-		SaveScreenshot(ui.meshViewer, QString("Diverse-%1-Mesh.png").arg(now));
-		SaveScreenshot(ui.stackViewer, QString("Diverse-%1-Evo.png").arg(now));
-	}
-
-	// ------------------------------------------------------------------------
-	void MainWindow::on_actionStackOptions_triggered()
-	{
-		stackControls->show();
+		SaveScreenshot(ui.plotViewer, 
+			QString("Diverse-%1-Plot.png").arg(now));
+		SaveScreenshot(ui.meshViewer, 
+			QString("Diverse-%1-Mesh.png").arg(now));
+		SaveScreenshot(ui.evolutionViewer, 
+			QString("Diverse-%1-Evolution.png").arg(now), true);
 	}
 
 	// ------------------------------------------------------------------------
