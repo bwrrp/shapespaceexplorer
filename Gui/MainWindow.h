@@ -33,6 +33,8 @@ namespace Diverse
 
 		ShapeModel *model;
 
+		void SaveScreenshot(NQVTKWidget *viewer, const QString &filename);
+
 	private slots:
 		void on_actionLoadMesh_triggered();
 		void on_actionLoadPopulation_triggered();

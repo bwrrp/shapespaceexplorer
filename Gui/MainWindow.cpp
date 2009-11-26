@@ -104,6 +104,18 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MainWindow::SaveScreenshot(NQVTKWidget *viewer, 
+		const QString &filename)
+	{
+		QImage screenshot = viewer->grabFrameBuffer(true);
+		// Fix alpha values
+		screenshot.invertPixels(QImage::InvertRgba);
+		screenshot.invertPixels(QImage::InvertRgb);
+		// Save it
+		screenshot.save(filename, "PNG");
+	}
+
+	// ------------------------------------------------------------------------
 	void MainWindow::on_actionLoadMesh_triggered()
 	{
 		// Show open dialog
@@ -155,14 +167,11 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionScreenshot_triggered()
 	{
-		QDateTime now = QDateTime::currentDateTime();
-		QImage screenshot = ui.stackViewer->grabFrameBuffer(true);
-		// Fix alpha values
-		screenshot.invertPixels(QImage::InvertRgba);
-		screenshot.invertPixels(QImage::InvertRgb);
-		// Save it
-		screenshot.save(QString("Diverse-%1.png").arg(
-			now.toString("yyMMdd-hhmmss")), "PNG");
+		QString now = QDateTime::currentDateTime().toString("yyMMdd-hhmmss");
+		// Save screenshots of all viewers
+		SaveScreenshot(ui.plotViewer, QString("Diverse-%1-Plot.png").arg(now));
+		SaveScreenshot(ui.meshViewer, QString("Diverse-%1-Mesh.png").arg(now));
+		SaveScreenshot(ui.stackViewer, QString("Diverse-%1-Evo.png").arg(now));
 	}
 
 	// ------------------------------------------------------------------------
