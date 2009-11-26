@@ -1,8 +1,8 @@
 varying vec3 position;
-varying vec3 deformation;
+varying float deformation;
 
 void main()
 {
-	gl_FragData[0] = vec4(position, 1.0);
-	gl_FragData[1] = vec4(deformation, 1.0);
+	gl_FragData[0] = vec4(position, deformation);
+	gl_FragData[1] = vec4(1.0);
 }
