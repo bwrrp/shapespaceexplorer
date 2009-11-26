@@ -7,8 +7,8 @@
 
 #include "Data/Utility.h"
 
-#include "Rendering/ShapeStack.h"
-#include "Rendering/MeshRenderer.h"
+#include "MeshRenderer.h"
+#include "EvolutionConfiguration.h"
 
 #include <itpp/itbase.h>
 
@@ -23,7 +23,8 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeEvolutionRenderer::ShapeEvolutionRenderer() 
-		: stack(0), compositeShader(0), meshBuffer(0)
+		: compositeShader(0), meshBuffer(0), mesh(0), 
+		configuration(0), trajectory(0)
 	{
 		meshRenderer = new MeshRenderer();
 		// Create the mesh space scene with a dummy renderable
@@ -68,10 +69,11 @@ namespace Diverse
 
 		if (fboTarget) fboTarget->Unbind();
 
-		// Now render the shape stack...
-		if (stack)
+		// TODO: implement fallback configuration (single slice)
+		if (mesh != 0 && configuration != 0)
 		{
-			// Determine drawing order
+			// TODO: Determine drawing order
+			/*
 			double cameraZ = camera->position.z;
 			int numSlices = stack->GetNumberOfSlices();
 			itpp::vec relSliceOffsets(numSlices);
@@ -80,10 +82,14 @@ namespace Diverse
 				relSliceOffsets(i) = abs(cameraZ - stack->GetSliceOffset(i));
 			}
 			itpp::ivec order = itpp::sort_index(relSliceOffsets);
+			*/
 
-			// Render slices
-			ShapeMesh *mesh = stack->GetMesh();
-			for (int i = 0; i < numSlices; ++i)
+			// Set up camera
+			camera->focus = NQVTK::Vector3();
+			camera->SetZPlanes(configuration->GetBounds());
+
+			// Now render the current set of slices
+			for (unsigned int i = 0; i < slices.size(); ++i)
 			{
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
@@ -91,8 +97,8 @@ namespace Diverse
 				glLoadIdentity();
 
 				// Render this slice
-				int slice = order(i);
-				stack->SetupSliceMesh(slice);
+				const EvolutionSlice &slice = slices[i];
+				mesh->SetShape(slice.shape);
 				meshRenderer->Draw();
 
 				glMatrixMode(GL_PROJECTION);
@@ -110,10 +116,6 @@ namespace Diverse
 				glDisable(GL_DEPTH_TEST);
 				glDisable(GL_CULL_FACE);
 
-				// TODO: determine slice size automatically
-				double bounds[] = {-10.0, 10.0, -10.0, 10.0, -10.0, 10.0};
-				camera->focus = NQVTK::Vector3();
-				camera->SetZPlanes(bounds);
 				camera->Draw();
 
 				compositeShader->Start();
@@ -121,17 +123,7 @@ namespace Diverse
 				tm->Bind();
 
 				// Draw the slice
-				double offset = stack->GetSliceOffset(slice);
-				glBegin(GL_QUADS);
-				glTexCoord2d(1.0, 1.0);
-				glVertex3d(-10.0, 10.0, offset);
-				glTexCoord2d(0.0, 1.0);
-				glVertex3d(10.0, 10.0, offset);
-				glTexCoord2d(0.0, 0.0);
-				glVertex3d(10.0, -10.0, offset);
-				glTexCoord2d(1.0, 0.0);
-				glVertex3d(-10.0, -10.0, offset);
-				glEnd();
+				slices[i].Draw();
 
 				compositeShader->Stop();
 				tm->Unbind();
@@ -165,18 +157,39 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeEvolutionRenderer::SetShapeStack(ShapeStack *stack)
+	void ShapeEvolutionRenderer::SetMesh(ShapeMesh *mesh)
 	{
-		this->stack = stack;
-		if (stack)
+		this->mesh = mesh;
+		meshSpace->SetRenderable(0, mesh);
+		meshRenderer->SceneChanged();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionRenderer::SetTrajectory(ShapeTrajectory *trajectory)
+	{
+		this->trajectory = trajectory;
+		UpdateSlices();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionRenderer::SetConfiguration(
+		EvolutionConfiguration *configuration)
+	{
+		this->configuration = configuration;
+		UpdateSlices();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionRenderer::UpdateSlices()
+	{
+		if (configuration != 0 && trajectory != 0)
 		{
-			meshSpace->SetRenderable(0, stack->GetMesh());
+			configuration->SetupSlices(slices, trajectory);
 		}
 		else
 		{
-			meshSpace->SetRenderable(0, 0);
+			slices.clear();
 		}
-		meshRenderer->SceneChanged();
 	}
 
 	// ------------------------------------------------------------------------

@@ -10,7 +10,7 @@ void main()
 	vec4 mbl = texture2D(meshBuffer, tc + vec2(step, 0.0));
 	vec4 mbd = texture2D(meshBuffer, tc + vec2(0.0, step));
 	vec4 color = mb;
-	if (color.a != 0.0) color.a = 0.1;
+	//if (color.a != 0.0) color.a = 0.1;
 	vec4 contourcolor = vec4(0.0, 0.0, 0.0, 0.5);
 	if (abs(offset) < 0.05) contourcolor.r = 1.0;
 	if (mb.a != mbl.a || mb.a != mbd.a) color = contourcolor;

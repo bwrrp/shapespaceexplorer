@@ -9,7 +9,8 @@ namespace NQVTK { class Scene; }
 namespace Diverse
 {
 	class ShapeModel;
-	class ShapeStack;
+	class LinearPopulationTrajectory;
+	class EvolutionConfiguration;
 
 	class ShapeEvolutionViewer : public NQVTKWidget
 	{
@@ -27,7 +28,9 @@ namespace Diverse
 
 	protected:
 		ShapeModel *model;
-		ShapeStack *stack;
-		NQVTK::Scene *scene;
+
+		// TODO: make the trajectory type configurable
+		LinearPopulationTrajectory *trajectory;
+		EvolutionConfiguration *configuration;
 	};
 }
