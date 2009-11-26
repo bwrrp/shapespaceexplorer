@@ -6,9 +6,12 @@
 #include "Data/ShapeModel.h"
 #include "Data/ShapeMesh.h"
 
-#include "Rendering/ShapeStack.h"
+#include "Data/LinearPopulationTrajectory.h"
+
 #include "Rendering/ShapeEvolutionRenderer.h"
-#include "Rendering/PopulationProjectionStack.h"
+#include "Rendering/SideBySideConfiguration.h"
+#include "Rendering/ShapeStackConfiguration.h"
+#include "Rendering/OverlayConfiguration.h"
 
 #include <NQVTK/Interactors/OrbitCameraInteractor.h>
 
@@ -21,29 +24,29 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeEvolutionViewer::ShapeEvolutionViewer(QWidget *parent) 
-		: NQVTKWidget(parent), model(0), stack(0)
+		: NQVTKWidget(parent), model(0), trajectory(0)
 	{
 		// Initialize renderer
 		ShapeEvolutionRenderer *renderer = new ShapeEvolutionRenderer();
 		SetRenderer(renderer);
 
-		// Create a scene with dummy renderable
-		scene = new NQVTK::Scene();
-		scene->AddRenderable(0);
-
 		// Create camera and interactor
 		NQVTK::OrbitCamera *camera = new NQVTK::OrbitCamera();
 		renderer->SetCamera(camera);
 		SetInteractor(new NQVTK::OrbitCameraInteractor(camera));
+
+		// TODO: add UI for selecting configuration
+		//configuration = new SideBySideConfiguration();
+		configuration = new ShapeStackConfiguration();
+		//configuration = new OverlayConfiguration();
+		renderer->SetConfiguration(configuration);
 	}
 
 	// ------------------------------------------------------------------------
 	ShapeEvolutionViewer::~ShapeEvolutionViewer()
 	{
-		// The mesh is owned by the model
-		scene->SetRenderable(0, 0);
-		delete scene;
-		delete stack;
+		delete trajectory;
+		delete configuration;
 	}
 
 	// ------------------------------------------------------------------------
@@ -54,21 +57,22 @@ namespace Diverse
 		assert(renderer != 0);
 
 		// TODO: disconnect signals from old model
-		delete stack;
+		delete trajectory;
+		trajectory = 0;
 
 		if (model)
 		{
-			scene->SetRenderable(0, model->GetMesh());
-			// TODO: add UI for selecting the stack type
-			stack = new PopulationProjectionStack(model);
+			renderer->SetMesh(model->GetMesh());
+			// TODO: add UI for selecting trajectory type
+			Population *population = model->GetPopulation();
+			if (population)
+			{
+				trajectory = new LinearPopulationTrajectory(population);
+			}
 			// TODO: connect signals for new model
 		}
-		else
-		{
-			scene->SetRenderable(0, 0);
-			stack = 0;
-		}
-		renderer->SetShapeStack(stack);
+
+		renderer->SetTrajectory(trajectory);
 
 		this->model = model;
 	}
@@ -76,9 +80,15 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ShapeEvolutionViewer::SetVector(itpp::vec vector)
 	{
-		if (stack)
+		if (trajectory)
 		{
-			stack->SetVector(vector);
+			trajectory->SetVector(vector);
+
+			ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+			assert(renderer != 0);
+			renderer->UpdateSlices();
+
 			updateGL();
 		}
 	}

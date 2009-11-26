@@ -121,13 +121,18 @@ SET( ${ProjectName}_Data_Classes
 	ShapeModel
 	Utility
 	PickInfo
+	ShapeTrajectory
+	LinearMorphTrajectory
+	LinearPopulationTrajectory
 )
 
 SET( ${ProjectName}_Rendering_Classes
 	ShapeEvolutionRenderer
-	ShapeStack
-	ShapeSpaceLineStack
-	PopulationProjectionStack
+	EvolutionSlice
+	EvolutionConfiguration
+	OverlayConfiguration
+	SideBySideConfiguration
+	ShapeStackConfiguration
 	ScatterPlotRenderer
 	ScatterShapesRenderer
 	MeshRenderer

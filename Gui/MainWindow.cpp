@@ -87,8 +87,9 @@ namespace Diverse
 		{
 			if (model->SetPopulation(newPop))
 			{
-				// TODO: implement this as a signal from the model instead
+				// TODO: implement these as a signal from the model instead
 				ui.plotViewer->SetShapeModel(model);
+				ui.evolutionViewer->SetShapeModel(model);
 				RedrawViewers();
 			}
 			else

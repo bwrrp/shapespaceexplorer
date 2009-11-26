@@ -2,6 +2,8 @@
 
 #include <NQVTK/Rendering/Renderer.h>
 
+#include "EvolutionSlice.h"
+
 class GLProgram;
 class GLFramebuffer;
 
@@ -9,8 +11,11 @@ namespace NQVTK { class Scene; }
 
 namespace Diverse
 {
-	class ShapeStack;
+	class ShapeMesh;
 	class MeshRenderer;
+
+	class ShapeTrajectory;
+	class EvolutionConfiguration;
 
 	class ShapeEvolutionRenderer : public NQVTK::Renderer
 	{
@@ -22,19 +27,26 @@ namespace Diverse
 
 		virtual void Draw();
 
-		void SetShapeStack(ShapeStack *stack);
+		void SetMesh(ShapeMesh *mesh);
+		void SetTrajectory(ShapeTrajectory *trajectory);
+		void SetConfiguration(EvolutionConfiguration *configuration);
+
+		void UpdateSlices();
 
 		NQVTK::Camera *GetMeshCamera();
 
 	protected:
 		virtual bool Initialize();
 
-		ShapeStack *stack;
-
 		GLProgram *compositeShader;
 
 		GLFramebuffer *meshBuffer;
 		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
+		ShapeMesh *mesh;
+
+		ShapeTrajectory *trajectory;
+		EvolutionConfiguration *configuration;
+		std::vector<EvolutionSlice> slices;
 	};
 }
