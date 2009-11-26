@@ -108,8 +108,7 @@ SET( ${ProjectName}_ModuleNames
 
 SET( ${ProjectName}_Gui_Classes
 	MainWindow
-	ShapeStackViewer
-	ShapeStackControls
+	ShapeEvolutionViewer
 	ScatterPlotViewer
 	ScatterPlotInteractor
 	MeshViewer
@@ -125,7 +124,7 @@ SET( ${ProjectName}_Data_Classes
 )
 
 SET( ${ProjectName}_Rendering_Classes
-	ShapeStackRenderer
+	ShapeEvolutionRenderer
 	ShapeStack
 	ShapeSpaceLineStack
 	PopulationProjectionStack

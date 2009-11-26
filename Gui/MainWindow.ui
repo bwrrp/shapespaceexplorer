@@ -29,7 +29,7 @@
      </layout>
     </item>
     <item>
-     <widget class="Diverse::ShapeStackViewer" name="stackViewer" native="true"/>
+     <widget class="Diverse::ShapeEvolutionViewer" name="evolutionViewer" native="true"/>
     </item>
    </layout>
   </widget>
@@ -64,7 +64,6 @@
     </property>
     <addaction name="actionUsePCA"/>
     <addaction name="separator"/>
-    <addaction name="actionStackOptions"/>
     <addaction name="actionScreenshot"/>
    </widget>
    <addaction name="menuModel"/>
@@ -126,14 +125,6 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="actionStackOptions">
-   <property name="text">
-    <string>Shape S&amp;tack options...</string>
-   </property>
-   <property name="toolTip">
-    <string>Show the shape stack options dialog</string>
-   </property>
-  </action>
   <action name="actionUsePCA">
    <property name="checkable">
     <bool>true</bool>
@@ -148,9 +139,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Diverse::ShapeStackViewer</class>
+   <class>Diverse::ShapeEvolutionViewer</class>
    <extends>QWidget</extends>
-   <header>ShapeStackViewer.h</header>
+   <header>ShapeEvolutionViewer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

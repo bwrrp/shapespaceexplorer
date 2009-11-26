@@ -1,13 +1,13 @@
 #include <GLBlaat/GL.h>
 
-#include "ShapeStackViewer.h"
-#include "ShapeStackViewer.moc"
+#include "ShapeEvolutionViewer.h"
+#include "ShapeEvolutionViewer.moc"
 
 #include "Data/ShapeModel.h"
 #include "Data/ShapeMesh.h"
 
 #include "Rendering/ShapeStack.h"
-#include "Rendering/ShapeStackRenderer.h"
+#include "Rendering/ShapeEvolutionRenderer.h"
 #include "Rendering/PopulationProjectionStack.h"
 
 #include <NQVTK/Interactors/OrbitCameraInteractor.h>
@@ -20,11 +20,11 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ShapeStackViewer::ShapeStackViewer(QWidget *parent) 
+	ShapeEvolutionViewer::ShapeEvolutionViewer(QWidget *parent) 
 		: NQVTKWidget(parent), model(0), stack(0)
 	{
 		// Initialize renderer
-		ShapeStackRenderer *renderer = new ShapeStackRenderer();
+		ShapeEvolutionRenderer *renderer = new ShapeEvolutionRenderer();
 		SetRenderer(renderer);
 
 		// Create a scene with dummy renderable
@@ -38,7 +38,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	ShapeStackViewer::~ShapeStackViewer()
+	ShapeEvolutionViewer::~ShapeEvolutionViewer()
 	{
 		// The mesh is owned by the model
 		scene->SetRenderable(0, 0);
@@ -47,10 +47,10 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackViewer::SetShapeModel(ShapeModel *model)
+	void ShapeEvolutionViewer::SetShapeModel(ShapeModel *model)
 	{
-		ShapeStackRenderer *renderer = 
-			dynamic_cast<ShapeStackRenderer*>(GetRenderer());
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
 		assert(renderer != 0);
 
 		// TODO: disconnect signals from old model
@@ -74,7 +74,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackViewer::SetVector(itpp::vec vector)
+	void ShapeEvolutionViewer::SetVector(itpp::vec vector)
 	{
 		if (stack)
 		{
@@ -84,10 +84,10 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackViewer::SyncMeshCamera(NQVTK::Camera *cam)
+	void ShapeEvolutionViewer::SyncMeshCamera(NQVTK::Camera *cam)
 	{
-		ShapeStackRenderer *renderer = 
-			dynamic_cast<ShapeStackRenderer*>(GetRenderer());
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
 		if (!renderer) return;
 
 		NQVTK::Camera *meshCam = renderer->GetMeshCamera();

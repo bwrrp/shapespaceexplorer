@@ -1,6 +1,6 @@
 #include <GLBlaat/GL.h>
 
-#include "ShapeStackRenderer.h"
+#include "ShapeEvolutionRenderer.h"
 
 #include "Data/ShapeMesh.h"
 #include "Data/Population.h"
@@ -22,7 +22,7 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ShapeStackRenderer::ShapeStackRenderer() 
+	ShapeEvolutionRenderer::ShapeEvolutionRenderer() 
 		: stack(0), compositeShader(0), meshBuffer(0)
 	{
 		meshRenderer = new MeshRenderer();
@@ -35,7 +35,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	ShapeStackRenderer::~ShapeStackRenderer()
+	ShapeEvolutionRenderer::~ShapeEvolutionRenderer()
 	{
 		delete meshRenderer;
 		delete compositeShader;
@@ -46,7 +46,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackRenderer::Draw()
+	void ShapeEvolutionRenderer::Draw()
 	{
 		// TODO: find out why this doesn't stick...
 		meshRenderer->SetScene(meshSpace);
@@ -165,7 +165,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void ShapeStackRenderer::SetShapeStack(ShapeStack *stack)
+	void ShapeEvolutionRenderer::SetShapeStack(ShapeStack *stack)
 	{
 		this->stack = stack;
 		if (stack)
@@ -180,14 +180,14 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	NQVTK::Camera *ShapeStackRenderer::GetMeshCamera()
+	NQVTK::Camera *ShapeEvolutionRenderer::GetMeshCamera()
 	{
 		if (!meshRenderer) return 0;
 		return meshRenderer->GetCamera();
 	}
 
 	// ------------------------------------------------------------------------
-	bool ShapeStackRenderer::Initialize()
+	bool ShapeEvolutionRenderer::Initialize()
 	{
 		if (!Superclass::Initialize()) return false;
 

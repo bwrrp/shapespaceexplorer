@@ -12,13 +12,13 @@ namespace Diverse
 	class ShapeStack;
 	class MeshRenderer;
 
-	class ShapeStackRenderer : public NQVTK::Renderer
+	class ShapeEvolutionRenderer : public NQVTK::Renderer
 	{
 	public:
 		typedef NQVTK::Renderer Superclass;
 
-		ShapeStackRenderer();
-		~ShapeStackRenderer();
+		ShapeEvolutionRenderer();
+		~ShapeEvolutionRenderer();
 
 		virtual void Draw();
 
