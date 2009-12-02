@@ -21,8 +21,8 @@ namespace Diverse
 	public slots:
 		void RedrawViewers();
 
-		void LoadMesh(const QString &filename);
-		void LoadPopulation(const QString &filename);
+		bool LoadMesh(const QString &filename);
+		bool LoadPopulation(const QString &filename);
 
 	protected:
 		Ui::MainWindow ui;
