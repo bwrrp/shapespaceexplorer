@@ -142,6 +142,7 @@ namespace Diverse
 				// Widgets might move in memory, so prevent dangling pointers
 				interactor->ReleaseWidgets();
 				renderer->SetNumberOfAxes(numAxes);
+				OnProjectionChanged();
 			}
 
 			event->accept();
