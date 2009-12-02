@@ -122,6 +122,8 @@ namespace Diverse
 				tm->Bind();
 
 				// Draw the slice
+				compositeShader->SetUniform1f("offset", 
+					static_cast<float>(slices[i].offset));
 				slices[i].Draw();
 
 				compositeShader->Stop();

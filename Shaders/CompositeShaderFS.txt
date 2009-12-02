@@ -1,6 +1,7 @@
 uniform sampler2D meshBuffer;
 
-varying float offset;
+// Offset is in range -1..1
+uniform float offset;
 
 void main()
 {
@@ -10,11 +11,30 @@ void main()
 	vec4 mbl = texture2D(meshBuffer, tc + vec2(step, 0.0));
 	vec4 mbd = texture2D(meshBuffer, tc + vec2(0.0, step));
 	vec4 color = mb;
-	//if (color.a != 0.0) color.a = 0.1;
+
+	float t = clamp(offset, 0.0, 1.0);
+
 	vec4 contourcolor = vec4(0.0, 0.0, 0.0, 0.5);
-	if (abs(offset) < 0.05) contourcolor.r = 1.0;
-	if (mb.a != mbl.a || mb.a != mbd.a) color = contourcolor;
-	color.a *= max(1.0 - abs(offset) / 10.0, 0.1);
+
+	// Outline coloring for overlay
+	// TODO: make color map / interpolation perceptually uniform
+	//contourcolor = mix(vec4(1.0, 1.0, 0.5, 1.0), 
+	//	offset > 0.0 ? vec4(0.42, 0.76, 1.0, 1.0) : vec4(0.8, 0.33, 0.32, 1.0), 
+	//	abs(offset));
+
+	if (mb.a != mbl.a || mb.a != mbd.a)
+	{
+		color = contourcolor;
+	}
+	else
+	{
+		// Outlines only for overlay
+		//discard;
+	}
+
+	// Blending for shape stacks
+	//color.a *= max(1.0 - abs(offset), 0.1);
+
 	color.rgb *= color.a;
 	gl_FragColor = color;
 }

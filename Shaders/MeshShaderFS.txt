@@ -40,7 +40,7 @@ void main()
 
 	if (fragment.background) discard;
 
-	vec3 color = vec3(1.0, 1.0, 1.0);
+	vec3 color;
 
 	// Compute screen-space normal
 	// TODO: combine with SSAO for smoother normals
@@ -53,8 +53,11 @@ void main()
 	float dwy = (wy2 - wy1) * 0.5;
 	vec3 normal = normalize(cross(vec3(1.0, 0.0, dwx), vec3(0.0, 1.0, dwy)));
 
-	vec3 defcol = fragment.deformation < 0.0 ? vec3(0.5, 0.5, 1.0) : vec3(1.0, 0.5, 0.5);
-	//color = mix(color, defcol, min(1.0, abs(fragment.deformation) / 10.0));
+	float t = clamp(fragment.deformation / 2.0, -1.0, 1.0);
+	color = mix(vec4(1.0, 1.0, 0.5, 1.0), 
+		t > 0.0 ? vec4(0.42, 0.76, 1.0, 1.0) : vec4(0.8, 0.33, 0.32, 1.0), 
+		abs(t));
+	//color = vec3(1.0);
 	float alpha = 1.0;
 	color *= 0.5 + 0.5 * max(dot(normal, normalize(gl_LightSource[0].position)), 0.0);
 	gl_FragColor = vec4(color * alpha, alpha);
