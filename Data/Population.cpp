@@ -257,15 +257,15 @@ namespace Diverse
 		delete basis;
 		// Assume a Gaussian distribution with the PCA eigenvalues as variance
 		double powtwopi = pow(sqrt(2.0 * M_PI), dims);
-		double prodstdevs = 1.0;
+		double prodvars = 1.0;
 		double sumshape = 0.0;
 		for (int i = 0; i < dims; ++i)
 		{
 			double var = eigVals(i);
-			prodstdevs *= sqrt(var);
-			sumshape += pcashape(i) * pcashape(i) / 2.0 / var;
+			prodvars *= var;
+			sumshape += pcashape(i) * pcashape(i) / var;
 		}
-		double gauss = 1.0 / powtwopi / prodstdevs * exp(-sumshape);
+		double gauss = 1.0 / powtwopi / sqrt(prodvars) * exp(-0.5 * sumshape);
 		assert(gauss >= 0.0 && gauss <= 1.0);
 		return gauss;
 	}
