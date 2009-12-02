@@ -31,8 +31,6 @@ namespace Diverse
 
 		virtual void DrawPoint(int individual);
 
-		ShapeMesh *mesh;
-
 		GLFramebuffer *meshBuffer;
 		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
