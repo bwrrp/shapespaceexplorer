@@ -7,9 +7,11 @@ void main()
 {
 	float step = 2.0 / 1024.0;
 	vec2 tc = gl_TexCoord[0].xy;
+	vec2 dx = ddx(tc);
+	vec2 dy = ddy(tc);
 	vec4 mb = texture2D(meshBuffer, tc);
-	vec4 mbl = texture2D(meshBuffer, tc + vec2(step, 0.0));
-	vec4 mbd = texture2D(meshBuffer, tc + vec2(0.0, step));
+	vec4 mbl = texture2D(meshBuffer, tc + dx);
+	vec4 mbd = texture2D(meshBuffer, tc + dy);
 	vec4 color = mb;
 
 	float t = clamp(offset, 0.0, 1.0);
