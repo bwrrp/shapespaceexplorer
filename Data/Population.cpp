@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "Population.h"
 
 #include "CoordinateFrame.h"
@@ -243,6 +244,44 @@ namespace Diverse
 		itpp::mat cov = frame->TransformCovarianceIn(covariance);
 		if (!basis) delete frame;
 		return new Population(result, cov);
+	}
+
+	// ------------------------------------------------------------------------
+	double Population::GetProbability(const itpp::vec &shape, int dims)
+	{
+		assert(dims <= eigVecs.cols());
+		if (dims <= 0) dims = eigVecs.cols();
+		// Get point in terms of the principal components
+		CoordinateFrame *basis = GetPrincipalComponentBasis(dims);
+		itpp::vec pcashape = basis->TransformIn(shape);
+		delete basis;
+		// Assume a Gaussian distribution with the PCA eigenvalues as variance
+		double powtwopi = pow(sqrt(2.0 * M_PI), dims);
+		double prodstdevs = 1.0;
+		double sumshape = 0.0;
+		for (int i = 0; i < dims; ++i)
+		{
+			double var = eigVals(i);
+			prodstdevs *= sqrt(var);
+			sumshape += pcashape(i) * pcashape(i) / 2.0 / var;
+		}
+		double gauss = 1.0 / powtwopi / prodstdevs * exp(-sumshape);
+		assert(gauss >= 0.0 && gauss <= 1.0);
+		return gauss;
+	}
+
+	// ------------------------------------------------------------------------
+	double Population::GetReconstructionError(const itpp::vec &shape, int dims)
+	{
+		assert(dims <= eigVecs.cols());
+		if (dims <= 0) dims = eigVecs.cols();
+		// Transform point to the principal component basis and back
+		CoordinateFrame *basis = GetPrincipalComponentBasis(dims);
+		itpp::vec approx = basis->TransformOut(basis->TransformIn(shape));
+		delete basis;
+		itpp::vec error = shape - approx;
+		// Reconstruction error is defined as the norm of this vector
+		return sqrt(itpp::dot(error, error));
 	}
 
 	// ------------------------------------------------------------------------
