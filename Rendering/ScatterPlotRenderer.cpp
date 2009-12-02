@@ -106,7 +106,6 @@ namespace Diverse
 
 		// Draw points
 		glPointSize(5.0);
-		glColor3d(1.0, 1.0, 1.0);
 		glEnable(GL_POINT_SMOOTH);
 		DrawPoints();
 
@@ -496,8 +495,27 @@ namespace Diverse
 		}
 		itpp::ivec order = itpp::sort_index(projections);
 
+		// Determine reconstruction errors for all individuals
+		itpp::vec error(numPoints);
 		for (int i = 0; i < numPoints; ++i)
 		{
+			error(i) = population->GetReconstructionError(
+				population->GetIndividual(order(i)), widgets.size() - 1);
+		}
+
+		for (int i = 0; i < numPoints; ++i)
+		{
+			// Color by reconstruction error
+			// TODO: make this configurable
+			// TODO: make the color map perceptually uniform
+			NQVTK::Vector3 colorLow(0.0, 0.5, 1.0);
+			NQVTK::Vector3 colorHigh(1.0, 0.5, 0.0);
+			double p = error(order(i));
+			// TODO: make the color-mapped interval configurable
+			p = -1.0 + 0.02 * p;
+			if (p < 0.0) p = 0.0;
+			if (p > 1.0) p = 1.0;
+			glColor3dv(((1.0 - p) * colorLow + p * colorHigh).V);
 			DrawPoint(order(i));
 		}
 	}
