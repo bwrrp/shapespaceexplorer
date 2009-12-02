@@ -25,6 +25,9 @@ namespace Diverse
 
 		Population *TransformTo(CoordinateFrame *basis = 0);
 
+		double GetProbability(const itpp::vec &shape, int dims = 0);
+		double GetReconstructionError(const itpp::vec &shape, int dims = 0);
+
 	protected:
 		Population(const itpp::mat &population);
 		Population(const itpp::mat &population, const itpp::mat &covariance);
