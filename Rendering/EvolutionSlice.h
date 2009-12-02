@@ -14,6 +14,7 @@ namespace Diverse
 		NQVTK::Vector3 right;
 
 		itpp::vec shape;
+		double offset;
 
 		static EvolutionSlice Interpolate(const EvolutionSlice &slice1, 
 			const EvolutionSlice &slice2, double t);

@@ -11,6 +11,7 @@ namespace Diverse
 		EvolutionSlice result;
 		double invt = 1.0 - t;
 		result.shape = invt * slice1.shape + t * slice2.shape;
+		result.offset = invt * slice1.offset + t * slice2.offset;
 		result.origin = invt * slice1.origin + t * slice2.origin;
 		// Not quite spherical linear interpolation, but close enough...
 		result.up = (invt * slice1.up + t * slice2.up).normalized() * 

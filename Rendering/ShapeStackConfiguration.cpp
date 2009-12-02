@@ -27,19 +27,21 @@ namespace Diverse
 		int numSlices = offsets.size();
 		slices.resize(numSlices);
 
-		// Rescale offsets to a nice -5..5 range
-		double shift = -offsets(0);
-		double scale = 10.0 / (offsets(numSlices - 1) - offsets(0));
+		// Rescale offsets to a nice -1..1 range
+		double scale = 1.0 / std::max(
+			std::abs(offsets(numSlices - 1)), 
+			std::abs(offsets(0)));
 
 		// Generate shape stack
 		for (int i = 0; i < numSlices; ++i)
 		{
 			EvolutionSlice &slice = slices[i];
 			slice.origin = NQVTK::Vector3(0.0, 0.0, 
-				scale * (offsets(i) + shift) - 5.0);
+				5.0 * scale * offsets(i));
 			slice.right = NQVTK::Vector3(5.0, 0.0, 0.0);
 			slice.up = NQVTK::Vector3(0.0, 5.0, 0.0);
 			slice.shape = shapes.get_row(i);
+			slice.offset = scale * offsets(i);
 		}
 
 		// Set up bounds

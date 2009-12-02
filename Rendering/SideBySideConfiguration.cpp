@@ -28,6 +28,11 @@ namespace Diverse
 		int numSlices = offsets.size();
 		slices.resize(numSlices);
 
+		// Rescale offsets to a nice -1..1 range
+		double scale = 1.0 / std::max(
+			std::abs(offsets(numSlices - 1)), 
+			std::abs(offsets(0)));
+
 		// Generate grid of slices
 		// TODO: this should probably match the aspect ratio
 		double N = static_cast<double>(numSlices);
@@ -53,6 +58,7 @@ namespace Diverse
 					slice.right = NQVTK::Vector3(size * 0.5, 0.0, 0.0);
 					slice.up = NQVTK::Vector3(0.0, size * 0.5, 0.0);
 					slice.shape = shapes.get_row(index);
+					slice.offset = scale * offsets(index);
 				}
 			}
 		}
