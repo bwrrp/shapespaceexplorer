@@ -10,8 +10,19 @@ namespace Diverse
 	{
 		EvolutionSlice result;
 		double invt = 1.0 - t;
+
+		// Slice parameters
 		result.shape = invt * slice1.shape + t * slice2.shape;
 		result.offset = invt * slice1.offset + t * slice2.offset;
+
+		result.contourColoring = invt * slice1.contourColoring + 
+			t * slice2.contourColoring;
+		result.contourOpacity = invt * slice1.contourOpacity + 
+			t * slice2.contourOpacity;
+		result.shapeOpacity = invt * slice1.shapeOpacity + 
+			t * slice2.shapeOpacity;
+
+		// Slice position and orientation
 		result.origin = invt * slice1.origin + t * slice2.origin;
 		// Not quite spherical linear interpolation, but close enough...
 		result.up = (invt * slice1.up + t * slice2.up).normalized() * 

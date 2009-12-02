@@ -57,8 +57,13 @@ namespace Diverse
 						0.0);
 					slice.right = NQVTK::Vector3(size * 0.5, 0.0, 0.0);
 					slice.up = NQVTK::Vector3(0.0, size * 0.5, 0.0);
+
 					slice.shape = shapes.get_row(index);
 					slice.offset = scale * offsets(index);
+
+					slice.contourColoring = 0.0f;
+					slice.contourOpacity = 1.0f;
+					slice.shapeOpacity = 1.0f;
 				}
 			}
 		}

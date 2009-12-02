@@ -40,8 +40,13 @@ namespace Diverse
 			slice.origin = NQVTK::Vector3(0.0, 0.0, 0.0);
 			slice.right = NQVTK::Vector3(5.0, 0.0, 0.0);
 			slice.up = NQVTK::Vector3(0.0, 5.0, 0.0);
+
 			slice.shape = shapes.get_row(i);
 			slice.offset = scale * offsets(i);
+
+			slice.contourColoring = 1.0f;
+			slice.contourOpacity = 1.0f;
+			slice.shapeOpacity = 0.0f;
 		}
 
 		// Set up bounds
