@@ -121,7 +121,8 @@ namespace Diverse
 		const QString &filename, bool invertAlpha)
 	{
 		// TODO: add support for subpixel rendering to the NQVTKViewer
-		QImage screenshot = viewer->grabFrameBuffer(true);
+		//QImage screenshot = viewer->grabFrameBuffer(true);
+		QImage screenshot = viewer->GrabHighRes(6);
 		if (invertAlpha)
 		{
 			// Fix alpha values
