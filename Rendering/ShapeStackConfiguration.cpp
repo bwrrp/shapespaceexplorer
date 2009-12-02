@@ -40,8 +40,15 @@ namespace Diverse
 				5.0 * scale * offsets(i));
 			slice.right = NQVTK::Vector3(5.0, 0.0, 0.0);
 			slice.up = NQVTK::Vector3(0.0, 5.0, 0.0);
+
 			slice.shape = shapes.get_row(i);
 			slice.offset = scale * offsets(i);
+
+			float opacity = static_cast<float>(
+				std::max(1.0 - std::abs(slice.offset), 0.2));
+			slice.contourColoring = 0.0f;
+			slice.contourOpacity = 1.0f * opacity;
+			slice.shapeOpacity = 0.6f * opacity;
 		}
 
 		// Set up bounds

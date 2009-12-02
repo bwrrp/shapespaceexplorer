@@ -3,6 +3,25 @@ uniform sampler2D meshBuffer;
 // Offset is in range -1..1
 uniform float offset;
 
+uniform float contourColoring;
+uniform float shapeOpacity;
+uniform float contourOpacity;
+
+vec3 toLinearGamma(vec3 color)
+{
+	return pow((color + vec3(0.055))/ 1.055, 2.4);
+}
+
+vec3 toScreenGamma(vec3 color)
+{
+	return pow(1.055 * color, 1.0/2.4) - vec3(0.055);
+}
+
+vec3 interpolateColors(vec3 color1, vec3 color2, float t)
+{
+	return toScreenGamma(mix(toLinearGamma(color1), toLinearGamma(color2), t));
+}
+
 void main()
 {
 	float step = 2.0 / 1024.0;
@@ -16,26 +35,21 @@ void main()
 
 	float t = clamp(offset, 0.0, 1.0);
 
-	vec4 contourcolor = vec4(0.0, 0.0, 0.0, 0.5);
-
 	// Outline coloring for overlay
-	// TODO: make color map / interpolation perceptually uniform
-	//contourcolor = mix(vec4(1.0, 1.0, 0.5, 1.0), 
-	//	offset > 0.0 ? vec4(0.42, 0.76, 1.0, 1.0) : vec4(0.8, 0.33, 0.32, 1.0), 
-	//	abs(offset));
+	vec3 contourColor = interpolateColors(vec3(1.0, 1.0, 0.5), 
+		offset > 0.0 ? vec3(0.42, 0.76, 1.0) : vec3(0.8, 0.33, 0.32), 
+		abs(offset));
+	contourColor = mix(vec3(0.15), contourColor, contourColoring);
 
 	if (mb.a != mbl.a || mb.a != mbd.a)
 	{
-		color = contourcolor;
+		color = vec4(contourColor, contourOpacity);
 	}
 	else
 	{
 		// Outlines only for overlay
-		//discard;
+		color.a *= shapeOpacity;
 	}
-
-	// Blending for shape stacks
-	//color.a *= max(1.0 - abs(offset), 0.1);
 
 	color.rgb *= color.a;
 	gl_FragColor = color;

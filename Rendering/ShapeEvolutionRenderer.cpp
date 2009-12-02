@@ -124,6 +124,12 @@ namespace Diverse
 				// Draw the slice
 				compositeShader->SetUniform1f("offset", 
 					static_cast<float>(slices[i].offset));
+				compositeShader->SetUniform1f("contourColoring", 
+					static_cast<float>(slices[i].contourColoring));
+				compositeShader->SetUniform1f("contourOpacity", 
+					static_cast<float>(slices[i].contourOpacity));
+				compositeShader->SetUniform1f("shapeOpacity", 
+					static_cast<float>(slices[i].shapeOpacity));
 				slices[i].Draw();
 
 				compositeShader->Stop();

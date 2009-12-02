@@ -31,6 +31,21 @@ sample GetSample(vec2 coord)
 	return result;
 }
 
+vec3 toLinearGamma(vec3 color)
+{
+	return pow((color + vec3(0.055))/ 1.055, 2.4);
+}
+
+vec3 toScreenGamma(vec3 color)
+{
+	return pow(1.055 * color, 1.0/2.4) - vec3(0.055);
+}
+
+vec3 interpolateColors(vec3 color1, vec3 color2, float t)
+{
+	return toScreenGamma(mix(toLinearGamma(color1), toLinearGamma(color2), t));
+}
+
 void main()
 {
 	vec2 coord = gl_FragCoord.xy;
@@ -54,11 +69,11 @@ void main()
 	vec3 normal = normalize(cross(vec3(1.0, 0.0, dwx), vec3(0.0, 1.0, dwy)));
 
 	float t = clamp(fragment.deformation / 2.0, -1.0, 1.0);
-	color = mix(vec4(1.0, 1.0, 0.5, 1.0), 
-		t > 0.0 ? vec4(0.42, 0.76, 1.0, 1.0) : vec4(0.8, 0.33, 0.32, 1.0), 
+	color = interpolateColors(vec3(1.0, 1.0, 0.5), 
+		t > 0.0 ? vec3(0.42, 0.76, 1.0) : vec3(0.8, 0.33, 0.32), 
 		abs(t));
 	//color = vec3(1.0);
 	float alpha = 1.0;
-	color *= 0.5 + 0.5 * max(dot(normal, normalize(gl_LightSource[0].position)), 0.0);
+	color *= 0.5 + 0.5 * max(dot(normal, normalize(gl_LightSource[0].position.xyz)), 0.0);
 	gl_FragColor = vec4(color * alpha, alpha);
 }

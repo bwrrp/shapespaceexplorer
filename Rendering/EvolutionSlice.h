@@ -16,6 +16,10 @@ namespace Diverse
 		itpp::vec shape;
 		double offset;
 
+		double contourColoring;
+		double contourOpacity;
+		double shapeOpacity;
+
 		static EvolutionSlice Interpolate(const EvolutionSlice &slice1, 
 			const EvolutionSlice &slice2, double t);
 
