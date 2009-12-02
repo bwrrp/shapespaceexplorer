@@ -10,6 +10,8 @@
 
 #include "GPUVoronoi.h"
 
+#include <NQVTK/Rendering/Camera.h>
+
 #include <cassert>
 #include <cmath>
 
@@ -70,6 +72,8 @@ namespace Diverse
 		// This is a 2D view, no renderables are supported (for now)
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		// Jitter translation
+		glTranslated(camera->jitterX, camera->jitterY, 0.0);
 		glOrtho(viewportX, viewportX + viewportWidth, 
 			viewportY + viewportHeight, viewportY, -1.0, 1.0);
 		glMatrixMode(GL_MODELVIEW);
