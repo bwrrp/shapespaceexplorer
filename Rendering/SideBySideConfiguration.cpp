@@ -29,8 +29,9 @@ namespace Diverse
 		slices.resize(numSlices);
 
 		// Generate grid of slices
+		// TODO: this should probably match the aspect ratio
 		double N = static_cast<double>(numSlices);
-		double W = ceil(sqrt(N));
+		double W = ceil(2.0 * sqrt(N / 2.0));
 		double H = ceil(N / W);
 		double size = 10.0 / W;
 		int width = static_cast<int>(W);
