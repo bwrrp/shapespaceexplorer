@@ -7,6 +7,11 @@
 #include "Data/ShapeMesh.h"
 #include "Data/ShapeModel.h"
 
+#include "Rendering/SideBySideConfiguration.h"
+#include "Rendering/ShapeStackConfiguration.h"
+#include "Rendering/OverlayConfiguration.h"
+
+#include <QActionGroup>
 #include <QApplication>
 #include <QDateTime>
 #include <QFileDialog>
@@ -21,6 +26,13 @@ namespace Diverse
 		model(0)
 	{
 		ui.setupUi(this);
+
+		// Group the configurations as only one can be active
+		QActionGroup *group = new QActionGroup(this);
+		group->addAction(ui.actionSideBySide);
+		group->addAction(ui.actionOverlaidContours);
+		group->addAction(ui.actionShapeStack);
+		ui.actionSideBySide->setChecked(true);
 
 		// A user should start by loading a mesh
 		ui.actionLoadPopulation->setEnabled(false);
@@ -176,6 +188,24 @@ namespace Diverse
 			QString("Diverse-%1-Mesh.png").arg(now));
 		SaveScreenshot(ui.evolutionViewer, 
 			QString("Diverse-%1-Evolution.png").arg(now), true);
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionSideBySide_triggered()
+	{
+		ui.evolutionViewer->SetConfiguration(new SideBySideConfiguration());
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionOverlaidContours_triggered()
+	{
+		ui.evolutionViewer->SetConfiguration(new OverlayConfiguration());
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionShapeStack_triggered()
+	{
+		ui.evolutionViewer->SetConfiguration(new ShapeStackConfiguration());
 	}
 
 	// ------------------------------------------------------------------------

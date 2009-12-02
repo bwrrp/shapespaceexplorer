@@ -10,8 +10,6 @@
 
 #include "Rendering/ShapeEvolutionRenderer.h"
 #include "Rendering/SideBySideConfiguration.h"
-#include "Rendering/ShapeStackConfiguration.h"
-#include "Rendering/OverlayConfiguration.h"
 
 #include <NQVTK/Interactors/OrbitCameraInteractor.h>
 
@@ -35,9 +33,8 @@ namespace Diverse
 		renderer->SetCamera(camera);
 		SetInteractor(new NQVTK::OrbitCameraInteractor(camera));
 
-		// TODO: add UI for selecting configuration
-		//configuration = new SideBySideConfiguration();
-		configuration = new ShapeStackConfiguration();
+		configuration = new SideBySideConfiguration();
+		//configuration = new ShapeStackConfiguration();
 		//configuration = new OverlayConfiguration();
 		renderer->SetConfiguration(configuration);
 	}
@@ -75,6 +72,20 @@ namespace Diverse
 		renderer->SetTrajectory(trajectory);
 
 		this->model = model;
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::SetConfiguration(EvolutionConfiguration *config)
+	{
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		// TODO: smoothly morph to the new configuration
+		delete this->configuration;
+		this->configuration = config;
+		renderer->SetConfiguration(config);
+		updateGL();
 	}
 
 	// ------------------------------------------------------------------------

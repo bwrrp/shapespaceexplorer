@@ -39,6 +39,9 @@ namespace Diverse
 		void on_actionReloadShaders_triggered();
 		void on_actionStartBenchmark_triggered();
 		void on_actionScreenshot_triggered();
+		void on_actionSideBySide_triggered();
+		void on_actionOverlaidContours_triggered();
+		void on_actionShapeStack_triggered();
 		void on_evolutionViewer_fpsChanged(int fps);
 	};
 }
