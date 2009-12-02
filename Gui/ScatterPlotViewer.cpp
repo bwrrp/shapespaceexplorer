@@ -137,7 +137,7 @@ namespace Diverse
 			{
 				numAxes -= 1;
 			}
-			if (numAxes >= 0)
+			if (numAxes > 0)
 			{
 				// Widgets might move in memory, so prevent dangling pointers
 				interactor->ReleaseWidgets();
