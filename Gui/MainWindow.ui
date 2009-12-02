@@ -62,9 +62,18 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuEvolution_view_configuraton">
+     <property name="title">
+      <string>Evolution view &amp;configuraton</string>
+     </property>
+     <addaction name="actionSideBySide"/>
+     <addaction name="actionOverlaidContours"/>
+     <addaction name="actionShapeStack"/>
+    </widget>
     <addaction name="actionUsePCA"/>
     <addaction name="separator"/>
     <addaction name="actionScreenshot"/>
+    <addaction name="menuEvolution_view_configuraton"/>
    </widget>
    <addaction name="menuModel"/>
    <addaction name="menuView"/>
@@ -134,6 +143,48 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSideBySide">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Side by side</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to a side by side configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="actionOverlaidContours">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Overlaid &amp;contours</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to an overlaid contours configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionShapeStack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shape s&amp;tack</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to a shape stack configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
    </property>
   </action>
  </widget>

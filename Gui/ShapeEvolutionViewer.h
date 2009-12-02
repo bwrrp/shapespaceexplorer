@@ -22,6 +22,8 @@ namespace Diverse
 
 		void SetShapeModel(ShapeModel *model);
 
+		void SetConfiguration(EvolutionConfiguration *config);
+
 	public slots:
 		void SetVector(itpp::vec vector);
 		void SyncMeshCamera(NQVTK::Camera *cam);
