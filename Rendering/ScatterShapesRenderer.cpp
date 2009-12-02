@@ -18,7 +18,7 @@
 namespace Diverse
 {
 	// ------------------------------------------------------------------------
-	ScatterShapesRenderer::ScatterShapesRenderer() : mesh(0), meshBuffer(0)
+	ScatterShapesRenderer::ScatterShapesRenderer() : meshBuffer(0)
 	{
 		meshRenderer = new MeshRenderer();
 		meshSpace = new NQVTK::Scene();
@@ -41,9 +41,9 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ScatterShapesRenderer::SetMesh(ShapeMesh *mesh)
 	{
-		if (this->mesh == mesh) return;
-		this->mesh = mesh;
 		meshSpace->SetRenderable(0, mesh);
+		meshRenderer->SetMesh(mesh);
+		meshRenderer->SceneChanged();
 		// TODO: pre-render shape miniatures for the population
 	}
 
@@ -116,7 +116,7 @@ namespace Diverse
 		// Render the mesh
 		glEnable(GL_DEPTH_TEST);
 		// TODO: cache reconstructed meshes for comparison
-		if (mesh) mesh->SetShape(population->GetIndividual(individual));
+		meshRenderer->SetShape(population->GetIndividual(individual));
 		meshRenderer->Draw();
 		glDisable(GL_DEPTH_TEST);
 

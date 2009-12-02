@@ -23,8 +23,7 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeEvolutionRenderer::ShapeEvolutionRenderer() 
-		: compositeShader(0), meshBuffer(0), mesh(0), 
-		configuration(0), trajectory(0)
+		: compositeShader(0), meshBuffer(0), configuration(0), trajectory(0)
 	{
 		meshRenderer = new MeshRenderer();
 		// Create the mesh space scene with a dummy renderable
@@ -70,7 +69,7 @@ namespace Diverse
 		if (fboTarget) fboTarget->Unbind();
 
 		// TODO: implement fallback configuration (single slice)
-		if (mesh != 0 && configuration != 0)
+		if (configuration)
 		{
 			// TODO: Determine drawing order
 			/*
@@ -98,7 +97,7 @@ namespace Diverse
 
 				// Render this slice
 				const EvolutionSlice &slice = slices[i];
-				mesh->SetShape(slice.shape);
+				meshRenderer->SetShape(slice.shape);
 				meshRenderer->Draw();
 
 				glMatrixMode(GL_PROJECTION);
@@ -159,8 +158,8 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void ShapeEvolutionRenderer::SetMesh(ShapeMesh *mesh)
 	{
-		this->mesh = mesh;
 		meshSpace->SetRenderable(0, mesh);
+		meshRenderer->SetMesh(mesh);
 		meshRenderer->SceneChanged();
 	}
 

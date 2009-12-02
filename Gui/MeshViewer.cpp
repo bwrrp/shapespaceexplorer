@@ -65,7 +65,6 @@ namespace Diverse
 	void MeshViewer::SetShape(itpp::vec shape)
 	{
 		if (!model) return;
-		if (!model->GetMesh()) return;
 
 		MeshRenderer *renderer = dynamic_cast<MeshRenderer*>(GetRenderer());
 		assert(renderer != 0);

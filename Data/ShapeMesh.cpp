@@ -26,6 +26,12 @@ namespace Diverse
 		refAttr = new NQVTK::AttributeSet(GL_DOUBLE, 3);
 		refAttr->SetData(numPoints, 0, GL_DYNAMIC_DRAW);
 		AddAttributeSet("reference", refAttr, true);
+
+		// Set zero shape and reference
+		itpp::vec zeros(GetShapeSpaceDimension());
+		zeros.zeros();
+		SetShape(zeros);
+		SetReference(zeros);
 	}
 
 	// ------------------------------------------------------------------------

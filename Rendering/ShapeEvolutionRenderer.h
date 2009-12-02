@@ -43,7 +43,6 @@ namespace Diverse
 		GLFramebuffer *meshBuffer;
 		MeshRenderer *meshRenderer;
 		NQVTK::Scene *meshSpace;
-		ShapeMesh *mesh;
 
 		ShapeTrajectory *trajectory;
 		EvolutionConfiguration *configuration;

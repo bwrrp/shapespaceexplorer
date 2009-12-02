@@ -79,7 +79,7 @@ namespace Diverse
 			tm->AddTexture("gbuffer0", meshBuffer->GetTexture2D(
 				GL_COLOR_ATTACHMENT0), false);
 			tm->AddTexture("gbuffer1", meshBuffer->GetTexture2D(
-				GL_COLOR_ATTACHMENT0), false);
+				GL_COLOR_ATTACHMENT1), false);
 		}
 		else
 		{
@@ -106,6 +106,7 @@ namespace Diverse
 		GLFramebuffer *oldTarget = SetTarget(meshBuffer);
 		bool oldDrawBackground = drawBackground;
 		SetDrawBackground(false);
+		glDisable(GL_BLEND);
 		Superclass::Draw();
 
 		// Prepare for the shading pass
