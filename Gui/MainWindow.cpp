@@ -179,7 +179,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_stackViewer_fpsChanged(int fps)
+	void MainWindow::on_evolutionViewer_fpsChanged(int fps)
 	{
 		setWindowTitle(QString("%1 - %2 fps")
 			.arg(qApp->applicationName()).arg(fps));
