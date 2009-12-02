@@ -22,15 +22,21 @@ int main(int argc, char *argv[])
 
 	Diverse::MainWindow *window = new Diverse::MainWindow();
 
-	// TODO: If a model was specified on the command line, load it
+	window->show();
+
+	// If a model was specified on the command line, load it
 	QStringList args = app.arguments();
 	if (args.size() > 1)
 	{
-		//window->LoadModel(args[1]);
+		bool ok = window->LoadMesh(args[1]);
+
+		if (ok && args.size() > 2)
+		{
+			window->LoadPopulation(args[2]);
+		}
 	}
 
 	// Go!
-	window->show();
 	app.exec();
 
 	// Clean up and exit

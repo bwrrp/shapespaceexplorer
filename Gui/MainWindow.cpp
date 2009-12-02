@@ -69,7 +69,7 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::LoadMesh(const QString &filename)
+	bool MainWindow::LoadMesh(const QString &filename)
 	{
 		ShapeMesh *mesh = ShapeMesh::Load(filename);
 		if (mesh)
@@ -88,11 +88,13 @@ namespace Diverse
 			ui.plotViewer->SetShapeModel(model);
 			ui.meshViewer->SetShapeModel(model);
 			RedrawViewers();
+			return true;
 		}
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::LoadPopulation(const QString &filename)
+	bool MainWindow::LoadPopulation(const QString &filename)
 	{
 		Population *newPop = Population::Load(filename);
 		if (newPop)
@@ -103,6 +105,7 @@ namespace Diverse
 				ui.plotViewer->SetShapeModel(model);
 				ui.evolutionViewer->SetShapeModel(model);
 				RedrawViewers();
+				return true;
 			}
 			else
 			{
@@ -110,6 +113,7 @@ namespace Diverse
 				delete newPop;
 			}
 		}
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
