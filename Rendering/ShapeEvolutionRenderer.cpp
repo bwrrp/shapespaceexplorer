@@ -2,6 +2,7 @@
 
 #include "ShapeEvolutionRenderer.h"
 
+#include "Data/CoordinateFrame.h"
 #include "Data/ShapeMesh.h"
 #include "Data/Population.h"
 
@@ -23,7 +24,8 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeEvolutionRenderer::ShapeEvolutionRenderer() 
-		: compositeShader(0), meshBuffer(0), configuration(0), trajectory(0)
+		: compositeShader(0), meshBuffer(0), configuration(0), trajectory(0), 
+		referenceBasis(0)
 	{
 		meshRenderer = new MeshRenderer();
 		// Create the mesh space scene with a dummy renderable
@@ -98,6 +100,18 @@ namespace Diverse
 				// Render this slice
 				const EvolutionSlice &slice = slices[i];
 				meshRenderer->SetShape(slice.shape);
+				itpp::vec reference;
+				if (referenceBasis)
+				{
+					reference = referenceBasis->TransformOut(
+						referenceBasis->TransformIn(slice.shape));
+				}
+				else
+				{
+					reference.set_size(slice.shape.size());
+					reference.zeros();
+				}
+				meshRenderer->SetReference(reference);
 				meshRenderer->Draw();
 
 				glMatrixMode(GL_PROJECTION);
@@ -184,6 +198,13 @@ namespace Diverse
 	{
 		this->configuration = configuration;
 		UpdateSlices();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionRenderer::SetReferenceBasis(CoordinateFrame *basis)
+	{
+		delete referenceBasis;
+		referenceBasis = basis;
 	}
 
 	// ------------------------------------------------------------------------
