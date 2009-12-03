@@ -25,11 +25,14 @@ namespace Diverse
 
 		void SetMesh(ShapeMesh *mesh);
 		void SetShape(itpp::vec shape);
+		itpp::vec GetShape() { return shape; }
+		void SetReference(itpp::vec shape);
 		void SetUseColorMap(bool use);
 
 	protected:
 		ShapeMesh *mesh;
 		itpp::vec shape;
+		itpp::vec reference;
 
 		GLProgram *meshShader;
 

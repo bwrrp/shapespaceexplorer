@@ -20,11 +20,25 @@ namespace Diverse
 
 		void SetShapeModel(ShapeModel *model);
 
+		enum ColorMode
+		{
+			ColorByDeformation,
+			ColorByReconstructionError
+		};
+
+		void SetColorMode(ColorMode mode);
+
 	public slots:
 		void SetShape(itpp::vec shape);
+		void SetReconstructionDimension(int dims);
 
 	protected:
 		ShapeModel *model;
 		NQVTK::Scene *scene;
+
+		ColorMode colorMode;
+		int reconstructionDims;
+
+		void UpdateReference();
 	};
 }

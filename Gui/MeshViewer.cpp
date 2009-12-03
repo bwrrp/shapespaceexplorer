@@ -3,6 +3,8 @@
 #include "MeshViewer.h"
 #include "MeshViewer.moc"
 
+#include "Data/CoordinateFrame.h"
+#include "Data/Population.h"
 #include "Data/ShapeMesh.h"
 #include "Data/ShapeModel.h"
 
@@ -32,6 +34,9 @@ namespace Diverse
 		NQVTK::ArcballCamera *camera = new NQVTK::ArcballCamera();
 		renderer->SetCamera(camera);
 		SetInteractor(new NQVTK::ArcballCameraInteractor(camera));
+
+		reconstructionDims = 5;
+		colorMode = ColorByDeformation;
 	}
 
 	// ------------------------------------------------------------------------
@@ -58,7 +63,18 @@ namespace Diverse
 			scene->SetRenderable(0, 0);
 			renderer->SetMesh(0);
 		}
+		UpdateReference();
 		GetRenderer()->SceneChanged();
+	}
+
+	// ------------------------------------------------------------------------
+	void MeshViewer::SetColorMode(ColorMode mode)
+	{
+		this->colorMode = mode;
+
+		UpdateReference();
+
+		updateGL();
 	}
 
 	// ------------------------------------------------------------------------
@@ -70,6 +86,44 @@ namespace Diverse
 		assert(renderer != 0);
 
 		renderer->SetShape(shape);
+		UpdateReference();
 		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void MeshViewer::SetReconstructionDimension(int dims)
+	{
+		if (dims == reconstructionDims) return;
+		reconstructionDims = dims;
+		UpdateReference();
+		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void MeshViewer::UpdateReference()
+	{
+		MeshRenderer *renderer = dynamic_cast<MeshRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		// Update the reference shape according to the current coloring mode
+		if (!model) return;
+
+		itpp::vec reference(model->GetMesh()->GetShapeSpaceDimension());
+		reference.zeros();
+
+		if (colorMode == ColorByReconstructionError)
+		{
+			Population *population = model->GetPopulation();
+			if (population)
+			{
+				CoordinateFrame *basis = 
+					population->GetPrincipalComponentBasis(reconstructionDims);
+				reference = basis->TransformOut(
+					basis->TransformIn(renderer->GetShape()));
+				delete basis;
+			}
+		}
+
+		renderer->SetReference(reference);
 	}
 }

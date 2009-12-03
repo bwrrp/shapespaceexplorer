@@ -92,7 +92,11 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	void MeshRenderer::Draw()
 	{
-		if (mesh) mesh->SetShape(shape);
+		if (mesh)
+		{
+			mesh->SetShape(shape);
+			mesh->SetReference(reference);
+		}
 
 		// TODO: add a standard deferred shading renderer to NQVTK
 
@@ -125,6 +129,8 @@ namespace Diverse
 		{
 			shape.set_size(mesh->GetShapeSpaceDimension());
 			shape.zeros();
+			reference.set_size(mesh->GetShapeSpaceDimension());
+			reference.zeros();
 		}
 	}
 
@@ -134,6 +140,14 @@ namespace Diverse
 		assert(mesh != 0);
 		assert(shape.size() == mesh->GetShapeSpaceDimension());
 		this->shape = shape;
+	}
+
+	// ------------------------------------------------------------------------
+	void MeshRenderer::SetReference(itpp::vec shape)
+	{
+		assert(mesh != 0);
+		assert(shape.size() == mesh->GetShapeSpaceDimension());
+		this->reference = shape;
 	}
 
 	// ------------------------------------------------------------------------

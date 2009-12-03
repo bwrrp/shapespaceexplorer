@@ -153,6 +153,7 @@ namespace Diverse
 				interactor->ReleaseWidgets();
 				renderer->SetNumberOfAxes(numAxes);
 				OnProjectionChanged();
+				emit NumberOfAxesChanged(renderer->GetNumberOfAxes());
 			}
 
 			event->accept();
