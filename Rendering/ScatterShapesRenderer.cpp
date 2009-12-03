@@ -25,6 +25,7 @@ namespace Diverse
 		meshSpace->AddRenderable(0);
 		meshRenderer->SetScene(meshSpace);
 		meshRenderer->SetDrawBackground(false);
+		meshRenderer->SetUseColorMap(false);
 
 		shapeSize = 1.0;
 	}

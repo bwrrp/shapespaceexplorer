@@ -6,6 +6,8 @@ uniform float viewportY;
 
 uniform vec3 cameraPos;
 
+uniform bool useColorMap;
+
 struct sample
 {
 	vec2 coord;
@@ -55,7 +57,7 @@ void main()
 
 	if (fragment.background) discard;
 
-	vec3 color;
+	vec3 color = vec3(1.0);
 
 	// Compute screen-space normal
 	// TODO: combine with SSAO for smoother normals
@@ -68,11 +70,13 @@ void main()
 	float dwy = (wy2 - wy1) * 0.5;
 	vec3 normal = normalize(cross(vec3(1.0, 0.0, dwx), vec3(0.0, 1.0, dwy)));
 
-	float t = clamp(fragment.deformation / 2.0, -1.0, 1.0);
-	color = interpolateColors(vec3(1.0, 1.0, 0.5), 
-		t > 0.0 ? vec3(0.42, 0.76, 1.0) : vec3(0.8, 0.33, 0.32), 
-		abs(t));
-	//color = vec3(1.0);
+	if (useColorMap)
+	{
+		float t = clamp(fragment.deformation / 2.0, -1.0, 1.0);
+		color = interpolateColors(vec3(1.0, 1.0, 0.5), 
+			t > 0.0 ? vec3(0.42, 0.76, 1.0) : vec3(0.8, 0.33, 0.32), 
+			abs(t));
+	}
 	float alpha = 1.0;
 	color *= 0.5 + 0.5 * max(dot(normal, normalize(gl_LightSource[0].position.xyz)), 0.0);
 	gl_FragColor = vec4(color * alpha, alpha);
