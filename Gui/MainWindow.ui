@@ -62,18 +62,27 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="menuEvolution_view_configuraton">
+    <widget class="QMenu" name="menuEvolutionConfiguraton">
      <property name="title">
-      <string>Evolution view &amp;configuraton</string>
+      <string>&amp;Evolution view configuraton</string>
      </property>
      <addaction name="actionSideBySide"/>
      <addaction name="actionOverlaidContours"/>
      <addaction name="actionShapeStack"/>
     </widget>
+    <widget class="QMenu" name="menuScatterPlotColoring">
+     <property name="title">
+      <string>Scatter plot &amp;coloring</string>
+     </property>
+     <addaction name="actionColoringOff"/>
+     <addaction name="actionColoringProbability"/>
+     <addaction name="actionColoringReconstructionError"/>
+    </widget>
     <addaction name="actionUsePCA"/>
+    <addaction name="menuScatterPlotColoring"/>
+    <addaction name="menuEvolutionConfiguraton"/>
     <addaction name="separator"/>
     <addaction name="actionScreenshot"/>
-    <addaction name="menuEvolution_view_configuraton"/>
    </widget>
    <addaction name="menuModel"/>
    <addaction name="menuView"/>
@@ -117,7 +126,7 @@
   </action>
   <action name="actionScreenshot">
    <property name="text">
-    <string>Save &amp;screenshot</string>
+    <string>Save &amp;screenshots</string>
    </property>
    <property name="toolTip">
     <string>Save a screenshot of the 3D viewer</string>
@@ -185,6 +194,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionColoringOff">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Off</string>
+   </property>
+  </action>
+  <action name="actionColoringProbability">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shape &amp;probability</string>
+   </property>
+  </action>
+  <action name="actionColoringReconstructionError">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Reconstruction error</string>
    </property>
   </action>
  </widget>

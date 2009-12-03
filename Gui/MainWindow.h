@@ -42,6 +42,9 @@ namespace Diverse
 		void on_actionSideBySide_triggered();
 		void on_actionOverlaidContours_triggered();
 		void on_actionShapeStack_triggered();
+		void on_actionColoringOff_triggered();
+		void on_actionColoringProbability_triggered();
+		void on_actionColoringReconstructionError_triggered();
 		void on_evolutionViewer_fpsChanged(int fps);
 	};
 }

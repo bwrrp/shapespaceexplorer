@@ -6,6 +6,9 @@
 
 #include <itpp/itbase.h>
 
+// For ColorMode enum
+#include "Rendering/ScatterPlotRenderer.h"
+
 namespace Diverse
 {
 	class ShapeModel;
@@ -19,6 +22,8 @@ namespace Diverse
 		virtual ~ScatterPlotViewer();
 
 		void SetShapeModel(ShapeModel *model);
+
+		void SetColorMode(ScatterPlotRenderer::ColorMode mode);
 
 	signals:
 		void PointSelected(itpp::vec shape);

@@ -34,6 +34,13 @@ namespace Diverse
 		group->addAction(ui.actionShapeStack);
 		ui.actionSideBySide->setChecked(true);
 
+		// Group the scatter plot coloring modes
+		group = new QActionGroup(this);
+		group->addAction(ui.actionColoringOff);
+		group->addAction(ui.actionColoringProbability);
+		group->addAction(ui.actionColoringReconstructionError);
+		ui.actionColoringOff->setChecked(true);
+
 		// A user should start by loading a mesh
 		ui.actionLoadPopulation->setEnabled(false);
 
@@ -211,6 +218,25 @@ namespace Diverse
 	void MainWindow::on_actionShapeStack_triggered()
 	{
 		ui.evolutionViewer->SetConfiguration(new ShapeStackConfiguration());
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionColoringOff_triggered()
+	{
+		ui.plotViewer->SetColorMode(ScatterPlotRenderer::ColoringOff);
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionColoringProbability_triggered()
+	{
+		ui.plotViewer->SetColorMode(ScatterPlotRenderer::ColorByProbability);
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionColoringReconstructionError_triggered()
+	{
+		ui.plotViewer->SetColorMode(
+			ScatterPlotRenderer::ColorByReconstructionError);
 	}
 
 	// ------------------------------------------------------------------------

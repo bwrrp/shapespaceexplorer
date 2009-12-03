@@ -53,6 +53,15 @@ namespace Diverse
 		itpp::vec GetProjectionXAxis();
 		itpp::vec GetProjectionYAxis();
 
+		enum ColorMode
+		{
+			ColoringOff,
+			ColorByProbability, 
+			ColorByReconstructionError
+		};
+
+		void SetColorMode(ColorMode mode);
+
 		virtual void ZoomToFit();
 
 		double zoom;
@@ -80,5 +89,7 @@ namespace Diverse
 		NQVTK::Vector3 widgetOrigin;
 		int lastWidget;
 		unsigned int requestedNumAxes;
+
+		ColorMode colorMode;
 	};
 }

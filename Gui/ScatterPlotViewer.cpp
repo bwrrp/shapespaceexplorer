@@ -75,6 +75,16 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void ScatterPlotViewer::SetColorMode(ScatterPlotRenderer::ColorMode mode)
+	{
+		ScatterPlotRenderer *renderer = 
+			dynamic_cast<ScatterPlotRenderer*>(GetRenderer());
+		assert(renderer != 0);
+		renderer->SetColorMode(mode);
+		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
 	void ScatterPlotViewer::SyncMeshCamera(NQVTK::Camera *cam)
 	{
 		ScatterShapesRenderer *renderer = 
