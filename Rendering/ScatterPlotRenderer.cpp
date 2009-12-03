@@ -29,7 +29,7 @@ namespace Diverse
 		// Start with four axes
 		SetNumberOfAxes(5);
 
-		colorMode = ColoringOff;
+		colorMode = ColorByProbability;
 
 		//pickInfo = new PickInfo();
 		voronoi = new GPUVoronoi();

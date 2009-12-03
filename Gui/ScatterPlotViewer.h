@@ -28,6 +28,7 @@ namespace Diverse
 	signals:
 		void PointSelected(itpp::vec shape);
 		void XAxisChanged(itpp::vec axis);
+		void NumberOfAxesChanged(int num);
 
 	public slots:
 		void SyncMeshCamera(NQVTK::Camera *cam);

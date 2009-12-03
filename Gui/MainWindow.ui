@@ -74,12 +74,20 @@
      <property name="title">
       <string>Scatter plot &amp;coloring</string>
      </property>
-     <addaction name="actionColoringOff"/>
-     <addaction name="actionColoringProbability"/>
-     <addaction name="actionColoringReconstructionError"/>
+     <addaction name="actionPlotColoringOff"/>
+     <addaction name="actionPlotColoringProbability"/>
+     <addaction name="actionPlotColoringReconstructionError"/>
+    </widget>
+    <widget class="QMenu" name="menuObjectColoring">
+     <property name="title">
+      <string>&amp;Object coloring</string>
+     </property>
+     <addaction name="actionMeshColoringDeformation"/>
+     <addaction name="actionMeshColoringReconstructionError"/>
     </widget>
     <addaction name="actionUsePCA"/>
     <addaction name="menuScatterPlotColoring"/>
+    <addaction name="menuObjectColoring"/>
     <addaction name="menuEvolutionConfiguraton"/>
     <addaction name="separator"/>
     <addaction name="actionScreenshot"/>
@@ -196,28 +204,59 @@
     <string>Ctrl+3</string>
    </property>
   </action>
-  <action name="actionColoringOff">
+  <action name="actionPlotColoringOff">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Off</string>
    </property>
+   <property name="toolTip">
+    <string>Do not color scatterplot points</string>
+   </property>
   </action>
-  <action name="actionColoringProbability">
+  <action name="actionPlotColoringProbability">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>Shape &amp;probability</string>
    </property>
+   <property name="toolTip">
+    <string>Color scatter plot points by shape probability</string>
+   </property>
   </action>
-  <action name="actionColoringReconstructionError">
+  <action name="actionPlotColoringReconstructionError">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Reconstruction error</string>
+   </property>
+   <property name="toolTip">
+    <string>Color scatter plot points by reconstruction error</string>
+   </property>
+  </action>
+  <action name="actionMeshColoringDeformation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Deviation from mean</string>
+   </property>
+   <property name="toolTip">
+    <string>Color object surface by deviation from the mean shape</string>
+   </property>
+  </action>
+  <action name="actionMeshColoringReconstructionError">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Reconstruction error</string>
+   </property>
+   <property name="toolTip">
+    <string>Color object surface by the local reconstruction error</string>
    </property>
   </action>
  </widget>

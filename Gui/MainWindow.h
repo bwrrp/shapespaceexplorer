@@ -42,9 +42,11 @@ namespace Diverse
 		void on_actionSideBySide_triggered();
 		void on_actionOverlaidContours_triggered();
 		void on_actionShapeStack_triggered();
-		void on_actionColoringOff_triggered();
-		void on_actionColoringProbability_triggered();
-		void on_actionColoringReconstructionError_triggered();
+		void on_actionPlotColoringOff_triggered();
+		void on_actionPlotColoringProbability_triggered();
+		void on_actionPlotColoringReconstructionError_triggered();
+		void on_actionMeshColoringDeformation_triggered();
+		void on_actionMeshColoringReconstructionError_triggered();
 		void on_evolutionViewer_fpsChanged(int fps);
 	};
 }

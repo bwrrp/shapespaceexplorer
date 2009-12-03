@@ -36,10 +36,16 @@ namespace Diverse
 
 		// Group the scatter plot coloring modes
 		group = new QActionGroup(this);
-		group->addAction(ui.actionColoringOff);
-		group->addAction(ui.actionColoringProbability);
-		group->addAction(ui.actionColoringReconstructionError);
-		ui.actionColoringOff->setChecked(true);
+		group->addAction(ui.actionPlotColoringOff);
+		group->addAction(ui.actionPlotColoringProbability);
+		group->addAction(ui.actionPlotColoringReconstructionError);
+		ui.actionPlotColoringProbability->setChecked(true);
+
+		// Group the mesh coloring modes
+		group = new QActionGroup(this);
+		group->addAction(ui.actionMeshColoringDeformation);
+		group->addAction(ui.actionMeshColoringReconstructionError);
+		ui.actionMeshColoringDeformation->setChecked(true);
 
 		// A user should start by loading a mesh
 		ui.actionLoadPopulation->setEnabled(false);
@@ -51,6 +57,9 @@ namespace Diverse
 
 		connect(ui.plotViewer, SIGNAL(PointSelected(itpp::vec)), 
 			ui.meshViewer, SLOT(SetShape(itpp::vec)));
+
+		connect(ui.plotViewer, SIGNAL(NumberOfAxesChanged(int)), 
+			ui.meshViewer, SLOT(SetReconstructionDimension(int)));
 
 		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
 			ui.plotViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
@@ -221,22 +230,34 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_actionColoringOff_triggered()
+	void MainWindow::on_actionPlotColoringOff_triggered()
 	{
 		ui.plotViewer->SetColorMode(ScatterPlotRenderer::ColoringOff);
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_actionColoringProbability_triggered()
+	void MainWindow::on_actionPlotColoringProbability_triggered()
 	{
 		ui.plotViewer->SetColorMode(ScatterPlotRenderer::ColorByProbability);
 	}
 
 	// ------------------------------------------------------------------------
-	void MainWindow::on_actionColoringReconstructionError_triggered()
+	void MainWindow::on_actionPlotColoringReconstructionError_triggered()
 	{
 		ui.plotViewer->SetColorMode(
 			ScatterPlotRenderer::ColorByReconstructionError);
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionMeshColoringDeformation_triggered()
+	{
+		ui.meshViewer->SetColorMode(MeshViewer::ColorByDeformation);
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionMeshColoringReconstructionError_triggered()
+	{
+		ui.meshViewer->SetColorMode(MeshViewer::ColorByReconstructionError);
 	}
 
 	// ------------------------------------------------------------------------
