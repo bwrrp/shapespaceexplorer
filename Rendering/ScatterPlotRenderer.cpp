@@ -29,6 +29,8 @@ namespace Diverse
 		// Start with four axes
 		SetNumberOfAxes(5);
 
+		colorMode = ColoringOff;
+
 		//pickInfo = new PickInfo();
 		voronoi = new GPUVoronoi();
 
@@ -387,6 +389,12 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void ScatterPlotRenderer::SetColorMode(ColorMode mode)
+	{
+		this->colorMode = mode;
+	}
+
+	// ------------------------------------------------------------------------
 	void ScatterPlotRenderer::ZoomToFit()
 	{
 		if (!populationInFrame) return;
@@ -499,7 +507,7 @@ namespace Diverse
 		}
 		itpp::ivec order = itpp::sort_index(projections);
 
-		// Determine reconstruction errors for all individuals
+		// Determine reconstruction errors and probabilities
 		itpp::vec error(numPoints);
 		itpp::vec prob(numPoints);
 		for (int i = 0; i < numPoints; ++i)
@@ -518,10 +526,21 @@ namespace Diverse
 			// TODO: make the color map perceptually uniform
 			NQVTK::Vector3 colorLow(0.0, 0.5, 1.0);
 			NQVTK::Vector3 colorHigh(1.0, 0.5, 0.0);
-			//double p = error(order(i));
-			double p = 1.0 - prob(order(i)) / maxProb;
+			double p;
+			switch (colorMode)
+			{
+			case ColorByProbability:
+				p = 1.0 - prob(order(i)) / maxProb;
+				break;
+
+			case ColorByReconstructionError:
+				p = -1.0 + 0.02 * error(order(i));
+				break;
+
+			default:
+				p = 0.5;
+			}
 			// TODO: make the color-mapped interval configurable
-			//p = -1.0 + 0.02 * p;
 			if (p < 0.0) p = 0.0;
 			if (p > 1.0) p = 1.0;
 			glColor3dv(((1.0 - p) * colorLow + p * colorHigh).V);
