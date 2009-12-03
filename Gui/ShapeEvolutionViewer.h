@@ -24,15 +24,30 @@ namespace Diverse
 
 		void SetConfiguration(EvolutionConfiguration *config);
 
+		enum ColorMode
+		{
+			ColorByDeformation,
+			ColorByReconstructionError
+		};
+
+		void SetColorMode(ColorMode mode);
+
 	public slots:
 		void SetVector(itpp::vec vector);
 		void SyncMeshCamera(NQVTK::Camera *cam);
+		void SetReconstructionDimension(int dims);
 
 	protected:
 		ShapeModel *model;
 
+		ColorMode colorMode;
+
 		// TODO: make the trajectory type configurable
 		LinearPopulationTrajectory *trajectory;
 		EvolutionConfiguration *configuration;
+
+		int reconstructionDims;
+
+		void UpdateReference();
 	};
 }

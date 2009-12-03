@@ -3,6 +3,7 @@
 #include "ShapeEvolutionViewer.h"
 #include "ShapeEvolutionViewer.moc"
 
+#include "Data/Population.h"
 #include "Data/ShapeModel.h"
 #include "Data/ShapeMesh.h"
 
@@ -37,6 +38,9 @@ namespace Diverse
 		//configuration = new ShapeStackConfiguration();
 		//configuration = new OverlayConfiguration();
 		renderer->SetConfiguration(configuration);
+
+		reconstructionDims = 5;
+		colorMode = ColorByDeformation;
 	}
 
 	// ------------------------------------------------------------------------
@@ -72,6 +76,8 @@ namespace Diverse
 		renderer->SetTrajectory(trajectory);
 
 		this->model = model;
+
+		UpdateReference();
 	}
 
 	// ------------------------------------------------------------------------
@@ -85,6 +91,16 @@ namespace Diverse
 		delete this->configuration;
 		this->configuration = config;
 		renderer->SetConfiguration(config);
+		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::SetColorMode(ColorMode mode)
+	{
+		this->colorMode = mode;
+
+		UpdateReference();
+
 		updateGL();
 	}
 
@@ -118,6 +134,38 @@ namespace Diverse
 			meshCam->focus = cam->focus;
 			meshCam->up = cam->up;
 			updateGL();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::SetReconstructionDimension(int dims)
+	{
+		if (reconstructionDims == dims) return;
+		reconstructionDims = dims;
+
+		UpdateReference();
+
+		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::UpdateReference()
+	{
+		if (!model) return;
+
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		Population *population = model->GetPopulation();
+		if (population != 0 && colorMode == ColorByReconstructionError)
+		{
+			renderer->SetReferenceBasis(
+				population->GetPrincipalComponentBasis(reconstructionDims));
+		}
+		else
+		{
+			renderer->SetReferenceBasis(0);
 		}
 	}
 }

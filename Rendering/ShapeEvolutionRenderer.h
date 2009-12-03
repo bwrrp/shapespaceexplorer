@@ -11,6 +11,7 @@ namespace NQVTK { class Scene; }
 
 namespace Diverse
 {
+	class CoordinateFrame;
 	class ShapeMesh;
 	class MeshRenderer;
 
@@ -30,6 +31,7 @@ namespace Diverse
 		void SetMesh(ShapeMesh *mesh);
 		void SetTrajectory(ShapeTrajectory *trajectory);
 		void SetConfiguration(EvolutionConfiguration *configuration);
+		void SetReferenceBasis(CoordinateFrame *basis);
 
 		void UpdateSlices();
 
@@ -47,5 +49,7 @@ namespace Diverse
 		ShapeTrajectory *trajectory;
 		EvolutionConfiguration *configuration;
 		std::vector<EvolutionSlice> slices;
+
+		CoordinateFrame *referenceBasis;
 	};
 }

@@ -60,6 +60,8 @@ namespace Diverse
 
 		connect(ui.plotViewer, SIGNAL(NumberOfAxesChanged(int)), 
 			ui.meshViewer, SLOT(SetReconstructionDimension(int)));
+		connect(ui.plotViewer, SIGNAL(NumberOfAxesChanged(int)), 
+			ui.evolutionViewer, SLOT(SetReconstructionDimension(int)));
 
 		connect(ui.meshViewer, SIGNAL(cameraUpdated(NQVTK::Camera*)), 
 			ui.plotViewer, SLOT(SyncMeshCamera(NQVTK::Camera*)));
@@ -252,12 +254,16 @@ namespace Diverse
 	void MainWindow::on_actionMeshColoringDeformation_triggered()
 	{
 		ui.meshViewer->SetColorMode(MeshViewer::ColorByDeformation);
+		ui.evolutionViewer->SetColorMode(
+			ShapeEvolutionViewer::ColorByDeformation);
 	}
 
 	// ------------------------------------------------------------------------
 	void MainWindow::on_actionMeshColoringReconstructionError_triggered()
 	{
 		ui.meshViewer->SetColorMode(MeshViewer::ColorByReconstructionError);
+		ui.evolutionViewer->SetColorMode(
+			ShapeEvolutionViewer::ColorByReconstructionError);
 	}
 
 	// ------------------------------------------------------------------------
