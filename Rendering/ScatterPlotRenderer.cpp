@@ -8,6 +8,8 @@
 #include "Data/Population.h"
 #include "Data/PickInfo.h"
 
+#include "Data/Utility.h"
+
 #include "GPUVoronoi.h"
 
 #include <NQVTK/Rendering/Camera.h>
@@ -523,14 +525,13 @@ namespace Diverse
 		{
 			// Color by reconstruction error
 			// TODO: make this configurable
-			// TODO: make the color map perceptually uniform
-			NQVTK::Vector3 colorLow(0.0, 0.5, 1.0);
-			NQVTK::Vector3 colorHigh(1.0, 0.5, 0.0);
+			NQVTK::Vector3 colorLow(0.35, 0.36, 1.0);
+			NQVTK::Vector3 colorHigh(1.0, 0.89, 0.43);
 			double p;
 			switch (colorMode)
 			{
 			case ColorByProbability:
-				p = 1.0 - prob(order(i)) / maxProb;
+				p = prob(order(i)) / maxProb;
 				break;
 
 			case ColorByReconstructionError:
@@ -543,7 +544,7 @@ namespace Diverse
 			// TODO: make the color-mapped interval configurable
 			if (p < 0.0) p = 0.0;
 			if (p > 1.0) p = 1.0;
-			glColor3dv(((1.0 - p) * colorLow + p * colorHigh).V);
+			glColor3dv(Utility::InterpolateColors(colorLow, colorHigh, p).V);
 			DrawPoint(order(i));
 		}
 	}
