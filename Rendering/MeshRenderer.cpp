@@ -18,6 +18,7 @@ namespace Diverse
 	// ------------------------------------------------------------------------
 	MeshRenderer::MeshRenderer() : mesh(0), meshShader(0), meshBuffer(0)
 	{
+		useColorMap = true;
 	}
 
 	// ------------------------------------------------------------------------
@@ -136,6 +137,12 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MeshRenderer::SetUseColorMap(bool use)
+	{
+		this->useColorMap = use;
+	}
+
+	// ------------------------------------------------------------------------
 	bool MeshRenderer::Initialize()
 	{
 		if (!Superclass::Initialize()) return false;
@@ -201,6 +208,7 @@ namespace Diverse
 			static_cast<float>(camera->position.x), 
 			static_cast<float>(camera->position.y), 
 			static_cast<float>(camera->position.z));
+		meshShader->SetUniform1i("useColorMap", useColorMap ? 1 : 0);
 		tm->SetupProgram(meshShader);
 		tm->Bind();
 

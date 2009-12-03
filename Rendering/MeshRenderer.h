@@ -25,6 +25,7 @@ namespace Diverse
 
 		void SetMesh(ShapeMesh *mesh);
 		void SetShape(itpp::vec shape);
+		void SetUseColorMap(bool use);
 
 	protected:
 		ShapeMesh *mesh;
@@ -33,6 +34,8 @@ namespace Diverse
 		GLProgram *meshShader;
 
 		GLFramebuffer *meshBuffer;
+
+		bool useColorMap;
 
 		virtual bool Initialize();
 
