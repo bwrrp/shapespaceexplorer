@@ -149,6 +149,7 @@ SET( ${ProjectName}_ExtraSource
 IF( WIN32 )
 	SET( ${ProjectName}_ExtraSource
 		${${ProjectName}_ExtraSource}
+		Diverse.rc
 	)
 ENDIF( WIN32 )
 
