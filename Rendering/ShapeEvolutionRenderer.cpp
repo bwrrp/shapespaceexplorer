@@ -73,25 +73,26 @@ namespace Diverse
 		// TODO: implement fallback configuration (single slice)
 		if (configuration)
 		{
-			// TODO: Determine drawing order
-			/*
-			double cameraZ = camera->position.z;
-			int numSlices = stack->GetNumberOfSlices();
-			itpp::vec relSliceOffsets(numSlices);
-			for (int i = 0; i < numSlices; ++i)
-			{
-				relSliceOffsets(i) = abs(cameraZ - stack->GetSliceOffset(i));
-			}
-			itpp::ivec order = itpp::sort_index(relSliceOffsets);
-			*/
-
 			// Set up camera
 			camera->focus = NQVTK::Vector3();
 			camera->SetZPlanes(configuration->GetBounds());
 
-			// Now render the current set of slices
-			for (unsigned int i = 0; i < slices.size(); ++i)
+			// We assume the set of slices is ordered by increasing z position
+			// Find the position of the camera relative to the slices
+			unsigned int camIndex = 0;
+			while (camIndex < slices.size() && 
+				camera->position.z > slices[camIndex].origin.z)
 			{
+				++camIndex;
+			}
+
+			// Now render the current set of slices
+			for (unsigned int s = 0; s < slices.size(); ++s)
+			{
+				unsigned int i = s;
+				// Render slices beyond the camera in inverse order
+				if (s < camIndex) i = camIndex - s - 1;
+
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
 				glMatrixMode(GL_MODELVIEW);
