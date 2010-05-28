@@ -32,6 +32,7 @@ namespace Diverse
 		void SetTrajectory(ShapeTrajectory *trajectory);
 		void SetConfiguration(EvolutionConfiguration *configuration);
 		void SetReferenceBasis(CoordinateFrame *basis);
+		void SetThreshold(float threshold);
 
 		void UpdateSlices();
 
@@ -51,5 +52,7 @@ namespace Diverse
 		std::vector<EvolutionSlice> slices;
 
 		CoordinateFrame *referenceBasis;
+
+		float threshold;
 	};
 }

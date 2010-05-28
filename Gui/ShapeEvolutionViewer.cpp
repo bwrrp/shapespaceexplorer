@@ -108,6 +108,16 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::SetThreshold(float threshold)
+	{
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+		assert(renderer != 0);
+		renderer->SetThreshold(threshold);
+		update();
+	}
+
+	// ------------------------------------------------------------------------
 	void ShapeEvolutionViewer::SetVector(itpp::vec vector)
 	{
 		if (trajectory)

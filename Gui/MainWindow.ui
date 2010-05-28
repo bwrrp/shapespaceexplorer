@@ -69,6 +69,8 @@
      <addaction name="actionSideBySide"/>
      <addaction name="actionOverlaidContours"/>
      <addaction name="actionShapeStack"/>
+     <addaction name="separator"/>
+     <addaction name="actionThreshold"/>
     </widget>
     <widget class="QMenu" name="menuScatterPlotColoring">
      <property name="title">
@@ -276,6 +278,20 @@
    </property>
    <property name="shortcut">
     <string>N</string>
+   </property>
+  </action>
+  <action name="actionThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>T&amp;hresholded coloring</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle thresholding in evolution view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

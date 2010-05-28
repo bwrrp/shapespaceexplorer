@@ -28,6 +28,7 @@ namespace Diverse
 		itpp::vec GetShape() { return shape; }
 		void SetReference(itpp::vec shape);
 		void SetUseColorMap(bool use);
+		void SetThreshold(float threshold);
 
 	protected:
 		ShapeMesh *mesh;
@@ -39,6 +40,7 @@ namespace Diverse
 		GLFramebuffer *meshBuffer;
 
 		bool useColorMap;
+		float threshold;
 
 		virtual bool Initialize();
 
