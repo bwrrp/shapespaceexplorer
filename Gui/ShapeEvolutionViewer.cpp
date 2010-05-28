@@ -61,6 +61,8 @@ namespace Diverse
 		// TODO: disconnect signals from old model
 		delete trajectory;
 		trajectory = 0;
+		delete morph;
+		morph = 0;
 
 		if (model)
 		{
