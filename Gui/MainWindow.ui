@@ -90,6 +90,9 @@
     <addaction name="menuObjectColoring"/>
     <addaction name="menuEvolutionConfiguraton"/>
     <addaction name="separator"/>
+    <addaction name="actionMorphShape"/>
+    <addaction name="actionMorphEnd"/>
+    <addaction name="separator"/>
     <addaction name="actionScreenshot"/>
    </widget>
    <addaction name="menuModel"/>
@@ -257,6 +260,19 @@
    </property>
    <property name="toolTip">
     <string>Color object surface by the local reconstruction error</string>
+   </property>
+  </action>
+  <action name="actionMorphShape">
+   <property name="text">
+    <string>Pick &amp;morph shape</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
+   </property>
+  </action>
+  <action name="actionMorphEnd">
+   <property name="text">
+    <string>E&amp;nd morph</string>
    </property>
   </action>
  </widget>
