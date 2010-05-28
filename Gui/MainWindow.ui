@@ -274,6 +274,9 @@
    <property name="text">
     <string>E&amp;nd morph</string>
    </property>
+   <property name="shortcut">
+    <string>N</string>
+   </property>
   </action>
  </widget>
  <customwidgets>
