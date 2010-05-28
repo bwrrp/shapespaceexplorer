@@ -8,6 +8,7 @@
 #include "Data/ShapeMesh.h"
 
 #include "Data/LinearPopulationTrajectory.h"
+#include "Data/LinearMorphTrajectory.h"
 
 #include "Rendering/ShapeEvolutionRenderer.h"
 #include "Rendering/SideBySideConfiguration.h"
@@ -23,7 +24,7 @@ namespace Diverse
 {
 	// ------------------------------------------------------------------------
 	ShapeEvolutionViewer::ShapeEvolutionViewer(QWidget *parent) 
-		: NQVTKWidget(parent), model(0), trajectory(0)
+		: NQVTKWidget(parent), model(0), trajectory(0), morph(0)
 	{
 		// Initialize renderer
 		ShapeEvolutionRenderer *renderer = new ShapeEvolutionRenderer();
@@ -146,6 +147,44 @@ namespace Diverse
 		UpdateReference();
 
 		updateGL();
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::MorphShape(const itpp::vec &shape)
+	{
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+		if (!renderer) return;
+
+		if (morph)
+		{
+			// Assume the user wants to set or update the end shape
+			itpp::vec start = morph->GetShape1();
+			delete morph;
+			morph = new LinearMorphTrajectory(start, shape);
+			// We can now use the morph trajectory in the renderer
+			renderer->SetTrajectory(morph);
+		}
+		else
+		{
+			// Start a new morph
+			itpp::vec dummyTo(shape.size());
+			morph = new LinearMorphTrajectory(shape, dummyTo);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionViewer::MorphEnd()
+	{
+		ShapeEvolutionRenderer *renderer = 
+			dynamic_cast<ShapeEvolutionRenderer*>(GetRenderer());
+		if (!renderer) return;
+
+		// Switch back to the projection trajectory
+		renderer->SetTrajectory(trajectory);
+
+		delete morph;
+		morph = 0;
 	}
 
 	// ------------------------------------------------------------------------

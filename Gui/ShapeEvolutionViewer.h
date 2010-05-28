@@ -10,6 +10,7 @@ namespace Diverse
 {
 	class ShapeModel;
 	class LinearPopulationTrajectory;
+	class LinearMorphTrajectory;
 	class EvolutionConfiguration;
 
 	class ShapeEvolutionViewer : public NQVTKWidget
@@ -37,13 +38,16 @@ namespace Diverse
 		void SyncMeshCamera(NQVTK::Camera *cam);
 		void SetReconstructionDimension(int dims);
 
+		void MorphShape(const itpp::vec &shape);
+		void MorphEnd();
+
 	protected:
 		ShapeModel *model;
 
 		ColorMode colorMode;
 
-		// TODO: make the trajectory type configurable
 		LinearPopulationTrajectory *trajectory;
+		LinearMorphTrajectory *morph;
 		EvolutionConfiguration *configuration;
 
 		int reconstructionDims;
