@@ -166,6 +166,7 @@ namespace Diverse
 			morph = new LinearMorphTrajectory(start, shape);
 			// We can now use the morph trajectory in the renderer
 			renderer->SetTrajectory(morph);
+			update();
 		}
 		else
 		{
@@ -184,6 +185,7 @@ namespace Diverse
 
 		// Switch back to the projection trajectory
 		renderer->SetTrajectory(trajectory);
+		update();
 
 		delete morph;
 		morph = 0;
