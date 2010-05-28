@@ -47,6 +47,8 @@ namespace Diverse
 		void on_actionPlotColoringReconstructionError_triggered();
 		void on_actionMeshColoringDeformation_triggered();
 		void on_actionMeshColoringReconstructionError_triggered();
+		void on_actionMorphShape_triggered();
+		void on_actionMorphEnd_triggered();
 		void on_evolutionViewer_fpsChanged(int fps);
 	};
 }

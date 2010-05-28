@@ -267,6 +267,18 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MainWindow::on_actionMorphShape_triggered()
+	{
+		ui.evolutionViewer->MorphShape(ui.meshViewer->GetShape());
+	}
+
+	// ------------------------------------------------------------------------
+	void MainWindow::on_actionMorphEnd_triggered()
+	{
+		ui.evolutionViewer->MorphEnd();
+	}
+
+	// ------------------------------------------------------------------------
 	void MainWindow::on_evolutionViewer_fpsChanged(int fps)
 	{
 		setWindowTitle(QString("%1 - %2 fps")
