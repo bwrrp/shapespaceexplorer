@@ -33,6 +33,8 @@ namespace Diverse
 
 		void SetColorMode(ColorMode mode);
 
+		void SetThreshold(float threshold);
+
 	public slots:
 		void SetVector(itpp::vec vector);
 		void SyncMeshCamera(NQVTK::Camera *cam);

@@ -279,6 +279,13 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MainWindow::on_actionThreshold_toggled(bool checked)
+	{
+		// TODO: add a slider to configure the threshold value
+		ui.evolutionViewer->SetThreshold(checked ? 1.0 : -1.0);
+	}
+
+	// ------------------------------------------------------------------------
 	void MainWindow::on_evolutionViewer_fpsChanged(int fps)
 	{
 		setWindowTitle(QString("%1 - %2 fps")

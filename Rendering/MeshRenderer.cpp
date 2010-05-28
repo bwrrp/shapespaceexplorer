@@ -19,6 +19,7 @@ namespace Diverse
 	MeshRenderer::MeshRenderer() : mesh(0), meshShader(0), meshBuffer(0)
 	{
 		useColorMap = true;
+		threshold = -1.0; // disabled
 	}
 
 	// ------------------------------------------------------------------------
@@ -157,6 +158,12 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	void MeshRenderer::SetThreshold(float threshold)
+	{
+		this->threshold = threshold;
+	}
+
+	// ------------------------------------------------------------------------
 	bool MeshRenderer::Initialize()
 	{
 		if (!Superclass::Initialize()) return false;
@@ -223,6 +230,7 @@ namespace Diverse
 			static_cast<float>(camera->position.y), 
 			static_cast<float>(camera->position.z));
 		meshShader->SetUniform1i("useColorMap", useColorMap ? 1 : 0);
+		meshShader->SetUniform1f("threshold", threshold);
 		tm->SetupProgram(meshShader);
 		tm->Bind();
 

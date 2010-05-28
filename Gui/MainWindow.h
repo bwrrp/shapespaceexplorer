@@ -49,6 +49,7 @@ namespace Diverse
 		void on_actionMeshColoringReconstructionError_triggered();
 		void on_actionMorphShape_triggered();
 		void on_actionMorphEnd_triggered();
+		void on_actionThreshold_toggled(bool checked);
 		void on_evolutionViewer_fpsChanged(int fps);
 	};
 }

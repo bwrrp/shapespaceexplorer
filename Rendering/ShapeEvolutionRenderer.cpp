@@ -113,6 +113,7 @@ namespace Diverse
 					reference.zeros();
 				}
 				meshRenderer->SetReference(reference);
+				meshRenderer->SetThreshold(threshold);
 				meshRenderer->Draw();
 
 				glMatrixMode(GL_PROJECTION);
@@ -206,6 +207,12 @@ namespace Diverse
 	{
 		delete referenceBasis;
 		referenceBasis = basis;
+	}
+
+	// ------------------------------------------------------------------------
+	void ShapeEvolutionRenderer::SetThreshold(float threshold)
+	{
+		this->threshold = threshold;
 	}
 
 	// ------------------------------------------------------------------------
