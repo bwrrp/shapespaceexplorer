@@ -78,6 +78,17 @@ namespace Diverse
 	}
 
 	// ------------------------------------------------------------------------
+	const itpp::vec MeshViewer::GetShape()
+	{
+		if (!model) return itpp::vec();
+
+		MeshRenderer *renderer = dynamic_cast<MeshRenderer*>(GetRenderer());
+		assert(renderer != 0);
+
+		return renderer->GetShape();
+	}
+
+	// ------------------------------------------------------------------------
 	void MeshViewer::SetShape(itpp::vec shape)
 	{
 		if (!model) return;

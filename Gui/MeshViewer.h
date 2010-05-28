@@ -28,6 +28,8 @@ namespace Diverse
 
 		void SetColorMode(ColorMode mode);
 
+		const itpp::vec GetShape();
+
 	public slots:
 		void SetShape(itpp::vec shape);
 		void SetReconstructionDimension(int dims);
